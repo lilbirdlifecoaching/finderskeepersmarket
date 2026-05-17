@@ -1,5 +1,19 @@
 {
-  "wife": [],
+  "wife": [
+    {
+      "id": "w472116",
+      "title": "Oregon Trail",
+      "medium": null,
+      "description": "",
+      "dimensions": null,
+      "price": null,
+      "shipping": "Contact for shipping info",
+      "available": true,
+      "tags": [],
+      "image": "images/wife/oregon-trail.png",
+      "date": "2026-05-17"
+    }
+  ],
   "daughter": [
     {
       "id": "d765476",
