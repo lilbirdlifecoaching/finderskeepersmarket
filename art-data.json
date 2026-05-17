@@ -9,8 +9,8 @@
       "description": "A magnificent large-scale sea turtle sculpture with tribal and Celtic-inspired engravings across the shell. Hand-sculpted and painted in deep slate blues and silver, with intricate scroll and eye motifs. A truly breathtaking wall piece.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 24\" x 20\"",
-      "image": "images/kg/turtle-blues.jpg",
-      "available": true,
+      "image": "../images/kg/turtle-blues.jpg",
+      "available": true
       "date": "2024-01-01",
       "tags": ["sculpture", "ocean", "turtle", "large"]
     },
@@ -22,7 +22,7 @@
       "description": "A boldly joyful crab sculpture with rich terracotta tones and expressive claws. Full of personality — this little guy is ready to claim his wall.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 14\" x 10\"",
-      "image": "images/kg/dinner-crab.jpg",
+      "image": "../images/kg/dinner-crab.jpg",
       "available": true,
       "date": "2024-01-02",
       "tags": ["sculpture", "ocean", "crab"]
@@ -35,7 +35,7 @@
       "description": "An octopus of mythic proportions — deep teal and green with iridescent lavender suckers, tentacles reaching in every direction. Named 'Sea Leopard' for its wild, untamed energy. One of the most dramatic pieces in the collection.",
       "medium": "Sculpted paper mache, acrylic paint, iridescent accents",
       "dimensions": "Approx. 22\" x 28\"",
-      "image": "images/kg/sea-leopard.jpg",
+      "image": "../images/kg/sea-leopard.jpg",
       "available": true,
       "date": "2024-01-03",
       "tags": ["sculpture", "ocean", "octopus", "large"]
@@ -48,7 +48,7 @@
       "description": "A jaw-dropping Dilophosaurus bust with full frill display — painted in volcanic yellows, reds, and deep greens. Wall-mounted like a trophy, this piece commands any room it enters. Contact for pricing.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 28\" x 22\"",
-      "image": "images/kg/dilophosaurus.jpg",
+      "image": "../images/kg/dilophosaurus.jpg",
       "available": true,
       "date": "2024-01-04",
       "tags": ["sculpture", "dinosaur", "large", "statement"]
@@ -61,7 +61,7 @@
       "description": "A monarch butterfly in full glory, wings spread wide over a yellow flower — mounted in a black shadow box. The detail in each wing vein and the contrast of orange against black is extraordinary. A showpiece for any wall.",
       "medium": "Sculpted paper mache, acrylic paint, shadow box",
       "dimensions": "Approx. 16\" x 16\"",
-      "image": "images/kg/mariposa.jpg",
+      "image": "../images/kg/mariposa.jpg",
       "available": true,
       "date": "2024-01-05",
       "tags": ["sculpture", "butterfly", "nature", "framed"]
@@ -74,7 +74,7 @@
       "description": "Two cheerful ladybugs resting on a periwinkle blue flower, trimmed with white dot details. Sweet, charming, and full of life.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 18\" x 18\"",
-      "image": "images/kg/little-ladys.jpg",
+      "image": "../images/kg/little-ladys.jpg",
       "available": false,
       "date": "2024-01-06",
       "tags": ["sculpture", "nature", "ladybug", "sold"]
@@ -87,7 +87,7 @@
       "description": "Perhaps the most technically astonishing piece — a life-size tuna built from hundreds of individual spoon-shaped scales, creating a shimmering metallic surface unlike anything else. Massive scale, incredible detail.",
       "medium": "Sculpted paper mache, metallic paint, mixed media scales",
       "dimensions": "Approx. 48\" x 24\"",
-      "image": "images/kg/canned-tuna.jpg",
+      "image": "../images/kg/canned-tuna.jpg",
       "available": true,
       "date": "2024-01-07",
       "tags": ["sculpture", "ocean", "fish", "large", "statement"]
@@ -100,7 +100,7 @@
       "description": "Inspired by the iconic Kaiju moth, this piece explodes with fiery yellows, oranges, and reds against a dramatic dark body. Feathered antennae and eye-spot details make this a statement piece.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 22\" x 12\"",
-      "image": "images/kg/mothra.jpg",
+      "image": "../images/kg/mothra.jpg",
       "available": true,
       "date": "2024-01-08",
       "tags": ["sculpture", "moth", "fantasy"]
@@ -113,7 +113,7 @@
       "description": "A sculptural phoenix in full wingspan, mounted within a gilded ornate frame — the bird breaking free of the canvas itself. Warm copper and gold tones with a fiery background. Contact for pricing.",
       "medium": "Sculpted paper mache, acrylic paint, antique gilded frame",
       "dimensions": "Approx. 18\" x 20\" framed",
-      "image": "images/kg/phoenix.jpg",
+      "image": "../images/kg/phoenix.jpg",
       "available": true,
       "date": "2024-01-09",
       "tags": ["sculpture", "bird", "fantasy", "framed", "statement"]
@@ -126,7 +126,7 @@
       "description": "A green sea turtle swimming through cracked, flowing water — rendered in a panoramic framed scene with natural river stones. The water texture is created entirely by hand. Contact for pricing.",
       "medium": "Sculpted paper mache, acrylic paint, antique frame, natural stones",
       "dimensions": "Approx. 24\" x 14\" framed",
-      "image": "images/kg/turtle-journey.jpg",
+      "image": "../images/kg/turtle-journey.jpg",
       "available": true,
       "date": "2024-01-10",
       "tags": ["sculpture", "turtle", "ocean", "framed"]
