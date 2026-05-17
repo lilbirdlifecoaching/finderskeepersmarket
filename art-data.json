@@ -2,6 +2,19 @@
   "wife": [],
   "daughter": [
     {
+      "id": "d765476",
+      "title": "Shark",
+      "medium": "Sculpted Paper Mache",
+      "description": "",
+      "dimensions": null,
+      "price": 950,
+      "shipping": "120",
+      "available": true,
+      "tags": [],
+      "image": "images/kg/shark.jpg",
+      "date": "2026-05-17"
+    },
+    {
       "id": "kg001",
       "title": "Turtle Blues",
       "price": 325,
@@ -12,7 +25,12 @@
       "image": "images/kg/turtle-blues.jpg",
       "available": true,
       "date": "2024-01-01",
-      "tags": ["sculpture", "ocean", "turtle", "large"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "turtle",
+        "large"
+      ]
     },
     {
       "id": "kg002",
@@ -25,7 +43,11 @@
       "image": "images/kg/dinner-crab.jpg",
       "available": true,
       "date": "2024-01-02",
-      "tags": ["sculpture", "ocean", "crab"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "crab"
+      ]
     },
     {
       "id": "kg003",
@@ -38,7 +60,12 @@
       "image": "images/kg/sea-leopard.jpg",
       "available": true,
       "date": "2024-01-03",
-      "tags": ["sculpture", "ocean", "octopus", "large"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "octopus",
+        "large"
+      ]
     },
     {
       "id": "kg004",
@@ -51,7 +78,12 @@
       "image": "images/kg/dilophosaurus.jpg",
       "available": true,
       "date": "2024-01-04",
-      "tags": ["sculpture", "dinosaur", "large", "statement"]
+      "tags": [
+        "sculpture",
+        "dinosaur",
+        "large",
+        "statement"
+      ]
     },
     {
       "id": "kg005",
@@ -64,7 +96,12 @@
       "image": "images/kg/mariposa.jpg",
       "available": true,
       "date": "2024-01-05",
-      "tags": ["sculpture", "butterfly", "nature", "framed"]
+      "tags": [
+        "sculpture",
+        "butterfly",
+        "nature",
+        "framed"
+      ]
     },
     {
       "id": "kg006",
@@ -77,7 +114,12 @@
       "image": "images/kg/little-ladys.jpg",
       "available": false,
       "date": "2024-01-06",
-      "tags": ["sculpture", "nature", "ladybug", "sold"]
+      "tags": [
+        "sculpture",
+        "nature",
+        "ladybug",
+        "sold"
+      ]
     },
     {
       "id": "kg007",
@@ -90,7 +132,13 @@
       "image": "images/kg/canned-tuna.jpg",
       "available": true,
       "date": "2024-01-07",
-      "tags": ["sculpture", "ocean", "fish", "large", "statement"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "fish",
+        "large",
+        "statement"
+      ]
     },
     {
       "id": "kg008",
@@ -103,7 +151,11 @@
       "image": "images/kg/mothra.jpg",
       "available": true,
       "date": "2024-01-08",
-      "tags": ["sculpture", "moth", "fantasy"]
+      "tags": [
+        "sculpture",
+        "moth",
+        "fantasy"
+      ]
     },
     {
       "id": "kg009",
@@ -116,7 +168,13 @@
       "image": "images/kg/phoenix.jpg",
       "available": true,
       "date": "2024-01-09",
-      "tags": ["sculpture", "bird", "fantasy", "framed", "statement"]
+      "tags": [
+        "sculpture",
+        "bird",
+        "fantasy",
+        "framed",
+        "statement"
+      ]
     },
     {
       "id": "kg010",
@@ -129,7 +187,12 @@
       "image": "images/kg/turtle-journey.jpg",
       "available": true,
       "date": "2024-01-10",
-      "tags": ["sculpture", "turtle", "ocean", "framed"]
+      "tags": [
+        "sculpture",
+        "turtle",
+        "ocean",
+        "framed"
+      ]
     }
   ]
 }
