@@ -29,6 +29,19 @@
   ],
   "daughter": [
     {
+      "id": "d313392",
+      "title": "Conqueror of Worlds",
+      "medium": "Sculpted paper mache",
+      "description": "",
+      "dimensions": null,
+      "price": 1000,
+      "shipping": "Contact for shipping info",
+      "available": true,
+      "tags": [],
+      "image": "images/kg/conqueror-of-worlds.png",
+      "date": "2026-06-11"
+    },
+    {
       "id": "d765476",
       "title": "Shark",
       "medium": "Sculpted Paper Mache",
