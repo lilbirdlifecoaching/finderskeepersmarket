@@ -212,7 +212,7 @@
       "medium": "Sculpted paper mache, acrylic paint, antique frame, natural stones",
       "dimensions": "Approx. 24\" x 14\" framed",
       "image": "images/kg/turtle-journey.jpg",
-      "available": true,
+      "available": false,
       "date": "2024-01-10",
       "tags": [
         "sculpture",
