@@ -29,6 +29,19 @@
   ],
   "daughter": [
     {
+      "id": "d400046",
+      "title": "Shrooms",
+      "medium": "Sculpted paper mache",
+      "description": "",
+      "dimensions": null,
+      "price": null,
+      "shipping": "Contact for shipping info",
+      "available": false,
+      "tags": [],
+      "image": "images/kg/shrooms.png",
+      "date": "2026-06-11"
+    },
+    {
       "id": "d313392",
       "title": "Conqueror of Worlds",
       "medium": "Sculpted paper mache",
