@@ -8,7 +8,7 @@
       "dimensions": null,
       "price": null,
       "shipping": "Contact for shipping info",
-      "available": true,
+      "available": false,
       "tags": [],
       "image": "images/wife/mr-rogers-mini.png",
       "date": "2026-05-17"
