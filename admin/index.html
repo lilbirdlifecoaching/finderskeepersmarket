@@ -2,44 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"
-  function checkToken() {
-    if (!GITHUB_TOKEN) {
-      document.getElementById('token-setup').style.display = 'block';
-    } else {
-      document.getElementById('token-setup').style.display = 'none';
-    }
-  }
-
-  async function saveToken() {
-    const input = document.getElementById('token-input').value.trim();
-    if (!input || !input.startsWith('ghp_')) {
-      document.getElementById('token-error').style.display = 'block';
-      document.getElementById('token-error').textContent = 'Please enter a valid GitHub token starting with ghp_';
-      return;
-    }
-    try {
-      const r = await fetch('https://api.github.com/repos/lilbirdlifecoaching/finderskeepersmarket', {
-        headers: { Authorization: 'token ' + input, Accept: 'application/vnd.github.v3+json' }
-      });
-      if (!r.ok) throw new Error('Invalid token — got ' + r.status);
-      GITHUB_TOKEN = input;
-      localStorage.setItem('fk_gh_token', input);
-      document.getElementById('token-setup').style.display = 'none';
-      document.getElementById('token-error').style.display = 'none';
-      document.getElementById('token-input').value = '';
-      loadData();
-    } catch(e) {
-      document.getElementById('token-error').style.display = 'block';
-      document.getElementById('token-error').textContent = 'Token failed: ' + e.message;
-    }
-  }
-
-  function clearToken() {
-    localStorage.removeItem('fk_gh_token');
-    GITHUB_TOKEN = '';
-    checkToken();
-  }
-
  />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Art Manager — Finders Keepers</title>
@@ -479,6 +441,45 @@ function positionTooltip(tooltip, hs, container) {
 }
 
 let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
+
+  function checkToken() {
+    if (!GITHUB_TOKEN) {
+      document.getElementById('token-setup').style.display = 'block';
+    } else {
+      document.getElementById('token-setup').style.display = 'none';
+    }
+  }
+
+  async function saveToken() {
+    const input = document.getElementById('token-input').value.trim();
+    if (!input || !input.startsWith('ghp_')) {
+      document.getElementById('token-error').style.display = 'block';
+      document.getElementById('token-error').textContent = 'Please enter a valid token starting with ghp_';
+      return;
+    }
+    try {
+      const r = await fetch('https://api.github.com/repos/lilbirdlifecoaching/finderskeepersmarket', {
+        headers: { Authorization: 'token ' + input, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (!r.ok) throw new Error('Invalid token — status ' + r.status);
+      GITHUB_TOKEN = input;
+      localStorage.setItem('fk_gh_token', input);
+      document.getElementById('token-setup').style.display = 'none';
+      document.getElementById('token-error').style.display = 'none';
+      document.getElementById('token-input').value = '';
+      loadData();
+    } catch(e) {
+      document.getElementById('token-error').style.display = 'block';
+      document.getElementById('token-error').textContent = 'Token failed: ' + e.message;
+    }
+  }
+
+  function clearToken() {
+    localStorage.removeItem('fk_gh_token');
+    GITHUB_TOKEN = '';
+    checkToken();
+  }
+
   const REPO_OWNER = 'lilbirdlifecoaching';
   const REPO_NAME = 'finderskeepersmarket';
   const API = 'https://api.github.com';
