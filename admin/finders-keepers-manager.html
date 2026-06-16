@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Art Manager — Finders Keepers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FAF7F2; --warm: #F0E8D8; --ink: #1C1814;
+      --muted: #7A6E64; --clay: #B8714A; --clay-dark: #8B5A3A;
+      --border: rgba(100,80,60,0.2); --green: #3D7A5A; --red: #c0392b;
+    }
+    body { background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; min-height: 100vh; }
+    header { background: var(--ink); padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.1rem; font-weight: 400; }
+    header span { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+    /* TAB NAV */
+    .tab-nav { display: flex; border-bottom: 2px solid var(--border); margin: 2rem 0 1.5rem; }
+    .tab-btn { padding: 0.85rem 1.5rem; font-family: 'Jost', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: none; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+    .tab-btn:hover { color: var(--clay); }
+    .tab-btn.active { color: var(--clay); border-bottom-color: var(--clay); font-weight: 500; }
+
+    /* PANELS */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* MANAGE PANEL */
+    .manage-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
+    .manage-header h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+    .gallery-filter { display: flex; gap: 0.5rem; }
+    .filter-pill { padding: 0.35rem 0.85rem; border: 1px solid var(--border); background: #fff; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; font-family: 'Jost', sans-serif; }
+    .filter-pill:hover, .filter-pill.active { background: var(--clay); color: #fff; border-color: var(--clay); }
+
+    .listings-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+    .listing-card { background: #fff; border: 1px solid var(--border); display: flex; align-items: stretch; overflow: hidden; transition: box-shadow 0.2s; }
+    .listing-card:hover { box-shadow: 0 4px 16px rgba(100,60,30,0.1); }
+    .listing-thumb { width: 90px; flex-shrink: 0; background: var(--warm); position: relative; overflow: hidden; }
+    .listing-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .listing-thumb .no-img { width: 100%; height: 100%; min-height: 90px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .listing-body { flex: 1; padding: 0.9rem 1rem; display: flex; flex-direction: column; justify-content: center; gap: 0.25rem; min-width: 0; }
+    .listing-title { font-family: 'Playfair Display', serif; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .listing-meta { font-size: 0.76rem; color: var(--muted); }
+    .listing-badges { display: flex; gap: 0.4rem; margin-top: 0.2rem; flex-wrap: wrap; }
+    .badge { font-size: 0.62rem; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.18rem 0.5rem; }
+    .badge-available { background: #eef7ee; color: var(--green); }
+    .badge-sold { background: #f5ede8; color: var(--clay); }
+    .badge-wife { background: #f0ebe4; color: var(--clay-dark); }
+    .badge-kg { background: #1a1510; color: #c9a84c; }
+    .listing-actions { display: flex; flex-direction: column; gap: 0; border-left: 1px solid var(--border); }
+    .action-btn { padding: 0 1rem; flex: 1; border: none; background: none; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); transition: all 0.2s; white-space: nowrap; border-bottom: 1px solid var(--border); }
+    .action-btn:last-child { border-bottom: none; }
+    .action-btn:hover { background: var(--warm); color: var(--ink); }
+    .action-btn.delete:hover { background: #fdf0f0; color: var(--red); }
+
+    .loading-state { text-align: center; padding: 3rem; color: var(--muted); font-style: italic; font-family: 'Playfair Display', serif; }
+    .empty-state { text-align: center; padding: 3rem; color: var(--muted); }
+    .empty-state p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; }
+
+    /* FORM STYLES */
+    .form-card { background: #fff; border: 1px solid var(--border); padding: 2rem; }
+    .page-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.75rem; }
+    .page-btn { padding: 1.1rem; border: 2px solid var(--border); background: #fff; cursor: pointer; text-align: left; transition: all 0.2s; font-family: 'Jost', sans-serif; }
+    .page-btn:hover { border-color: var(--clay); }
+    .page-btn.selected { border-color: var(--clay); background: #fff8f4; }
+    .page-btn .icon { font-size: 1.2rem; margin-bottom: 0.3rem; }
+    .page-btn .name { font-family: 'Playfair Display', serif; font-size: 0.95rem; display: block; margin-bottom: 0.15rem; }
+    .page-btn .desc { font-size: 0.72rem; color: var(--muted); }
+    .form-section { margin-bottom: 1.75rem; }
+    .form-section-title { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    label { font-size: 0.76rem; font-weight: 500; color: var(--ink); }
+    label .opt { font-weight: 300; color: var(--muted); font-size: 0.7rem; }
+    input[type="text"], input[type="number"], textarea {
+      padding: 0.7rem 0.9rem; border: 1px solid var(--border); background: var(--cream);
+      font-family: 'Jost', sans-serif; font-size: 0.92rem; font-weight: 300; color: var(--ink);
+      outline: none; transition: border-color 0.2s; width: 100%; -webkit-appearance: none;
+    }
+    input:focus, textarea:focus { border-color: var(--clay); background: #fff; }
+    textarea { resize: vertical; min-height: 90px; }
+    .checkbox-row { display: flex; align-items: center; gap: 0.75rem; }
+    .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: var(--clay); }
+    .checkbox-row label { font-size: 0.88rem; cursor: pointer; font-weight: 300; }
+
+    /* IMAGE UPLOAD */
+    .image-drop { border: 2px dashed var(--border); padding: 1.75rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--cream); position: relative; }
+    .image-drop:hover, .image-drop.dragover { border-color: var(--clay); background: #fff8f4; }
+    .image-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 1.75rem; margin-bottom: 0.4rem; }
+    .drop-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.95rem; color: var(--muted); margin-bottom: 0.15rem; }
+    .drop-hint { font-size: 0.74rem; color: var(--muted); }
+    .current-img { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; padding: 0.75rem; background: var(--warm); border: 1px solid var(--border); }
+    .current-img img { width: 60px; height: 60px; object-fit: cover; flex-shrink: 0; }
+    .current-img-info { font-size: 0.8rem; color: var(--muted); }
+    .current-img-info strong { display: block; color: var(--ink); font-size: 0.85rem; margin-bottom: 0.1rem; }
+    .preview-wrap { display: none; margin-top: 0.75rem; align-items: center; gap: 1rem; }
+    .preview-wrap img { width: 70px; height: 70px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
+    .preview-info { font-size: 0.78rem; color: var(--muted); }
+    .preview-info strong { display: block; color: var(--ink); margin-bottom: 0.1rem; word-break: break-all; }
+    .preview-change { font-size: 0.7rem; color: var(--clay); cursor: pointer; text-decoration: underline; display: inline-block; }
+
+    /* BUTTONS */
+    .btn-submit { width: 100%; background: var(--clay); color: #fff; border: none; padding: 1rem; font-family: 'Jost', sans-serif; font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; margin-top: 1.5rem; -webkit-appearance: none; border-radius: 0; }
+    .btn-submit:hover:not(:disabled) { background: var(--clay-dark); }
+    .btn-submit:disabled { background: var(--muted); cursor: not-allowed; }
+    .btn-back { background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.6rem 1.25rem; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-bottom: 1.25rem; transition: all 0.2s; }
+    .btn-back:hover { border-color: var(--clay); color: var(--clay); }
+    .btn-delete-confirm { width: 100%; background: var(--red); color: #fff; border: none; padding: 0.85rem; font-family: 'Jost', sans-serif; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; margin-top: 0.75rem; border-radius: 0; -webkit-appearance: none; }
+    .btn-delete-confirm:hover { background: #a93226; }
+
+    .progress-bar { display: none; width: 100%; height: 4px; background: var(--warm); margin-top: 0.75rem; }
+    .progress-fill { height: 100%; background: var(--clay); width: 0%; transition: width 0.5s; }
+    .status-msg { font-size: 0.83rem; color: var(--muted); margin-top: 0.6rem; min-height: 1.1rem; text-align: center; }
+    .error-box { display: none; background: #fdf0f0; border: 1px solid var(--red); padding: 1rem 1.25rem; margin-top: 1rem; }
+    .error-box p { color: var(--red); font-size: 0.86rem; line-height: 1.6; }
+    .success-box { display: none; background: #f0f9f4; border: 1px solid var(--green); padding: 1.75rem; margin-top: 1.25rem; text-align: center; }
+    .success-box h3 { color: var(--green); font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.4rem; }
+    .success-box p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; margin-bottom: 1rem; }
+    .success-box a { color: var(--clay); text-decoration: none; font-weight: 500; }
+    .btn-another { background: none; border: 1px solid var(--clay); color: var(--clay); padding: 0.65rem 1.5rem; font-family: 'Jost', sans-serif; font-size: 0.76rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border-radius: 0; -webkit-appearance: none; }
+    .btn-another:hover { background: #fff8f4; }
+
+    /* DELETE CONFIRM */
+    .delete-confirm { background: #fdf0f0; border: 1px solid #e8b4b4; padding: 1.5rem; margin-top: 1rem; }
+    .delete-confirm h3 { font-family: 'Playfair Display', serif; color: var(--red); margin-bottom: 0.5rem; }
+    .delete-confirm p { font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.6; }
+    .delete-confirm-btns { display: flex; gap: 0.75rem; }
+    .btn-cancel { flex: 1; background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.75rem; font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+    .btn-cancel:hover { border-color: var(--clay); color: var(--clay); }
+    .btn-delete-go { flex: 1; background: var(--red); color: #fff; border: none; padding: 0.75rem; font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+    .btn-delete-go:hover { background: #a93226; }
+
+    @media (max-width: 540px) {
+      .form-row { grid-template-columns: 1fr; }
+      .page-selector { grid-template-columns: 1fr; }
+      .form-card { padding: 1.25rem; }
+      .tab-btn { padding: 0.75rem 0.85rem; font-size: 0.72rem; }
+      .manage-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Finders Keepers — Art Manager</h1>
+  <span>Private Tool</span>
+</header>
+
+<div class="container">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('manage')">Manage Listings</button>
+    <button class="tab-btn" onclick="showTab('add')">Add New Piece</button>
+    <button class="tab-btn" onclick="showTab('scene')">🛋️ Scene Builder</button>
+    <button class="tab-btn" onclick="showTab('scenes')">📋 Manage Scenes</button>
+  </div>
+
+  <!-- ── MANAGE PANEL ── -->
+  <div class="panel active" id="panel-manage">
+    <div class="manage-header">
+      <h2>All Artwork</h2>
+      <div class="gallery-filter">
+        <button class="filter-pill active" onclick="filterListings('all', this)">All</button>
+        <button class="filter-pill" onclick="filterListings('wife', this)">Market</button>
+        <button class="filter-pill" onclick="filterListings('daughter', this)">Kindness Grace</button>
+      </div>
+    </div>
+    <div class="listings-grid" id="listings-grid">
+      <div class="loading-state">Loading your artwork…</div>
+    </div>
+  </div>
+
+  <!-- ── ADD PANEL ── -->
+  <div class="panel" id="panel-add">
+    <div class="page-selector">
+      <button class="page-btn selected" data-page="wife" onclick="selectPage('wife', this)">
+        <div class="icon">🏪</div>
+        <span class="name">Finders Keepers Market</span>
+        <span class="desc">Main homepage gallery</span>
+      </button>
+      <button class="page-btn" data-page="daughter" onclick="selectPage('daughter', this)">
+        <div class="icon">✦</div>
+        <span class="name">Art by Kindness Grace</span>
+        <span class="desc">Kindness Grace gallery page</span>
+      </button>
+    </div>
+    <div class="form-card">
+      <div id="add-form-body"></div>
+      <button class="btn-submit" id="add-submit-btn" onclick="submitAdd()">Upload to Website ✦</button>
+      <div class="progress-bar" id="add-progress-bar"><div class="progress-fill" id="add-progress-fill"></div></div>
+      <div class="status-msg" id="add-status-msg"></div>
+      <div class="error-box" id="add-error-box"><p id="add-error-msg"></p></div>
+      <div class="success-box" id="add-success-box">
+        <h3>✓ It's live!</h3>
+        <p>The piece has been added and will appear on the website within about 60 seconds.<br><br>
+          <a href="https://finderskeepersmarket.com" target="_blank">View main site</a> &nbsp;·&nbsp;
+          <a href="https://finderskeepersmarket.com/kindnessgrace/" target="_blank">View Kindness Grace gallery</a>
+        </p>
+        <button class="btn-another" onclick="resetAdd()">Add Another Piece</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCENE BUILDER PANEL ── -->
+  <div class="panel" id="panel-scene">
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15)">Scene Details</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+          <label style="font-size:0.76rem;font-weight:500">Scene Title</label>
+          <input type="text" id="scene-title" placeholder='e.g. "The Studio Corner"' style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+          <label style="font-size:0.76rem;font-weight:500">Month</label>
+          <input type="text" id="scene-month" placeholder='e.g. "July 2026"' style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem;">
+        <label style="font-size:0.76rem;font-weight:500">Description</label>
+        <textarea id="scene-desc" placeholder="Describe this month's scene..." style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;min-height:70px;resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <input type="checkbox" id="scene-current" checked style="width:18px;height:18px;accent-color:#C9943A;" />
+        <label for="scene-current" style="font-size:0.88rem;cursor:pointer;">Set as current featured scene (replaces existing current)</label>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15)">Scene Photo</div>
+      <div class="image-drop" id="scene-drop-zone" style="border:2px dashed rgba(100,80,60,0.2);padding:2rem;text-align:center;cursor:pointer;position:relative;background:#FAF7F2;">
+        <input type="file" id="scene-image-file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" />
+        <div style="font-size:1.75rem;margin-bottom:0.5rem;">📷</div>
+        <div style="font-family:'Playfair Display',serif;font-style:italic;color:#7A6E64;margin-bottom:0.2rem;">Tap to choose your scene photo</div>
+        <div style="font-size:0.74rem;color:#7A6E64;">This is the real room photo — hotspots will be placed on top of it</div>
+      </div>
+      <div id="scene-preview-wrap" style="display:none;margin-top:1rem;">
+        <div style="font-size:0.78rem;color:#7A6E64;margin-bottom:0.5rem;">✓ Photo selected — now click on the image below to place hotspots</div>
+        <div style="position:relative;border:1px solid rgba(100,80,60,0.2);overflow:hidden;cursor:crosshair;" id="scene-hotspot-canvas">
+          <img id="scene-preview-img" src="" style="width:100%;display:block;" alt="Scene preview" />
+          <div id="scene-hotspots-overlay" style="position:absolute;inset:0;"></div>
+        </div>
+        <div style="font-size:0.75rem;color:#7A6E64;margin-top:0.5rem;padding:0.5rem;background:#EDE4D3;">
+          💡 <strong>How to place hotspots:</strong> Click anywhere on the photo above to drop a hotspot. Then fill in the item details below and click "Add Item". Use arrow keys to fine-tune position after selecting a hotspot.
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15)">Add Items to Scene</div>
+      <div id="scene-items-list" style="margin-bottom:1.25rem;display:flex;flex-direction:column;gap:0.5rem;"></div>
+      <div style="border:1px solid rgba(100,80,60,0.15);padding:1.25rem;background:#FAF7F2;">
+        <div style="font-size:0.72rem;color:#7A6E64;margin-bottom:0.75rem;font-weight:500;">New Item Details <span style="font-weight:300;">(fill in after placing a dot on the photo)</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="text" id="item-name" placeholder="Item name" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+          <input type="number" id="item-price" placeholder="Price (blank = on request)" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+        </div>
+        <textarea id="item-desc" placeholder="Description" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;min-height:60px;resize:vertical;margin-bottom:0.75rem;display:block;"></textarea>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="checkbox" id="item-available" checked style="width:16px;height:16px;accent-color:#C9943A;" />
+          <label for="item-available" style="font-size:0.84rem;">Available for purchase</label>
+        </div>
+        <button onclick="addSceneItem()" style="background:#C9943A;color:#fff;border:none;padding:0.65rem 1.5rem;font-family:Jost,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Add Item to Scene</button>
+        <span id="item-pending-note" style="font-size:0.75rem;color:#7A6E64;margin-left:0.75rem;display:none;">⚠️ Place a dot on the photo first</span>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="scene-submit-btn" onclick="submitScene()">Publish Scene to Website ✦</button>
+    <div class="progress-bar" id="scene-progress-bar"><div class="progress-fill" id="scene-progress-fill"></div></div>
+    <div class="status-msg" id="scene-status-msg"></div>
+    <div class="error-box" id="scene-error-box"><p id="scene-error-msg"></p></div>
+    <div class="success-box" id="scene-success-box">
+      <h3>✓ Scene is live!</h3>
+      <p>The scene has been published and will appear on the website within about 60 seconds.<br><br>
+        <a href="https://finderskeepers.market/shop-a-room/" target="_blank">View Scene Archive</a>
+      </p>
+      <button class="btn-another" onclick="resetScene()">Build Another Scene</button>
+    </div>
+  </div>
+
+  <!-- ── MANAGE SCENES PANEL ── -->
+  <div class="panel" id="panel-scenes">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;">Your Scenes</h2>
+      <button onclick="showTab('scene')" style="background:var(--clay);color:#fff;border:none;padding:0.6rem 1.25rem;font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">+ Build New Scene</button>
+    </div>
+    <div id="scenes-list"><div style="text-align:center;padding:3rem;font-family:'Playfair Display',serif;font-style:italic;color:var(--muted);">Loading scenes…</div></div>
+  </div>
+
+  <!-- ── EDIT SCENE PANEL ── -->
+  <div class="panel" id="panel-edit-scene">
+    <button class="btn-back" onclick="showTab('scenes')">← Back to Scenes</button>
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15);">Scene Details</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Title</label>
+          <input type="text" id="edit-scene-title" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Month</label>
+          <input type="text" id="edit-scene-month" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem;">
+        <label style="font-size:0.76rem;font-weight:500;">Description</label>
+        <textarea id="edit-scene-desc" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;min-height:70px;resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <input type="checkbox" id="edit-scene-current" style="width:18px;height:18px;accent-color:#C9943A;" />
+        <label for="edit-scene-current" style="font-size:0.88rem;cursor:pointer;">Set as current featured scene</label>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15);">Scene Photo</div>
+      <div id="edit-scene-current-img" style="margin-bottom:0.75rem;"></div>
+      <div style="font-size:0.78rem;color:#7A6E64;margin-bottom:0.5rem;">Upload a new photo to replace the current one (optional):</div>
+      <div style="border:2px dashed rgba(100,80,60,0.2);padding:1.5rem;text-align:center;cursor:pointer;position:relative;background:#FAF7F2;">
+        <input type="file" id="edit-scene-image-file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleEditSceneImage(this)" />
+        <div style="font-size:0.9rem;color:#7A6E64;">📷 Tap to choose a replacement photo</div>
+      </div>
+      <div id="edit-scene-new-img-preview" style="display:none;margin-top:0.75rem;font-size:0.8rem;color:#3D7A5A;"></div>
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15);">Hotspot Items</div>
+      <div id="edit-scene-items-list" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;"></div>
+      <div style="border:1px solid rgba(100,80,60,0.15);padding:1.25rem;background:#FAF7F2;">
+        <div style="font-size:0.72rem;color:#7A6E64;margin-bottom:0.75rem;font-weight:500;">Add a New Item</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="text" id="edit-item-name" placeholder="Item name" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+          <input type="number" id="edit-item-price" placeholder="Price (blank = on request)" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+        </div>
+        <textarea id="edit-item-desc" placeholder="Description" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;min-height:60px;resize:vertical;margin-bottom:0.75rem;display:block;"></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="number" id="edit-item-x" placeholder="X position (0-100%)" min="0" max="100" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+          <input type="number" id="edit-item-y" placeholder="Y position (0-100%)" min="0" max="100" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+        </div>
+        <div style="font-size:0.72rem;color:#7A6E64;margin-bottom:0.75rem;">💡 X and Y are percentages across the photo (e.g. X:50 Y:50 = centre of image)</div>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="checkbox" id="edit-item-available" checked style="width:16px;height:16px;accent-color:#C9943A;" />
+          <label for="edit-item-available" style="font-size:0.84rem;">Available for purchase</label>
+        </div>
+        <button onclick="addEditSceneItem()" style="background:#C9943A;color:#fff;border:none;padding:0.65rem 1.5rem;font-family:Jost,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Add Item</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+      <button class="btn-submit" id="edit-scene-save-btn" onclick="saveEditedScene()" style="flex:1;">Save Changes ✦</button>
+      <button onclick="confirmDeleteScene()" style="background:none;border:1px solid #c0392b;color:#c0392b;padding:1rem 1.5rem;font-family:Jost,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Delete Scene</button>
+    </div>
+    <div class="progress-bar" id="edit-scene-progress-bar"><div class="progress-fill" id="edit-scene-progress-fill"></div></div>
+    <div class="status-msg" id="edit-scene-status-msg"></div>
+    <div class="error-box" id="edit-scene-error-box"><p id="edit-scene-error-msg"></p></div>
+    <div class="success-box" id="edit-scene-success-box">
+      <h3>✓ Scene updated!</h3>
+      <p>Changes are live on the website within about 60 seconds.</p>
+      <button class="btn-another" onclick="showTab('scenes')">Back to Scenes</button>
+    </div>
+    <div class="delete-confirm" id="delete-scene-confirm" style="display:none;">
+      <h3>Delete this scene?</h3>
+      <p id="delete-scene-msg">This will permanently remove the scene from the website.</p>
+      <div class="delete-confirm-btns">
+        <button class="btn-cancel" onclick="document.getElementById('delete-scene-confirm').style.display='none'">Cancel</button>
+        <button class="btn-delete-go" onclick="executeDeleteScene()">Yes, Delete It</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EDIT PANEL ── -->
+  <div class="panel" id="panel-edit">
+    <button class="btn-back" onclick="showTab('manage')">← Back to Listings</button>
+    <div class="form-card">
+      <div id="edit-form-body"></div>
+      <button class="btn-submit" id="edit-submit-btn" onclick="submitEdit()">Save Changes ✦</button>
+      <div class="progress-bar" id="edit-progress-bar"><div class="progress-fill" id="edit-progress-fill"></div></div>
+      <div class="status-msg" id="edit-status-msg"></div>
+      <div class="error-box" id="edit-error-box"><p id="edit-error-msg"></p></div>
+      <div class="success-box" id="edit-success-box">
+        <h3>✓ Changes saved!</h3>
+        <p>The listing has been updated and will reflect on the website within about 60 seconds.<br><br>
+          <a href="https://finderskeepersmarket.com" target="_blank">View main site</a> &nbsp;·&nbsp;
+          <a href="https://finderskeepersmarket.com/kindnessgrace/" target="_blank">View Kindness Grace gallery</a>
+        </p>
+        <button class="btn-another" onclick="showTab('manage')">Back to Listings</button>
+      </div>
+      <div class="delete-confirm" id="delete-confirm" style="display:none;">
+        <h3>Delete this piece?</h3>
+        <p id="delete-confirm-msg">This will permanently remove the listing from the website. The photo will remain in the repo but the listing will be gone.</p>
+        <div class="delete-confirm-btns">
+          <button class="btn-cancel" onclick="document.getElementById('delete-confirm').style.display='none'">Cancel</button>
+          <button class="btn-delete-go" onclick="confirmDelete()">Yes, Delete It</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  
+function positionTooltip(tooltip, hs, container) {
+  const isMobile = window.innerWidth < 768;
+  if (isMobile) {
+    tooltip.style.left = '0';
+    tooltip.style.right = '0';
+    tooltip.style.top = 'auto';
+    tooltip.style.bottom = '0';
+    tooltip.style.width = '100%';
+    tooltip.style.position = 'absolute';
+  } else {
+    tooltip.style.width = '230px';
+    tooltip.style.bottom = '';
+    tooltip.style.right = '';
+    const sr = container.getBoundingClientRect();
+    const hr = hs.getBoundingClientRect();
+    let left = hr.left - sr.left + 44;
+    let top = hr.top - sr.top - 60;
+    if (left + 240 > sr.width) left = hr.left - sr.left - 254;
+    if (left < 8) left = 8;
+    if (top < 8) top = hr.top - sr.top + 44;
+    if (top + 220 > sr.height) top = sr.height - 230;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+  }
+  tooltip.classList.add('visible');
+}
+
+const GITHUB_TOKEN = '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';
+  const REPO_OWNER = 'lilbirdlifecoaching';
+  const REPO_NAME = 'finderskeepersmarket';
+  const API = 'https://api.github.com';
+
+  let allData = null;
+  let dataFileSha = null;
+  let currentFilter = 'all';
+  let selectedPage = 'wife';
+  let editingId = null;
+  let editingSection = null;
+  let addImageFile = null;
+  let editImageFile = null;
+
+  // ── GITHUB API ──
+  async function githubGet(path) {
+    const r = await fetch(`${API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+      headers: { Authorization: `token ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!r.ok) throw new Error(`Could not read ${path} (${r.status})`);
+    return r.json();
+  }
+
+  async function githubPut(path, content, sha, message) {
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+    const body = { message, content: encoded };
+    if (sha) body.sha = sha;
+    const r = await fetch(`${API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.message || `Save failed (${r.status})`); }
+    return r.json();
+  }
+
+  async function githubPutBinary(path, base64Content, sha, message) {
+    const body = { message, content: base64Content };
+    if (sha) body.sha = sha;
+    const r = await fetch(`${API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.message || `Image upload failed (${r.status})`); }
+    return r.json();
+  }
+
+  function fileToBase64(file) {
+    return new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = e => res(e.target.result.split(',')[1]);
+      reader.onerror = rej;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function slugify(str) {
+    return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  // ── LOAD DATA ──
+  async function loadData() {
+    try {
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      renderListings();
+    } catch(e) {
+      document.getElementById('listings-grid').innerHTML = `<div class="empty-state"><p>Could not load artwork. Check connection and refresh.</p></div>`;
+    }
+  }
+
+  // ── RENDER LISTINGS ──
+  function renderListings() {
+    const grid = document.getElementById('listings-grid');
+    let items = [];
+    if (currentFilter === 'all' || currentFilter === 'wife') {
+      (allData.wife || []).forEach(a => items.push({ ...a, _section: 'wife' }));
+    }
+    if (currentFilter === 'all' || currentFilter === 'daughter') {
+      (allData.daughter || []).forEach(a => items.push({ ...a, _section: 'daughter' }));
+    }
+
+    if (!items.length) {
+      grid.innerHTML = `<div class="empty-state"><p>No pieces here yet — add one!</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = '';
+    items.forEach(art => {
+      const card = document.createElement('div');
+      card.className = 'listing-card';
+      const cleanPath = (art.image || '').replace(/^\.\.\//, ''); const imgSrc = art.image ? `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${cleanPath}` : null;
+      card.innerHTML = `
+        <div class="listing-thumb">
+          ${imgSrc ? `<img src="${imgSrc}" alt="${art.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="no-img" style="display:none">🖼️</div>` : `<div class="no-img">🖼️</div>`}
+        </div>
+        <div class="listing-body">
+          <div class="listing-title">${art.title}</div>
+          <div class="listing-meta">${art.medium || 'No medium listed'} ${art.price ? '· $' + art.price.toLocaleString() : '· Price on request'}</div>
+          <div class="listing-badges">
+            <span class="badge ${art.available ? 'badge-available' : 'badge-sold'}">${art.available ? 'Available' : 'Sold'}</span>
+            <span class="badge ${art._section === 'wife' ? 'badge-wife' : 'badge-kg'}">${art._section === 'wife' ? 'Market' : 'Kindness Grace'}</span>
+          </div>
+        </div>
+        <div class="listing-actions">
+          <button class="action-btn" onclick="openEdit('${art.id}', '${art._section}')">Edit</button>
+          <button class="action-btn delete" onclick="openDeleteConfirm('${art.id}', '${art._section}', '${art.title.replace(/'/g,"\\'")}')">Delete</button>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  function filterListings(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderListings();
+  }
+
+  // ── TABS ──
+  function showTab(tab) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    if (tab === 'manage') { tabBtns[0].classList.add('active'); loadData(); }
+    else if (tab === 'add') { tabBtns[1].classList.add('active'); renderAddForm(); }
+    else if (tab === 'scene') { tabBtns[2].classList.add('active'); initSceneBuilder(); }
+    else if (tab === 'scenes') { tabBtns[3].classList.add('active'); loadScenesList(); }
+    else if (tab === 'edit-scene') { /* handled by openEditScene */ }
+  }
+
+  // ── FORM HTML ──
+  function formFieldsHTML(art = {}, pfx = 'f') {
+    return `
+      <div class="form-section">
+        <div class="form-section-title">About the Piece</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="${pfx}-title">Title</label>
+            <input type="text" id="${pfx}-title" value="${escAttr(art.title || '')}" placeholder='e.g. "Turtle Blues"' autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="${pfx}-medium">Medium <span class="opt">(how it was made)</span></label>
+            <input type="text" id="${pfx}-medium" value="${escAttr(art.medium || '')}" placeholder='e.g. Sculpted paper mache' autocomplete="off" />
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label for="${pfx}-description">Description</label>
+            <textarea id="${pfx}-description" placeholder="Tell the story of the piece...">${escText(art.description || '')}</textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="${pfx}-dimensions">Dimensions <span class="opt">(optional)</span></label>
+            <input type="text" id="${pfx}-dimensions" value="${escAttr(art.dimensions || '')}" placeholder='e.g. Approx. 18" x 24"' autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="${pfx}-tags">Tags <span class="opt">(comma separated)</span></label>
+            <input type="text" id="${pfx}-tags" value="${escAttr((art.tags || []).join(', '))}" placeholder='e.g. ocean, turtle, large' autocomplete="off" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Pricing & Shipping</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="${pfx}-price">Price ($) <span class="opt">(leave blank = "price on request")</span></label>
+            <input type="number" id="${pfx}-price" value="${art.price || ''}" placeholder="e.g. 225" min="0" step="1" />
+          </div>
+          <div class="form-group">
+            <label for="${pfx}-shipping">Shipping Info</label>
+            <input type="text" id="${pfx}-shipping" value="${escAttr(art.shipping || '')}" placeholder='e.g. USPS Priority, $14 flat rate' autocomplete="off" />
+          </div>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="${pfx}-available" ${art.available !== false ? 'checked' : ''} />
+          <label for="${pfx}-available">This piece is available for purchase</label>
+        </div>
+        <div class="checkbox-row" style="margin-top:0.75rem">
+          <input type="checkbox" id="${pfx}-featured" ${art.featured ? 'checked' : ''} />
+          <label for="${pfx}-featured">⭐ Feature this piece on the Original Art page</label>
+        </div>
+      </div>`;
+  }
+
+  function imageUploadHTML(prefix, existingPath = null) {
+    const cleanPath2 = (existingPath || '').replace(/^\.\.\//, ''); const imgSrc = existingPath ? `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${cleanPath2}` : null;
+    return `
+      <div class="form-section">
+        <div class="form-section-title">Photo</div>
+        ${imgSrc ? `<div class="current-img" id="${prefix}-current-img"><img src="${imgSrc}" alt="Current photo" onerror="this.parentElement.style.display='none'" /><div class="current-img-info"><strong>Current photo</strong>Choose a new one below to replace it</div></div>` : ''}
+        <div class="image-drop" id="${prefix}-drop-zone">
+          <input type="file" id="${prefix}-image-file" accept="image/*" onchange="handleImageSelect(this, '${prefix}')" />
+          <div class="drop-icon">📷</div>
+          <div class="drop-text">${existingPath ? 'Tap to replace photo' : 'Tap to choose a photo'}</div>
+          <div class="drop-hint">JPG or PNG — the clearer the better</div>
+        </div>
+        <div class="preview-wrap" id="${prefix}-preview-wrap">
+          <img id="${prefix}-preview-img" src="" alt="Preview" />
+          <div class="preview-info">
+            <strong id="${prefix}-preview-name"></strong>
+            <span id="${prefix}-preview-size"></span>
+            <span class="preview-change" onclick="clearImageSelect('${prefix}')">Change photo</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function handleImageSelect(input, prefix) {
+    const file = input.files[0];
+    if (!file) return;
+    if (prefix === 'add') addImageFile = file;
+    else editImageFile = file;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById(prefix + '-preview-img').src = e.target.result;
+      document.getElementById(prefix + '-preview-name').textContent = file.name;
+      document.getElementById(prefix + '-preview-size').textContent = (file.size / 1024).toFixed(0) + ' KB';
+      document.getElementById(prefix + '-preview-wrap').style.display = 'flex';
+      document.getElementById(prefix + '-drop-zone').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearImageSelect(prefix) {
+    if (prefix === 'add') addImageFile = null;
+    else editImageFile = null;
+    document.getElementById(prefix + '-image-file').value = '';
+    document.getElementById(prefix + '-preview-wrap').style.display = 'none';
+    document.getElementById(prefix + '-drop-zone').style.display = 'block';
+  }
+
+  function escAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function escText(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // ── ADD FORM ──
+  function renderAddForm() {
+    addImageFile = null;
+    document.getElementById('add-form-body').innerHTML = formFieldsHTML({}, 'add') + imageUploadHTML('add');
+    document.getElementById('add-submit-btn').style.display = 'block';
+    document.getElementById('add-submit-btn').disabled = false;
+    document.getElementById('add-submit-btn').textContent = 'Upload to Website ✦';
+    document.getElementById('add-progress-bar').style.display = 'none';
+    document.getElementById('add-status-msg').textContent = '';
+    document.getElementById('add-error-box').style.display = 'none';
+    document.getElementById('add-success-box').style.display = 'none';
+  }
+
+  function selectPage(page, btn) {
+    selectedPage = page;
+    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function getFormValues(pfx) { pfx = pfx || 'f';
+    return {
+      title: document.getElementById(pfx+'-title').value.trim(),
+      medium: document.getElementById(pfx+'-medium').value.trim() || null,
+      description: document.getElementById(pfx+'-description').value.trim(),
+      dimensions: document.getElementById(pfx+'-dimensions').value.trim() || null,
+      price: document.getElementById(pfx+'-price').value.trim() ? parseInt(document.getElementById(pfx+'-price').value.trim()) : null,
+      shipping: document.getElementById(pfx+'-shipping').value.trim() || 'Contact for shipping info',
+      available: document.getElementById(pfx+'-available').checked,
+      featured: document.getElementById(pfx+'-featured') ? document.getElementById(pfx+'-featured').checked : false,
+      tags: document.getElementById(pfx+'-tags').value.trim() ? document.getElementById(pfx+'-tags').value.trim().split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : []
+    };
+  }
+
+  function setProgress(prefix, pct, msg) {
+    document.getElementById(prefix + '-progress-bar').style.display = 'block';
+    document.getElementById(prefix + '-progress-fill').style.width = pct + '%';
+    document.getElementById(prefix + '-status-msg').textContent = msg;
+  }
+
+  function showErr(prefix, msg) {
+    document.getElementById(prefix + '-error-box').style.display = 'block';
+    document.getElementById(prefix + '-error-msg').textContent = msg;
+    document.getElementById(prefix + '-submit-btn').disabled = false;
+    document.getElementById(prefix + '-submit-btn').textContent = prefix === 'add' ? 'Upload to Website ✦' : 'Save Changes ✦';
+    document.getElementById(prefix + '-status-msg').textContent = '';
+  }
+
+  async function submitAdd() {
+    const vals = getFormValues('add');
+    if (!vals.title) { alert('Please enter a title.'); return; }
+    if (!addImageFile) { alert('Please choose a photo.'); return; }
+
+    const ext = addImageFile.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+    const slug = slugify(vals.title);
+    const folderMap = { wife: 'images/wife', daughter: 'images/kg', furniture: 'images/furniture', clothing: 'images/clothing' };
+    const folder = folderMap[selectedPage] || 'images/misc';
+    const imagePath = `${folder}/${slug}.${ext}`;
+
+    const newEntry = {
+      id: (selectedPage === 'wife' ? 'w' : 'd') + Date.now().toString().slice(-6),
+      ...vals, image: imagePath,
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    document.getElementById('add-submit-btn').disabled = true;
+    document.getElementById('add-submit-btn').textContent = 'Uploading…';
+    document.getElementById('add-error-box').style.display = 'none';
+
+    try {
+      setProgress('add', 15, 'Uploading photo…');
+      const b64 = await fileToBase64(addImageFile);
+      let imgSha = null;
+      try { const ex = await githubGet(imagePath); imgSha = ex.sha; } catch(e) {}
+      await githubPutBinary(imagePath, b64, imgSha, `Add photo: ${vals.title}`);
+
+      setProgress('add', 55, 'Reading artwork data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+
+      setProgress('add', 75, 'Adding your piece…');
+      if (!allData.wife) allData.wife = [];
+      if (!allData.daughter) allData.daughter = [];
+      if (!allData.furniture) allData.furniture = [];
+      if (!allData.clothing) allData.clothing = [];
+      if (!allData[selectedPage]) allData[selectedPage] = [];
+      allData[selectedPage].unshift(newEntry);
+
+      setProgress('add', 90, 'Saving to website…');
+      const saved = await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Add artwork: ${vals.title}`);
+      dataFileSha = saved.content.sha;
+
+      setProgress('add', 100, 'Done!');
+      setTimeout(() => {
+        document.getElementById('add-progress-bar').style.display = 'none';
+        document.getElementById('add-status-msg').textContent = '';
+        document.getElementById('add-submit-btn').style.display = 'none';
+        document.getElementById('add-success-box').style.display = 'block';
+        document.getElementById('add-success-box').scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+    } catch(err) { showErr('add', 'Something went wrong: ' + err.message); }
+  }
+
+  function resetAdd() {
+    renderAddForm();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── EDIT ──
+  function openEdit(id, section) {
+    editingId = id;
+    editingSection = section;
+    editImageFile = null;
+    const art = allData[section].find(a => a.id === id);
+    if (!art) return;
+
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-edit').classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+    document.getElementById('edit-form-body').innerHTML = formFieldsHTML(art, 'edit') + imageUploadHTML('edit', art.image || null);
+    document.getElementById('edit-submit-btn').style.display = 'block';
+    document.getElementById('edit-submit-btn').disabled = false;
+    document.getElementById('edit-submit-btn').textContent = 'Save Changes ✦';
+    document.getElementById('edit-progress-bar').style.display = 'none';
+    document.getElementById('edit-status-msg').textContent = '';
+    document.getElementById('edit-error-box').style.display = 'none';
+    document.getElementById('edit-success-box').style.display = 'none';
+    document.getElementById('delete-confirm').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function submitEdit() {
+    const vals = getFormValues('edit');
+    if (!vals.title) { alert('Please enter a title.'); return; }
+
+    const art = allData[editingSection].find(a => a.id === editingId);
+    const originalImagePath = art.image;
+
+    document.getElementById('edit-submit-btn').disabled = true;
+    document.getElementById('edit-submit-btn').textContent = 'Saving…';
+    document.getElementById('edit-error-box').style.display = 'none';
+
+    try {
+      let imagePath = originalImagePath;
+
+      if (editImageFile) {
+        setProgress('edit', 20, 'Uploading new photo…');
+        const ext = editImageFile.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+        const folderMap2 = { wife: 'images/wife', daughter: 'images/kg', furniture: 'images/furniture', clothing: 'images/clothing' }; const folder = folderMap2[editingSection] || 'images/misc';
+        imagePath = `${folder}/${slugify(vals.title)}.${ext}`;
+        const b64 = await fileToBase64(editImageFile);
+        let imgSha = null;
+        try { const ex = await githubGet(imagePath); imgSha = ex.sha; } catch(e) {}
+        await githubPutBinary(imagePath, b64, imgSha, `Update photo: ${vals.title}`);
+      }
+
+      setProgress('edit', 55, 'Reading artwork data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+
+      setProgress('edit', 75, 'Saving changes…');
+      const idx = allData[editingSection].findIndex(a => a.id === editingId);
+      if (idx === -1) throw new Error('Could not find piece to update.');
+      allData[editingSection][idx] = { ...allData[editingSection][idx], ...vals, image: imagePath };
+
+      setProgress('edit', 90, 'Writing to website…');
+      const saved = await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Update artwork: ${vals.title}`);
+      dataFileSha = saved.content.sha;
+
+      setProgress('edit', 100, 'Done!');
+      setTimeout(() => {
+        document.getElementById('edit-progress-bar').style.display = 'none';
+        document.getElementById('edit-status-msg').textContent = '';
+        document.getElementById('edit-submit-btn').style.display = 'none';
+        document.getElementById('edit-success-box').style.display = 'block';
+        document.getElementById('edit-success-box').scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+    } catch(err) { showErr('edit', 'Something went wrong: ' + err.message); }
+  }
+
+  // ── DELETE ──
+  function openDeleteConfirm(id, section, title) {
+    editingId = id;
+    editingSection = section;
+    const art = allData[section].find(a => a.id === id);
+    if (!art) return;
+    openEdit(id, section);
+    setTimeout(() => {
+      document.getElementById('delete-confirm-msg').textContent = `This will permanently remove "${title}" from the website. Are you sure?`;
+      document.getElementById('delete-confirm').style.display = 'block';
+      document.getElementById('delete-confirm').scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  async function confirmDelete() {
+    const art = allData[editingSection].find(a => a.id === editingId);
+    if (!art) return;
+    document.getElementById('delete-confirm').innerHTML = '<p style="color:var(--muted);font-size:0.88rem">Deleting…</p>';
+
+    try {
+      setProgress('edit', 30, 'Reading artwork data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+
+      setProgress('edit', 60, 'Removing listing…');
+      allData[editingSection] = allData[editingSection].filter(a => a.id !== editingId);
+
+      setProgress('edit', 85, 'Saving…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Remove artwork: ${art.title}`);
+
+      setProgress('edit', 100, 'Deleted!');
+      setTimeout(() => {
+        showTab('manage');
+      }, 800);
+    } catch(err) {
+      document.getElementById('edit-error-box').style.display = 'block';
+      document.getElementById('edit-error-msg').textContent = 'Delete failed: ' + err.message;
+    }
+  }
+
+  // ── SCENE BUILDER ──
+  let pendingHotspot = null;
+  let sceneItems = [];
+  let sceneImageFile = null;
+
+  function initSceneBuilder() {
+    document.getElementById('scene-image-file').addEventListener('change', function() {
+      if (this.files[0]) setSceneImage(this.files[0]);
+    });
+  }
+
+  function setSceneImage(file) {
+    sceneImageFile = file;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('scene-preview-img').src = e.target.result;
+      document.getElementById('scene-preview-wrap').style.display = 'block';
+      document.getElementById('scene-drop-zone').style.display = 'none';
+      document.getElementById('scene-hotspot-canvas').addEventListener('click', placeHotspot);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function placeHotspot(e) {
+    const canvas = document.getElementById('scene-hotspot-canvas');
+    const rect = canvas.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+    pendingHotspot = { x: parseFloat(x), y: parseFloat(y) };
+    renderHotspotOverlay();
+    document.getElementById('item-pending-note').style.display = 'none';
+    document.getElementById('item-name').focus();
+  }
+
+  function renderHotspotOverlay() {
+    const overlay = document.getElementById('scene-hotspots-overlay');
+    overlay.innerHTML = '';
+    // Existing items
+    sceneItems.forEach((item, i) => {
+      const dot = document.createElement('div');
+      dot.style.cssText = `position:absolute;left:${item.x}%;top:${item.y}%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:#C9943A;border:2px solid #fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2);`;
+      dot.innerHTML = `<span style="font-size:0.6rem;color:#fff;font-weight:700;">${i+1}</span>`;
+      dot.title = item.name;
+      dot.dataset.index = i;
+      dot.addEventListener('keydown', e => nudgeHotspot(e, i));
+      dot.setAttribute('tabindex', '0');
+      overlay.appendChild(dot);
+    });
+    // Pending hotspot
+    if (pendingHotspot) {
+      const dot = document.createElement('div');
+      dot.style.cssText = `position:absolute;left:${pendingHotspot.x}%;top:${pendingHotspot.y}%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:rgba(201,148,58,0.3);border:2px dashed #C9943A;animation:pulse 1.5s ease-in-out infinite;`;
+      overlay.appendChild(dot);
+    }
+  }
+
+  function nudgeHotspot(e, index) {
+    const step = 0.5;
+    if (e.key === 'ArrowLeft') { sceneItems[index].x = Math.max(0, sceneItems[index].x - step); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { sceneItems[index].x = Math.min(100, sceneItems[index].x + step); e.preventDefault(); }
+    if (e.key === 'ArrowUp') { sceneItems[index].y = Math.max(0, sceneItems[index].y - step); e.preventDefault(); }
+    if (e.key === 'ArrowDown') { sceneItems[index].y = Math.min(100, sceneItems[index].y + step); e.preventDefault(); }
+    renderHotspotOverlay();
+    renderSceneItemsList();
+  }
+
+  function addSceneItem() {
+    if (!pendingHotspot) { document.getElementById('item-pending-note').style.display = 'inline'; return; }
+    const name = document.getElementById('item-name').value.trim();
+    if (!name) { alert('Please enter an item name.'); return; }
+    const price = document.getElementById('item-price').value.trim();
+    sceneItems.push({
+      id: 's' + (sceneItems.length + 1),
+      name,
+      desc: document.getElementById('item-desc').value.trim(),
+      price: price ? parseInt(price) : null,
+      available: document.getElementById('item-available').checked,
+      x: pendingHotspot.x,
+      y: pendingHotspot.y
+    });
+    pendingHotspot = null;
+    document.getElementById('item-name').value = '';
+    document.getElementById('item-desc').value = '';
+    document.getElementById('item-price').value = '';
+    document.getElementById('item-available').checked = true;
+    renderHotspotOverlay();
+    renderSceneItemsList();
+  }
+
+  function renderSceneItemsList() {
+    const list = document.getElementById('scene-items-list');
+    if (!sceneItems.length) { list.innerHTML = '<div style="font-size:0.8rem;color:#7A6E64;font-style:italic;">No items added yet — click the photo to place a hotspot, then fill in the details.</div>'; return; }
+    list.innerHTML = '';
+    sceneItems.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.75rem;background:#FAF7F2;border:1px solid rgba(100,80,60,0.15);';
+      row.innerHTML = `
+        <span style="font-family:Playfair Display,serif;font-size:1.1rem;color:#C9943A;opacity:0.5;min-width:1.5rem;">${i+1}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.88rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.name}</div>
+          <div style="font-size:0.72rem;color:#7A6E64;">${item.price ? '$' + item.price : 'Price on request'} · pos: ${item.x}%, ${item.y}%</div>
+        </div>
+        <button onclick="removeSceneItem(${i})" style="background:none;border:1px solid rgba(100,80,60,0.2);color:#7A6E64;padding:0.25rem 0.6rem;cursor:pointer;font-size:0.7rem;">✕</button>`;
+      list.appendChild(row);
+    });
+  }
+
+  function removeSceneItem(index) {
+    sceneItems.splice(index, 1);
+    renderHotspotOverlay();
+    renderSceneItemsList();
+  }
+
+  async function submitScene() {
+    const title = document.getElementById('scene-title').value.trim();
+    const month = document.getElementById('scene-month').value.trim();
+    if (!title) { alert('Please enter a scene title.'); return; }
+    if (!month) { alert('Please enter the month.'); return; }
+    if (!sceneImageFile) { alert('Please choose a scene photo.'); return; }
+    if (!sceneItems.length) { alert('Please add at least one item to the scene.'); return; }
+
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + month.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const isCurrent = document.getElementById('scene-current').checked;
+    const ext = sceneImageFile.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+    const imgPath = `images/scenes/${slug}.${ext}`;
+
+    const newScene = {
+      id: 'scene-' + slug,
+      title, month, slug,
+      current: isCurrent,
+      image: imgPath,
+      thumb: imgPath,
+      description: document.getElementById('scene-desc').value.trim(),
+      items: sceneItems
+    };
+
+    document.getElementById('scene-submit-btn').disabled = true;
+    document.getElementById('scene-submit-btn').textContent = 'Publishing…';
+    document.getElementById('scene-error-box').style.display = 'none';
+
+    try {
+      // 1. Upload scene photo
+      setProgress('scene', 15, 'Uploading scene photo…');
+      const b64 = await fileToBase64(sceneImageFile);
+      let imgSha = null;
+      try { const ex = await githubGet(imgPath); imgSha = ex.sha; } catch(e) {}
+      await githubPutBinary(imgPath, b64, imgSha, `Add scene photo: ${title}`);
+
+      // 2. Read data
+      setProgress('scene', 40, 'Reading site data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      if (!allData.scenes) allData.scenes = [];
+
+      // 3. If current, unset other current scenes
+      if (isCurrent) allData.scenes.forEach(s => s.current = false);
+
+      // 4. Add or replace scene
+      const existingIdx = allData.scenes.findIndex(s => s.slug === slug);
+      if (existingIdx >= 0) allData.scenes[existingIdx] = newScene;
+      else allData.scenes.unshift(newScene);
+
+      // 5. Create scene page from template
+      setProgress('scene', 60, 'Creating scene page…');
+      let templateSha = null;
+      try { const ex = await githubGet(`shop-a-room/${slug}/index.html`); templateSha = ex.sha; } catch(e) {}
+      // The scene page just needs to exist — it uses the template logic reading from art-data.json
+      const scenePageHTML = await getScenePageHTML();
+      await githubPut(`shop-a-room/${slug}/index.html`, scenePageHTML, templateSha, `Create scene page: ${title}`);
+
+      // 6. Save data
+      setProgress('scene', 85, 'Saving to website…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Add scene: ${title}`);
+
+      setProgress('scene', 100, 'Done!');
+      setTimeout(() => {
+        document.getElementById('scene-progress-bar').style.display = 'none';
+        document.getElementById('scene-status-msg').textContent = '';
+        document.getElementById('scene-submit-btn').style.display = 'none';
+        document.getElementById('scene-success-box').style.display = 'block';
+      }, 500);
+
+    } catch(err) {
+      document.getElementById('scene-error-box').style.display = 'block';
+      document.getElementById('scene-error-msg').textContent = 'Something went wrong: ' + err.message;
+      document.getElementById('scene-submit-btn').disabled = false;
+      document.getElementById('scene-submit-btn').textContent = 'Publish Scene to Website ✦';
+    }
+  }
+
+  async function getScenePageHTML() {
+    // Fetch the scene template from the repo
+    try {
+      const f = await githubGet('shop-a-room/scene-template.html');
+      return decodeURIComponent(escape(atob(f.content.replace(/\n/g, ''))));
+    } catch(e) {
+      // Fallback minimal redirect page
+      return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=../"></head><body></body></html>';
+    }
+  }
+
+  function resetScene() {
+    sceneItems = []; pendingHotspot = null; sceneImageFile = null;
+    document.getElementById('scene-title').value = '';
+    document.getElementById('scene-month').value = '';
+    document.getElementById('scene-desc').value = '';
+    document.getElementById('scene-current').checked = true;
+    document.getElementById('scene-image-file').value = '';
+    document.getElementById('scene-preview-wrap').style.display = 'none';
+    document.getElementById('scene-drop-zone').style.display = 'block';
+    document.getElementById('scene-success-box').style.display = 'none';
+    document.getElementById('scene-submit-btn').style.display = 'block';
+    document.getElementById('scene-submit-btn').disabled = false;
+    document.getElementById('scene-submit-btn').textContent = 'Publish Scene to Website ✦';
+    renderSceneItemsList();
+  }
+
+  // ── MANAGE SCENES ──
+  let editingScene = null;
+  let editSceneItems = [];
+  let editSceneImageFile = null;
+
+  async function loadScenesList() {
+    const list = document.getElementById('scenes-list');
+    list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:var(--muted);">Loading…</div>';
+    try {
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      const scenes = allData.scenes || [];
+      if (!scenes.length) {
+        list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:Playfair Display,serif;font-style:italic;color:var(--muted);">No scenes yet — build your first one!</div>';
+        return;
+      }
+      list.innerHTML = '';
+      scenes.forEach(scene => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#fff;border:1px solid rgba(100,80,60,0.2);display:flex;align-items:stretch;overflow:hidden;margin-bottom:0.75rem;transition:box-shadow 0.2s;';
+        const imgSrc = scene.image ? `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${scene.image}` : null;
+        const itemCount = (scene.items || []).length;
+        const isCurrent = scene.current;
+        card.innerHTML = `
+          <div style="width:100px;flex-shrink:0;background:#EBE4D5;overflow:hidden;">
+            ${imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />` : '<div style="width:100%;height:100%;min-height:80px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🛋️</div>'}
+          </div>
+          <div style="flex:1;padding:1rem;display:flex;flex-direction:column;justify-content:center;gap:0.25rem;min-width:0;">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <div style="font-family:'Playfair Display',serif;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${scene.title}</div>
+              ${isCurrent ? '<span style="font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;background:#A8C4B4;color:#fff;padding:0.15rem 0.5rem;">Current</span>' : ''}
+            </div>
+            <div style="font-size:0.76rem;color:#7A6E64;">${scene.month || ''} · ${itemCount} item${itemCount !== 1 ? 's' : ''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;border-left:1px solid rgba(100,80,60,0.15);">
+            <button onclick="openEditScene('${scene.slug}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#7A6E64;border-bottom:1px solid rgba(100,80,60,0.15);transition:all 0.2s;" onmouseover="this.style.background='#EBE4D5'" onmouseout="this.style.background='none'">Edit</button>
+            <button onclick="confirmDeleteSceneBySlug('${scene.slug}', '${scene.title.replace(/'/g, "\'")}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#c0392b;transition:all 0.2s;" onmouseover="this.style.background='#fdf0f0'" onmouseout="this.style.background='none'">Delete</button>
+          </div>`;
+        list.appendChild(card);
+      });
+    } catch(e) {
+      list.innerHTML = `<div style="color:#c0392b;padding:1rem;">Could not load scenes: ${e.message}</div>`;
+    }
+  }
+
+  function openEditScene(slug) {
+    if (!allData || !allData.scenes) return;
+    editingScene = allData.scenes.find(s => s.slug === slug);
+    if (!editingScene) return;
+    editSceneItems = JSON.parse(JSON.stringify(editingScene.items || []));
+    editSceneImageFile = null;
+
+    document.getElementById('edit-scene-title').value = editingScene.title || '';
+    document.getElementById('edit-scene-month').value = editingScene.month || '';
+    document.getElementById('edit-scene-desc').value = editingScene.description || '';
+    document.getElementById('edit-scene-current').checked = !!editingScene.current;
+
+    // Show current image
+    const imgWrap = document.getElementById('edit-scene-current-img');
+    if (editingScene.image) {
+      const src = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${editingScene.image}`;
+      imgWrap.innerHTML = `<div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;background:#EBE4D5;border:1px solid rgba(100,80,60,0.15);margin-bottom:0.75rem;"><img src="${src}" style="width:80px;height:60px;object-fit:cover;" /><div style="font-size:0.8rem;color:#7A6E64;"><strong style="display:block;color:#1C1814;">Current photo</strong>Upload a new one below to replace it</div></div>`;
+    } else {
+      imgWrap.innerHTML = '<div style="font-size:0.8rem;color:#7A6E64;margin-bottom:0.5rem;">No photo yet — upload one below.</div>';
+    }
+
+    document.getElementById('edit-scene-new-img-preview').style.display = 'none';
+    document.getElementById('edit-scene-image-file').value = '';
+    document.getElementById('edit-scene-save-btn').style.display = 'block';
+    document.getElementById('edit-scene-save-btn').disabled = false;
+    document.getElementById('edit-scene-save-btn').textContent = 'Save Changes ✦';
+    document.getElementById('edit-scene-progress-bar').style.display = 'none';
+    document.getElementById('edit-scene-status-msg').textContent = '';
+    document.getElementById('edit-scene-error-box').style.display = 'none';
+    document.getElementById('edit-scene-success-box').style.display = 'none';
+    document.getElementById('delete-scene-confirm').style.display = 'none';
+
+    renderEditSceneItems();
+
+    // Show panel
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-edit-scene').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleEditSceneImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    editSceneImageFile = file;
+    document.getElementById('edit-scene-new-img-preview').style.display = 'block';
+    document.getElementById('edit-scene-new-img-preview').textContent = `✓ New photo selected: ${file.name}`;
+  }
+
+  function renderEditSceneItems() {
+    const list = document.getElementById('edit-scene-items-list');
+    if (!editSceneItems.length) {
+      list.innerHTML = '<div style="font-size:0.8rem;color:#7A6E64;font-style:italic;padding:0.5rem 0;">No items yet — add one below.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    editSceneItems.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:#FAF7F2;border:1px solid rgba(100,80,60,0.15);';
+      row.innerHTML = `
+        <span style="font-family:Playfair Display,serif;font-size:1.1rem;color:#C9943A;opacity:0.5;min-width:1.5rem;">${i+1}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.88rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.name}</div>
+          <div style="font-size:0.72rem;color:#7A6E64;">${item.price ? '$'+item.price : 'Price on request'} · ${item.available ? 'Available' : 'Sold'} · pos: ${item.x}%, ${item.y}%</div>
+        </div>
+        <div style="display:flex;gap:0.4rem;">
+          <button onclick="toggleEditItemAvailable(${i})" style="background:none;border:1px solid rgba(100,80,60,0.2);color:#7A6E64;padding:0.25rem 0.6rem;cursor:pointer;font-size:0.68rem;">${item.available ? 'Mark Sold' : 'Mark Available'}</button>
+          <button onclick="removeEditSceneItem(${i})" style="background:none;border:1px solid rgba(100,80,60,0.2);color:#c0392b;padding:0.25rem 0.6rem;cursor:pointer;font-size:0.7rem;">✕</button>
+        </div>`;
+      list.appendChild(row);
+    });
+  }
+
+  function addEditSceneItem() {
+    const name = document.getElementById('edit-item-name').value.trim();
+    if (!name) { alert('Please enter an item name.'); return; }
+    const x = parseFloat(document.getElementById('edit-item-x').value) || 50;
+    const y = parseFloat(document.getElementById('edit-item-y').value) || 50;
+    const price = document.getElementById('edit-item-price').value.trim();
+    editSceneItems.push({
+      id: 's' + Date.now().toString().slice(-5),
+      name,
+      desc: document.getElementById('edit-item-desc').value.trim(),
+      price: price ? parseInt(price) : null,
+      available: document.getElementById('edit-item-available').checked,
+      x, y
+    });
+    document.getElementById('edit-item-name').value = '';
+    document.getElementById('edit-item-desc').value = '';
+    document.getElementById('edit-item-price').value = '';
+    document.getElementById('edit-item-x').value = '';
+    document.getElementById('edit-item-y').value = '';
+    document.getElementById('edit-item-available').checked = true;
+    renderEditSceneItems();
+  }
+
+  function removeEditSceneItem(index) {
+    editSceneItems.splice(index, 1);
+    renderEditSceneItems();
+  }
+
+  function toggleEditItemAvailable(index) {
+    editSceneItems[index].available = !editSceneItems[index].available;
+    renderEditSceneItems();
+  }
+
+  async function saveEditedScene() {
+    if (!editingScene) return;
+    document.getElementById('edit-scene-save-btn').disabled = true;
+    document.getElementById('edit-scene-save-btn').textContent = 'Saving…';
+    document.getElementById('edit-scene-error-box').style.display = 'none';
+
+    try {
+      let imagePath = editingScene.image;
+
+      // Upload new photo if provided
+      if (editSceneImageFile) {
+        setProgress('edit-scene', 20, 'Uploading new photo…');
+        const ext = editSceneImageFile.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+        imagePath = `images/scenes/${editingScene.slug}.${ext}`;
+        const b64 = await fileToBase64(editSceneImageFile);
+        let imgSha = null;
+        try { const ex = await githubGet(imagePath); imgSha = ex.sha; } catch(e) {}
+        await githubPutBinary(imagePath, b64, imgSha, `Update scene photo: ${editingScene.title}`);
+      }
+
+      setProgress('edit-scene', 50, 'Reading data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+
+      setProgress('edit-scene', 70, 'Saving changes…');
+      const isCurrent = document.getElementById('edit-scene-current').checked;
+      if (isCurrent) allData.scenes.forEach(s => s.current = false);
+
+      const idx = allData.scenes.findIndex(s => s.slug === editingScene.slug);
+      if (idx >= 0) {
+        allData.scenes[idx] = {
+          ...allData.scenes[idx],
+          title: document.getElementById('edit-scene-title').value.trim(),
+          month: document.getElementById('edit-scene-month').value.trim(),
+          description: document.getElementById('edit-scene-desc').value.trim(),
+          current: isCurrent,
+          image: imagePath,
+          thumb: imagePath,
+          items: editSceneItems
+        };
+      }
+
+      setProgress('edit-scene', 88, 'Writing to website…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Update scene: ${editingScene.title}`);
+
+      setProgress('edit-scene', 100, 'Done!');
+      setTimeout(() => {
+        document.getElementById('edit-scene-progress-bar').style.display = 'none';
+        document.getElementById('edit-scene-status-msg').textContent = '';
+        document.getElementById('edit-scene-save-btn').style.display = 'none';
+        document.getElementById('edit-scene-success-box').style.display = 'block';
+      }, 500);
+    } catch(err) {
+      document.getElementById('edit-scene-error-box').style.display = 'block';
+      document.getElementById('edit-scene-error-msg').textContent = 'Something went wrong: ' + err.message;
+      document.getElementById('edit-scene-save-btn').disabled = false;
+      document.getElementById('edit-scene-save-btn').textContent = 'Save Changes ✦';
+      document.getElementById('edit-scene-status-msg').textContent = '';
+    }
+  }
+
+  function confirmDeleteScene() {
+    if (!editingScene) return;
+    document.getElementById('delete-scene-msg').textContent = `This will permanently remove "${editingScene.title}" from the website.`;
+    document.getElementById('delete-scene-confirm').style.display = 'block';
+    document.getElementById('delete-scene-confirm').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function confirmDeleteSceneBySlug(slug, title) {
+    if (!allData || !allData.scenes) return;
+    editingScene = allData.scenes.find(s => s.slug === slug);
+    openEditScene(slug);
+    setTimeout(() => confirmDeleteScene(), 200);
+  }
+
+  async function executeDeleteScene() {
+    if (!editingScene) return;
+    document.getElementById('delete-scene-confirm').innerHTML = '<p style="color:var(--muted);font-size:0.88rem;padding:0.5rem 0;">Deleting…</p>';
+    try {
+      setProgress('edit-scene', 40, 'Reading data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      allData.scenes = (allData.scenes || []).filter(s => s.slug !== editingScene.slug);
+      setProgress('edit-scene', 80, 'Removing scene…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Delete scene: ${editingScene.title}`);
+      setProgress('edit-scene', 100, 'Deleted!');
+      setTimeout(() => showTab('scenes'), 800);
+    } catch(err) {
+      document.getElementById('edit-scene-error-box').style.display = 'block';
+      document.getElementById('edit-scene-error-msg').textContent = 'Delete failed: ' + err.message;
+    }
+  }
+
+  // Init
+  loadData();
+  renderAddForm();
+  renderSceneItemsList();
+</script>
+</body>
+</html>
