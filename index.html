@@ -46,6 +46,21 @@
       .hero-right { min-height: 55vw; }
       .about-strip { grid-template-columns: 1fr; gap: 2.5rem; padding: 3.5rem 1.5rem; }
     }
+  
+    @media (max-width: 768px) {
+      .scene-tooltip, .tooltip {
+        position: absolute !important;
+        left: 0 !important; right: 0 !important;
+        top: auto !important; bottom: 0 !important;
+        width: 100% !important;
+        transform: none !important;
+        border-left: none; border-right: none; border-bottom: none;
+        border-radius: 0;
+      }
+      .scene-tooltip.visible, .tooltip.visible {
+        transform: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -109,6 +124,39 @@
   <a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a>
 </footer>
 <script>
+
+function positionTooltip(tooltip, hs, container) {
+  const isMobile = window.innerWidth < 768;
+  if (isMobile) {
+    // On mobile: pin to bottom of scene, full width
+    tooltip.style.left = '0';
+    tooltip.style.right = '0';
+    tooltip.style.top = 'auto';
+    tooltip.style.bottom = '0';
+    tooltip.style.width = '100%';
+    tooltip.style.position = 'absolute';
+  } else {
+    tooltip.style.width = '230px';
+    tooltip.style.bottom = '';
+    tooltip.style.right = '';
+    const sr = container.getBoundingClientRect();
+    const hr = hs.getBoundingClientRect();
+    let left = hr.left - sr.left + 44;
+    let top = hr.top - sr.top - 60;
+    // Flip left if too close to right edge
+    if (left + 240 > sr.width) left = hr.left - sr.left - 254;
+    // Clamp left so never off left edge
+    if (left < 8) left = 8;
+    // Flip down if too close to top
+    if (top < 8) top = hr.top - sr.top + 44;
+    // Clamp bottom
+    if (top + 220 > sr.height) top = sr.height - 230;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+  }
+  tooltip.classList.add('visible');
+}
+
 const DATA_URL='https://finderskeepers.market/art-data.json';
 async function loadScene(){try{const r=await fetch(DATA_URL);const data=await r.json();const scene=(data.scenes||[]).find(s=>s.current);if(!scene)return;renderScene(scene);}catch(e){}}
 function renderScene(scene){
@@ -132,10 +180,7 @@ function renderScene(scene){
       const btn=document.getElementById('tt-btn');
       if(!item.available){btn.textContent='This piece has sold';btn.style.pointerEvents='none';btn.style.opacity='0.5';btn.href='#';}
       else{btn.textContent='Inquire About This Piece';btn.style.pointerEvents='';btn.style.opacity='';btn.href=`mailto:hello@finderskeepers.market?subject=${sub}&body=${bod}`;}
-      const sr=container.getBoundingClientRect();const hr=hs.getBoundingClientRect();
-      let left=hr.left-sr.left+44;let top=hr.top-sr.top-50;
-      if(left+240>sr.width)left=hr.left-sr.left-244;if(top<0)top=hr.top-sr.top+44;
-      tooltip.style.left=left+'px';tooltip.style.top=top+'px';tooltip.classList.add('visible');
+      positionTooltip(tooltip, hs, container);
     };
     hs.addEventListener('mouseenter',show);
     hs.addEventListener('click',e=>{e.stopPropagation();if(activeId===item.id&&tooltip.classList.contains('visible')){tooltip.classList.remove('visible');hs.classList.remove('active');activeId=null;}else show();});
