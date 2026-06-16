@@ -13,7 +13,12 @@
       "available": true,
       "featured": false,
       "date": "2024-01-01",
-      "tags": ["sculpture", "ocean", "turtle", "large"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "turtle",
+        "large"
+      ]
     },
     {
       "id": "kg002",
@@ -27,7 +32,11 @@
       "available": true,
       "featured": false,
       "date": "2024-01-02",
-      "tags": ["sculpture", "ocean", "crab"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "crab"
+      ]
     },
     {
       "id": "kg003",
@@ -41,7 +50,12 @@
       "available": true,
       "featured": true,
       "date": "2024-01-03",
-      "tags": ["sculpture", "ocean", "octopus", "large"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "octopus",
+        "large"
+      ]
     },
     {
       "id": "kg004",
@@ -55,7 +69,12 @@
       "available": true,
       "featured": true,
       "date": "2024-01-04",
-      "tags": ["sculpture", "dinosaur", "large", "statement"]
+      "tags": [
+        "sculpture",
+        "dinosaur",
+        "large",
+        "statement"
+      ]
     },
     {
       "id": "kg005",
@@ -69,7 +88,12 @@
       "available": true,
       "featured": false,
       "date": "2024-01-05",
-      "tags": ["sculpture", "butterfly", "nature", "framed"]
+      "tags": [
+        "sculpture",
+        "butterfly",
+        "nature",
+        "framed"
+      ]
     },
     {
       "id": "kg006",
@@ -83,7 +107,12 @@
       "available": false,
       "featured": false,
       "date": "2024-01-06",
-      "tags": ["sculpture", "nature", "ladybug", "sold"]
+      "tags": [
+        "sculpture",
+        "nature",
+        "ladybug",
+        "sold"
+      ]
     },
     {
       "id": "kg007",
@@ -97,7 +126,13 @@
       "available": true,
       "featured": false,
       "date": "2024-01-07",
-      "tags": ["sculpture", "ocean", "fish", "large", "statement"]
+      "tags": [
+        "sculpture",
+        "ocean",
+        "fish",
+        "large",
+        "statement"
+      ]
     },
     {
       "id": "kg008",
@@ -111,7 +146,11 @@
       "available": true,
       "featured": false,
       "date": "2024-01-08",
-      "tags": ["sculpture", "moth", "fantasy"]
+      "tags": [
+        "sculpture",
+        "moth",
+        "fantasy"
+      ]
     },
     {
       "id": "kg009",
@@ -125,7 +164,13 @@
       "available": true,
       "featured": false,
       "date": "2024-01-09",
-      "tags": ["sculpture", "bird", "fantasy", "framed", "statement"]
+      "tags": [
+        "sculpture",
+        "bird",
+        "fantasy",
+        "framed",
+        "statement"
+      ]
     },
     {
       "id": "kg010",
@@ -139,18 +184,62 @@
       "available": true,
       "featured": false,
       "date": "2024-01-10",
-      "tags": ["sculpture", "turtle", "ocean", "framed"]
+      "tags": [
+        "sculpture",
+        "turtle",
+        "ocean",
+        "framed"
+      ]
     }
   ],
   "furniture": [],
   "clothing": [],
   "scenes": [
     {
+      "id": "scene-the-studio-corner-june-2026",
+      "title": "The Studio Corner",
+      "month": "June 2026",
+      "slug": "the-studio-corner-june-2026",
+      "current": true,
+      "image": "images/scenes/the-studio-corner-june-2026.jpg",
+      "thumb": "images/scenes/the-studio-corner-june-2026.jpg",
+      "description": "An eclectic array designed to get your creativity loosed and elicit gasps from those who enter.",
+      "items": [
+        {
+          "id": "s1",
+          "name": "Yellow Rocker",
+          "desc": "A treat for your seat. Classy, one-of-a-kind find.",
+          "price": 315,
+          "available": true,
+          "x": 67.7,
+          "y": 64.8
+        },
+        {
+          "id": "s2",
+          "name": "Dilophosauras",
+          "desc": "A replica of the best jump scare beast from Jurassic Park.",
+          "price": 285,
+          "available": true,
+          "x": 55,
+          "y": 18.4
+        },
+        {
+          "id": "s3",
+          "name": "Fisher Price Record Player",
+          "desc": "It's not just for kids, I swear. One of the coolest ads you could introduce to your home.",
+          "price": 45,
+          "available": true,
+          "x": 30.3,
+          "y": 41.6
+        }
+      ]
+    },
+    {
       "id": "scene-demo-june-2026",
       "title": "The Studio Corner",
       "month": "June 2026",
       "slug": "june-2026",
-      "current": true,
+      "current": false,
       "image": "images/scenes/june-2026.jpg",
       "thumb": "images/scenes/june-2026-thumb.jpg",
       "description": "A curated corner featuring vintage seating, handcrafted wall sculpture, and found objects — everything in this scene is available.",
