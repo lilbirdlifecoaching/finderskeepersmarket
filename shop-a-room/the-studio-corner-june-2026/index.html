@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scene — Finders Keepers Market</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../fk-styles.css" />
+  <style>
+    nav { position: sticky; }
+    .scene-header { padding: 2.5rem 3rem 1.5rem; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .scene-month { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sage); margin-bottom: 0.5rem; }
+    .scene-title { font-family: "Playfair Display", serif; font-size: 2.2rem; line-height: 1.1; }
+    .scene-title em { font-style: italic; color: var(--blush); }
+    .scene-desc { color: var(--muted); font-size: 0.88rem; margin-top: 0.5rem; max-width: 500px; line-height: 1.7; }
+    .scene-badge { background: var(--sage-light); color: #fff; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.4rem 1rem; align-self: flex-start; }
+    .room-wrap { padding: 0 3rem 1.5rem; }
+    .room-scene { position: relative; width: 100%; overflow: hidden; border: 1px solid var(--border-sage); background: var(--warm); user-select: none; }
+    .room-scene img.scene-bg { width: 100%; display: block; max-height: 78vh; object-fit: cover; }
+    .scene-placeholder { width:100%;min-height:65vh;background:linear-gradient(135deg,#C8B898 0%,#B0A07A 50%,#A89060 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem; }
+    .scene-placeholder p { font-family:"Playfair Display",serif;font-style:italic;color:rgba(100,80,40,0.35); }
+    .scene-hint { text-align:center;padding:0.7rem;font-size:0.73rem;color:var(--muted);letter-spacing:0.05em;border-top:1px solid var(--border);background:var(--warm); }
+    .items-section { padding: 3rem; }
+    .items-title { font-family:"Playfair Display",serif;font-size:1.5rem;margin-bottom:0.35rem; }
+    .items-sub { color:var(--muted);font-size:0.86rem;margin-bottom:2rem; }
+    .items-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem; }
+    .item-card { background:#fff;border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:0.9rem;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s; }
+    .item-card:hover,.item-card.highlighted { border-color:var(--sage-light);box-shadow:0 4px 16px rgba(107,143,122,0.1); }
+    .item-num { font-family:"Playfair Display",serif;font-size:1.4rem;color:var(--sage-light);opacity:0.6;flex-shrink:0;line-height:1; }
+    .item-name { font-family:"Playfair Display",serif;font-size:0.98rem;margin-bottom:0.2rem; }
+    .item-desc { font-size:0.76rem;color:var(--muted);line-height:1.6;margin-bottom:0.45rem; }
+    .item-price { font-size:0.92rem;color:var(--sage-mid);font-weight:500; }
+    .item-price.inquire { font-style:italic;color:var(--muted);font-weight:300;font-size:0.8rem; }
+    .item-sold { font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);background:var(--warm);padding:0.15rem 0.45rem;display:inline-block;margin-top:0.2rem; }
+    @media (max-width:768px) { .scene-header{padding:2rem 1.5rem 1rem;} .room-wrap{padding:0 0.75rem 1rem;} .items-section{padding:2rem 1.5rem;} }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../" class="nav-back">All Scenes</a>
+  <span class="nav-title" id="nav-title">Scene</span>
+  <span style="font-size:0.7rem;color:rgba(30,26,22,0.5);letter-spacing:0.1em;text-transform:uppercase;" id="nav-month"></span>
+</nav>
+<div class="scene-header">
+  <div>
+    <div class="scene-month" id="scene-month"></div>
+    <h1 class="scene-title" id="scene-title">Loading<em>…</em></h1>
+    <p class="scene-desc" id="scene-desc"></p>
+  </div>
+  <div class="scene-badge" id="scene-badge" style="display:none">Current Scene</div>
+</div>
+<div class="room-wrap">
+  <div class="room-scene" id="room-scene">
+    <div class="scene-placeholder" id="scene-placeholder"><p>Loading scene…</p></div>
+    <div class="scene-tooltip" id="tooltip">
+      <div class="tt-name" id="tt-name"></div>
+      <div class="tt-desc" id="tt-desc"></div>
+      <div class="tt-price" id="tt-price"></div>
+      <a class="tt-btn" id="tt-btn" href="#">Inquire About This Piece</a>
+    </div>
+  </div>
+  <div class="scene-hint">✦ &nbsp; Tap or hover the dots to explore each piece &nbsp; ✦</div>
+</div>
+<section class="items-section">
+  <h2 class="items-title">Everything in this room</h2>
+  <p class="items-sub">Click any item to highlight it in the scene above.</p>
+  <div class="items-grid" id="items-grid"></div>
+</section>
+<footer><span>© Finders Keepers Market</span><a href="../">All Scenes</a><a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a></footer>
+<script>
+const pathParts=window.location.pathname.replace(/\/$/,"").split("/");
+const slug=pathParts[pathParts.length-1];
+async function load(){
+  try{
+    const data=await(await fetch("https://finderskeepers.market/art-data.json")).json();
+    const scene=(data.scenes||[]).find(s=>s.slug===slug);
+    if(!scene){document.getElementById("scene-title").innerHTML="Scene not <em>found</em>";return;}
+    document.title=`${scene.title} — Finders Keepers Market`;
+    document.getElementById("nav-title").textContent=scene.title;
+    document.getElementById("nav-month").textContent=scene.month||"";
+    document.getElementById("scene-month").textContent=scene.month||"";
+    document.getElementById("scene-title").innerHTML=scene.title;
+    document.getElementById("scene-desc").textContent=scene.description||"";
+    if(scene.current)document.getElementById("scene-badge").style.display="";
+    const sceneEl=document.getElementById("room-scene");
+    const placeholder=document.getElementById("scene-placeholder");
+    if(scene.image){const img=document.createElement("img");img.className="scene-bg";img.src=`https://finderskeepers.market/${scene.image}`;img.alt=scene.title;img.onerror=()=>img.remove();sceneEl.insertBefore(img,placeholder);placeholder.style.display="none";}
+    const tooltip=document.getElementById("tooltip");let activeId=null;
+    (scene.items||[]).forEach((item,i)=>{
+      const hs=document.createElement("div");hs.className="hotspot";hs.style.left=item.x+"%";hs.style.top=item.y+"%";hs.dataset.id=item.id;
+      hs.innerHTML="<div class=hotspot-ring><div class=hotspot-dot></div></div>";
+      sceneEl.insertBefore(hs,tooltip);
+      const show=()=>{
+        document.querySelectorAll(".hotspot").forEach(h=>h.classList.remove("active"));
+        document.querySelectorAll(".item-card").forEach(c=>c.classList.remove("highlighted"));
+        hs.classList.add("active");activeId=item.id;
+        document.getElementById("item-card-"+item.id)?.classList.add("highlighted");
+        document.getElementById("tt-name").textContent=item.name;
+        document.getElementById("tt-desc").textContent=item.desc;
+        const p=document.getElementById("tt-price");p.textContent=item.price?`$${item.price.toLocaleString()}`:"Price on request";p.className="tt-price"+(item.price?"":' inquire');
+        const sub=encodeURIComponent(`Inquiry: ${item.name}`);const bod=encodeURIComponent(`Hello,\n\nI'm interested in "${item.name}" from the ${scene.title} scene.\n\nIs it available?\n\nThank you!`);
+        const btn=document.getElementById("tt-btn");
+        if(!item.available){btn.textContent="This piece has sold";btn.style.pointerEvents="none";btn.style.opacity="0.5";btn.href="#";}
+        else{btn.textContent="Inquire About This Piece";btn.style.pointerEvents="";btn.style.opacity="";btn.href=`mailto:hello@finderskeepers.market?subject=${sub}&body=${bod}`;}
+        const sr=sceneEl.getBoundingClientRect();const hr=hs.getBoundingClientRect();
+        let left=hr.left-sr.left+44;let top=hr.top-sr.top-50;
+        if(left+250>sr.width)left=hr.left-sr.left-254;if(top<0)top=hr.top-sr.top+44;
+        tooltip.style.left=left+"px";tooltip.style.top=top+"px";tooltip.classList.add("visible");
+      };
+      hs.addEventListener("mouseenter",show);
+      hs.addEventListener("click",e=>{e.stopPropagation();if(activeId===item.id&&tooltip.classList.contains("visible")){tooltip.classList.remove("visible");hs.classList.remove("active");activeId=null;}else show();});
+      hs.addEventListener("mouseleave",e=>{if(!tooltip.contains(e.relatedTarget))setTimeout(()=>{if(!tooltip.matches(":hover")){tooltip.classList.remove("visible");hs.classList.remove("active");activeId=null;}},200);});
+    });
+    tooltip.addEventListener("mouseleave",()=>{tooltip.classList.remove("visible");document.querySelectorAll(".hotspot").forEach(h=>h.classList.remove("active"));activeId=null;});
+    sceneEl.addEventListener("click",e=>{if(!e.target.closest(".hotspot")&&!e.target.closest(".scene-tooltip")){tooltip.classList.remove("visible");document.querySelectorAll(".hotspot").forEach(h=>h.classList.remove("active"));activeId=null;}});
+    const grid=document.getElementById("items-grid");grid.innerHTML="";
+    (scene.items||[]).forEach((item,i)=>{
+      const card=document.createElement("div");card.className="item-card";card.id="item-card-"+item.id;
+      const price=item.price?`<div class="item-price">$${item.price.toLocaleString()}</div>`:`<div class="item-price inquire">Price on request</div>`;
+      card.innerHTML=`<div class="item-num">${String(i+1).padStart(2,"0")}</div><div><div class="item-name">${item.name}</div><div class="item-desc">${item.desc}</div>${price}${!item.available?"<div class=item-sold>Sold</div>":""}</div>`;
+      card.addEventListener("click",()=>{const hs=document.querySelector(`.hotspot[data-id="${item.id}"]`);if(hs){hs.click();hs.scrollIntoView({behavior:"smooth",block:"center"});}});
+      grid.appendChild(card);
+    });
+  }catch(e){console.log(e);}
+}
+load();
+</script>
+</body>
+</html>
