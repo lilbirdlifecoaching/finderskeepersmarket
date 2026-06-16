@@ -231,6 +231,15 @@
           "available": true,
           "x": 30.3,
           "y": 41.6
+        },
+        {
+          "id": "s87234",
+          "name": "Phone Table",
+          "desc": "Yes, I KNOW we don't use these kind of phones anymore, BUT guess what?! You can kinda use this for anything. Like here, we have a cool record player on it.",
+          "price": 50,
+          "available": true,
+          "x": 30,
+          "y": 38
         }
       ]
     }
