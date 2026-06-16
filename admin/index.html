@@ -447,7 +447,10 @@ const GITHUB_TOKEN = ['ghp_2g','FqoSUxHi7Ca168nY','UGiHT746BnN44ZZp2T'].join('')
     const r = await fetch(`${API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
       headers: { Authorization: `token ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json' }
     });
-    if (!r.ok) throw new Error(`Could not read ${path} (${r.status})`);
+    if (!r.ok) {
+      const errBody = await r.json().catch(() => ({}));
+      throw new Error(`${r.status} ${r.statusText}: ${errBody.message || path}`);
+    }
     return r.json();
   }
 
@@ -1156,7 +1159,13 @@ const GITHUB_TOKEN = ['ghp_2g','FqoSUxHi7Ca168nY','UGiHT746BnN44ZZp2T'].join('')
         list.appendChild(card);
       });
     } catch(e) {
-      list.innerHTML = `<div style="color:#c0392b;padding:1rem;">Could not load scenes: ${e.message}</div>`;
+      list.innerHTML = `<div style="color:#c0392b;padding:1rem;font-size:0.85rem;">
+        <strong>Could not load scenes</strong><br><br>
+        Error: ${e.message}<br><br>
+        Token starts with: ${GITHUB_TOKEN.substring(0,8)}...<br>
+        Repo: ${REPO_OWNER}/${REPO_NAME}<br><br>
+        <button onclick="loadScenesList()" style="background:#C9943A;color:#fff;border:none;padding:0.5rem 1rem;cursor:pointer;font-family:Jost,sans-serif;font-size:0.78rem;">Try Again</button>
+      </div>`;
     }
   }
 
