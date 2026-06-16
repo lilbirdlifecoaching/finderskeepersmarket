@@ -1,72 +1,6 @@
 {
-  "wife": [
-    {
-      "id": "w505637",
-      "title": "Mr Rogers 'mini'",
-      "medium": null,
-      "description": "",
-      "dimensions": null,
-      "price": null,
-      "shipping": "Contact for shipping info",
-      "available": false,
-      "tags": [],
-      "image": "images/wife/mr-rogers-mini.png",
-      "date": "2026-05-17"
-    },
-    {
-      "id": "w472116",
-      "title": "Oregon Trail",
-      "medium": null,
-      "description": "",
-      "dimensions": null,
-      "price": null,
-      "shipping": "Contact for shipping info",
-      "available": false,
-      "tags": [],
-      "image": "images/wife/oregon-trail.png",
-      "date": "2026-05-17"
-    }
-  ],
+  "wife": [],
   "daughter": [
-    {
-      "id": "d400046",
-      "title": "Shrooms",
-      "medium": "Sculpted paper mache",
-      "description": "",
-      "dimensions": null,
-      "price": null,
-      "shipping": "Contact for shipping info",
-      "available": false,
-      "tags": [],
-      "image": "images/kg/shrooms.png",
-      "date": "2026-06-11"
-    },
-    {
-      "id": "d313392",
-      "title": "Conqueror of Worlds",
-      "medium": "Sculpted paper mache",
-      "description": "",
-      "dimensions": null,
-      "price": 1000,
-      "shipping": "Contact for shipping info",
-      "available": true,
-      "tags": [],
-      "image": "images/kg/conqueror-of-worlds.png",
-      "date": "2026-06-11"
-    },
-    {
-      "id": "d765476",
-      "title": "Shark",
-      "medium": "Sculpted Paper Mache",
-      "description": "",
-      "dimensions": null,
-      "price": 950,
-      "shipping": "120",
-      "available": true,
-      "tags": [],
-      "image": "images/kg/shark.jpg",
-      "date": "2026-05-17"
-    },
     {
       "id": "kg001",
       "title": "Turtle Blues",
@@ -77,174 +11,204 @@
       "dimensions": "Approx. 24\" x 20\"",
       "image": "images/kg/turtle-blues.jpg",
       "available": true,
+      "featured": false,
       "date": "2024-01-01",
-      "tags": [
-        "sculpture",
-        "ocean",
-        "turtle",
-        "large"
-      ]
+      "tags": ["sculpture", "ocean", "turtle", "large"]
     },
     {
       "id": "kg002",
       "title": "Dinner?",
       "price": 40,
       "shipping": "Ships via USPS Priority, $18 flat rate",
-      "description": "A boldly joyful crab sculpture with rich terracotta tones and expressive claws. Full of personality — this little guy is ready to claim his wall.",
+      "description": "A boldly joyful crab sculpture with rich terracotta tones and expressive claws.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 14\" x 10\"",
       "image": "images/kg/dinner-crab.jpg",
       "available": true,
+      "featured": false,
       "date": "2024-01-02",
-      "tags": [
-        "sculpture",
-        "ocean",
-        "crab"
-      ]
+      "tags": ["sculpture", "ocean", "crab"]
     },
     {
       "id": "kg003",
       "title": "Sea Leopard",
       "price": 282,
       "shipping": "Contact for shipping quote — large sculptural piece",
-      "description": "An octopus of mythic proportions — deep teal and green with iridescent lavender suckers, tentacles reaching in every direction. Named 'Sea Leopard' for its wild, untamed energy. One of the most dramatic pieces in the collection.",
+      "description": "An octopus of mythic proportions — deep teal and green with iridescent lavender suckers, tentacles reaching in every direction.",
       "medium": "Sculpted paper mache, acrylic paint, iridescent accents",
       "dimensions": "Approx. 22\" x 28\"",
       "image": "images/kg/sea-leopard.jpg",
       "available": true,
+      "featured": true,
       "date": "2024-01-03",
-      "tags": [
-        "sculpture",
-        "ocean",
-        "octopus",
-        "large"
-      ]
+      "tags": ["sculpture", "ocean", "octopus", "large"]
     },
     {
       "id": "kg004",
       "title": "Dilophosaurus",
       "price": null,
       "shipping": "Contact for shipping quote",
-      "description": "A jaw-dropping Dilophosaurus bust with full frill display — painted in volcanic yellows, reds, and deep greens. Wall-mounted like a trophy, this piece commands any room it enters. Contact for pricing.",
+      "description": "A jaw-dropping Dilophosaurus bust with full frill display — painted in volcanic yellows, reds, and deep greens.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 28\" x 22\"",
       "image": "images/kg/dilophosaurus.jpg",
       "available": true,
+      "featured": true,
       "date": "2024-01-04",
-      "tags": [
-        "sculpture",
-        "dinosaur",
-        "large",
-        "statement"
-      ]
+      "tags": ["sculpture", "dinosaur", "large", "statement"]
     },
     {
       "id": "kg005",
       "title": "Mariposa",
       "price": 225,
       "shipping": "Ships in custom box, $22 flat rate",
-      "description": "A monarch butterfly in full glory, wings spread wide over a yellow flower — mounted in a black shadow box. The detail in each wing vein and the contrast of orange against black is extraordinary. A showpiece for any wall.",
+      "description": "A monarch butterfly in full glory, wings spread wide over a yellow flower — mounted in a black shadow box.",
       "medium": "Sculpted paper mache, acrylic paint, shadow box",
       "dimensions": "Approx. 16\" x 16\"",
       "image": "images/kg/mariposa.jpg",
       "available": true,
+      "featured": false,
       "date": "2024-01-05",
-      "tags": [
-        "sculpture",
-        "butterfly",
-        "nature",
-        "framed"
-      ]
+      "tags": ["sculpture", "butterfly", "nature", "framed"]
     },
     {
       "id": "kg006",
       "title": "Little Ladys",
       "price": 65,
       "shipping": "Ships via USPS Priority, $14 flat rate",
-      "description": "Two cheerful ladybugs resting on a periwinkle blue flower, trimmed with white dot details. Sweet, charming, and full of life.",
+      "description": "Two cheerful ladybugs resting on a periwinkle blue flower, trimmed with white dot details.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 18\" x 18\"",
       "image": "images/kg/little-ladys.jpg",
       "available": false,
+      "featured": false,
       "date": "2024-01-06",
-      "tags": [
-        "sculpture",
-        "nature",
-        "ladybug",
-        "sold"
-      ]
+      "tags": ["sculpture", "nature", "ladybug", "sold"]
     },
     {
       "id": "kg007",
       "title": "Canned Tuna",
       "price": 444,
       "shipping": "Contact for shipping quote — very large piece",
-      "description": "Perhaps the most technically astonishing piece — a life-size tuna built from hundreds of individual spoon-shaped scales, creating a shimmering metallic surface unlike anything else. Massive scale, incredible detail.",
+      "description": "A life-size tuna built from hundreds of individual spoon-shaped scales, creating a shimmering metallic surface unlike anything else.",
       "medium": "Sculpted paper mache, metallic paint, mixed media scales",
       "dimensions": "Approx. 48\" x 24\"",
       "image": "images/kg/canned-tuna.jpg",
       "available": true,
+      "featured": false,
       "date": "2024-01-07",
-      "tags": [
-        "sculpture",
-        "ocean",
-        "fish",
-        "large",
-        "statement"
-      ]
+      "tags": ["sculpture", "ocean", "fish", "large", "statement"]
     },
     {
       "id": "kg008",
       "title": "Mothra",
       "price": 76,
       "shipping": "Ships in flat box, $18 flat rate",
-      "description": "Inspired by the iconic Kaiju moth, this piece explodes with fiery yellows, oranges, and reds against a dramatic dark body. Feathered antennae and eye-spot details make this a statement piece.",
+      "description": "Inspired by the iconic Kaiju moth, this piece explodes with fiery yellows, oranges, and reds against a dramatic dark body.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 22\" x 12\"",
       "image": "images/kg/mothra.jpg",
-      "available": false,
+      "available": true,
+      "featured": false,
       "date": "2024-01-08",
-      "tags": [
-        "sculpture",
-        "moth",
-        "fantasy"
-      ]
+      "tags": ["sculpture", "moth", "fantasy"]
     },
     {
       "id": "kg009",
       "title": "Phoenix Rising",
       "price": null,
       "shipping": "Contact for shipping quote",
-      "description": "A sculptural phoenix in full wingspan, mounted within a gilded ornate frame — the bird breaking free of the canvas itself. Warm copper and gold tones with a fiery background. Contact for pricing.",
+      "description": "A sculptural phoenix in full wingspan, mounted within a gilded ornate frame — the bird breaking free of the canvas itself.",
       "medium": "Sculpted paper mache, acrylic paint, antique gilded frame",
       "dimensions": "Approx. 18\" x 20\" framed",
       "image": "images/kg/phoenix.jpg",
-      "available": false,
+      "available": true,
+      "featured": false,
       "date": "2024-01-09",
-      "tags": [
-        "sculpture",
-        "bird",
-        "fantasy",
-        "framed",
-        "statement"
-      ]
+      "tags": ["sculpture", "bird", "fantasy", "framed", "statement"]
     },
     {
       "id": "kg010",
       "title": "Turtle Journey",
       "price": null,
       "shipping": "Contact for shipping quote — framed piece",
-      "description": "A green sea turtle swimming through cracked, flowing water — rendered in a panoramic framed scene with natural river stones. The water texture is created entirely by hand. Contact for pricing.",
+      "description": "A green sea turtle swimming through cracked, flowing water — rendered in a panoramic framed scene with natural river stones.",
       "medium": "Sculpted paper mache, acrylic paint, antique frame, natural stones",
       "dimensions": "Approx. 24\" x 14\" framed",
       "image": "images/kg/turtle-journey.jpg",
-      "available": false,
+      "available": true,
+      "featured": false,
       "date": "2024-01-10",
-      "tags": [
-        "sculpture",
-        "turtle",
-        "ocean",
-        "framed"
+      "tags": ["sculpture", "turtle", "ocean", "framed"]
+    }
+  ],
+  "furniture": [],
+  "clothing": [],
+  "scenes": [
+    {
+      "id": "scene-demo-june-2026",
+      "title": "The Studio Corner",
+      "month": "June 2026",
+      "slug": "june-2026",
+      "current": true,
+      "image": "images/scenes/june-2026.jpg",
+      "thumb": "images/scenes/june-2026-thumb.jpg",
+      "description": "A curated corner featuring vintage seating, handcrafted wall sculpture, and found objects — everything in this scene is available.",
+      "items": [
+        {
+          "id": "s1",
+          "name": "Vintage Gold Velvet Chair",
+          "desc": "Mid-century tufted armchair in rich mustard velvet. Solid wood frame, newly reupholstered.",
+          "price": 285,
+          "available": true,
+          "x": 27,
+          "y": 68
+        },
+        {
+          "id": "s2",
+          "name": "Fisher Price Record Player",
+          "desc": "Vintage Fisher Price toy record player in working condition. A perfect nostalgic piece.",
+          "price": 45,
+          "available": true,
+          "x": 30,
+          "y": 52
+        },
+        {
+          "id": "s3",
+          "name": "Dilophosaurus Wall Sculpture",
+          "desc": "Original hand-sculpted paper mache Dilophosaurus bust with frill. By Kindness Grace.",
+          "price": null,
+          "available": true,
+          "x": 54,
+          "y": 32
+        },
+        {
+          "id": "s4",
+          "name": "Sea Turtle Framed Scene",
+          "desc": "Hand-sculpted green sea turtle in a deep ocean scene, antique gold frame.",
+          "price": null,
+          "available": true,
+          "x": 74,
+          "y": 35
+        },
+        {
+          "id": "s5",
+          "name": "Vintage Floor Lamp",
+          "desc": "Warm linen shade floor lamp with wood-turned base.",
+          "price": 95,
+          "available": true,
+          "x": 76,
+          "y": 58
+        },
+        {
+          "id": "s6",
+          "name": "Potted Fiddle Leaf Fig",
+          "desc": "Large healthy fiddle leaf fig in a hand-painted terracotta pot. Local pickup only.",
+          "price": 65,
+          "available": false,
+          "x": 84,
+          "y": 62
+        }
       ]
     }
   ]

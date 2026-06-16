@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Original Art — Finders Keepers Market</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../fk-styles.css" />
+  <style>
+    nav { position: sticky; }
+    .artists-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 80vh; }
+    .artist-col { padding: 3rem; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 2rem; background: var(--linen); }
+    .artist-col.kg-side { background: var(--sage-pale); border-right: none; }
+    .artist-tag { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); }
+    .artist-name { font-family: "Playfair Display", serif; font-size: 1.75rem; line-height: 1.1; color: var(--ink); }
+    .artist-bio { font-size: 0.88rem; line-height: 1.8; color: var(--muted); }
+    .mini-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .mini-card { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 4/5; background: var(--warm); transition: transform 0.3s; }
+    .mini-card:hover { transform: scale(1.02); z-index: 2; }
+    .mini-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+    .mini-card:hover img { transform: scale(1.05); }
+    .mini-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top,rgba(30,26,22,0.85) 0%,transparent 55%); display: flex; flex-direction: column; justify-content: flex-end; padding: 0.75rem; opacity: 0; transition: opacity 0.3s; }
+    .mini-card:hover .mini-card-overlay { opacity: 1; }
+    .mini-card-title { font-family: "Playfair Display", serif; font-size: 0.85rem; color: #fff; margin-bottom: 0.15rem; }
+    .mini-card-price { font-size: 0.75rem; color: var(--sage-pale); }
+    .mini-placeholder { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",serif;font-style:italic;color:rgba(100,80,60,0.3);font-size:0.78rem; }
+    .artist-cta { display: flex; flex-direction: column; gap: 0.75rem; margin-top: auto; }
+    .featured-strip { background: var(--sage-light); padding: 1.5rem 3rem; display: flex; align-items: center; gap: 2rem; overflow-x: auto; }
+    .featured-label { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(30,26,22,0.55); white-space: nowrap; flex-shrink: 0; padding-right: 2rem; border-right: 1px solid rgba(107,143,122,0.3); }
+    .featured-items { display: flex; gap: 1.5rem; }
+    .featured-item { display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.5); padding: 0.75rem 1rem; border: 1px solid rgba(107,143,122,0.2); cursor: pointer; transition: border-color 0.2s; flex-shrink: 0; text-decoration: none; }
+    .featured-item:hover { border-color: var(--sage); }
+    .featured-thumb { width: 50px; height: 50px; object-fit: cover; flex-shrink: 0; }
+    .featured-thumb-placeholder { width: 50px; height: 50px; background: rgba(107,143,122,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+    .featured-name { font-family: "Playfair Display", serif; font-size: 0.88rem; color: var(--ink); margin-bottom: 0.15rem; }
+    .featured-artist { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; }
+    .featured-price { font-size: 0.82rem; color: var(--sage-mid); margin-top: 0.1rem; }
+    .featured-empty { color: var(--muted); font-style: italic; font-size: 0.88rem; }
+    @media (max-width:900px) { .artists-split{grid-template-columns:1fr;} .artist-col{border-right:none;border-bottom:1px solid var(--border);padding:2.5rem 1.5rem;} .featured-strip{padding:1.5rem;} }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../" class="nav-back">Finders Keepers</a>
+  <span class="nav-title">Original Art</span>
+  <div class="nav-links"><a href="../shop-a-room/">Shop a Room</a><a href="../furniture/">Furniture</a><a href="../clothing/">Clothing</a></div>
+</nav>
+<div class="page-header" style="text-align:center;">
+  <p class="page-eyebrow">Original Works · One of a Kind</p>
+  <h1 class="page-title">Art by the <em>Family</em></h1>
+  <p class="page-sub" style="margin-inline:auto;">Two artists, one family. Every piece is handcrafted, signed, and completely original.</p>
+</div>
+<div class="featured-strip" id="featured-strip">
+  <div class="featured-label">✦ Featured</div>
+  <div class="featured-items" id="featured-items"><span class="featured-empty">Featured pieces will appear here</span></div>
+</div>
+<div class="artists-split">
+  <div class="artist-col">
+    <div>
+      <span class="artist-tag">Finders Keepers Market</span>
+      <h2 class="artist-name">Momma Ange</h2>
+      <p class="artist-bio">Original paintings, mixed media, and handcrafted works. Each piece carries a warmth that only comes from being made with intention and love.</p>
+    </div>
+    <div class="mini-gallery" id="ange-gallery">
+      <div class="mini-card"><div class="mini-placeholder">Coming soon</div></div>
+      <div class="mini-card"><div class="mini-placeholder">Coming soon</div></div>
+      <div class="mini-card"><div class="mini-placeholder">Coming soon</div></div>
+      <div class="mini-card"><div class="mini-placeholder">Coming soon</div></div>
+    </div>
+    <div class="artist-cta">
+      <a href="../" class="btn-primary">View All of Momma Ange's Work</a>
+      <a href="mailto:hello@finderskeepers.market?subject=Inquiry: Momma Ange Art" class="btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+  <div class="artist-col kg-side">
+    <div>
+      <span class="artist-tag">Art by Kindness Grace</span>
+      <h2 class="artist-name">Kindness Grace</h2>
+      <p class="artist-bio">Hand-sculpted paper mache creatures born from wonder. Turtles, octopi, dinosaurs, moths — each one a living thing that insists on being seen.</p>
+    </div>
+    <div class="mini-gallery" id="kg-gallery">
+      <div class="mini-card"><div class="mini-placeholder">Loading…</div></div>
+      <div class="mini-card"><div class="mini-placeholder">Loading…</div></div>
+      <div class="mini-card"><div class="mini-placeholder">Loading…</div></div>
+      <div class="mini-card"><div class="mini-placeholder">Loading…</div></div>
+    </div>
+    <div class="artist-cta">
+      <a href="../kindnessgrace/" class="btn-primary">View Full Gallery — Kindness Grace</a>
+      <a href="mailto:hello@finderskeepers.market?subject=Inquiry: Kindness Grace Art" class="btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+</div>
+<footer><span>© Finders Keepers Market</span><a href="../">Back to Home</a><a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a></footer>
+<script>
+async function load(){
+  try{
+    const data=await(await fetch("https://finderskeepers.market/art-data.json")).json();
+    renderKG(data.daughter||[]);renderAnge(data.wife||[]);renderFeatured(data);
+  }catch(e){}
+}
+function renderKG(artworks){
+  const grid=document.getElementById("kg-gallery");
+  const pieces=artworks.slice(0,4);if(!pieces.length)return;grid.innerHTML="";
+  pieces.forEach(art=>{
+    const card=document.createElement("div");card.className="mini-card";
+    const src=`https://finderskeepers.market/${art.image}`;
+    const price=art.price?`$${art.price.toLocaleString()}`:"Price on request";
+    card.innerHTML=`<img src="${src}" alt="${art.title}" onerror="this.style.display='none'" /><div class="mini-card-overlay"><div class="mini-card-title">${art.title}</div><div class="mini-card-price">${price}</div></div>`;
+    card.addEventListener("click",()=>window.location.href="../kindnessgrace/");
+    grid.appendChild(card);
+  });
+}
+function renderAnge(artworks){
+  const grid=document.getElementById("ange-gallery");
+  const pieces=artworks.slice(0,4);if(!pieces.length)return;grid.innerHTML="";
+  pieces.forEach(art=>{
+    const card=document.createElement("div");card.className="mini-card";
+    const src=`https://finderskeepers.market/${art.image}`;
+    const price=art.price?`$${art.price.toLocaleString()}`:"Price on request";
+    card.innerHTML=`<img src="${src}" alt="${art.title}" onerror="this.style.display='none'" /><div class="mini-card-overlay"><div class="mini-card-title">${art.title}</div><div class="mini-card-price">${price}</div></div>`;
+    grid.appendChild(card);
+  });
+}
+function renderFeatured(data){
+  const container=document.getElementById("featured-items");
+  const featured=[...(data.wife||[]).filter(a=>a.featured).map(a=>({...a,artistName:"Momma Ange",link:"../"})),...(data.daughter||[]).filter(a=>a.featured).map(a=>({...a,artistName:"Kindness Grace",link:"../kindnessgrace/"}))];
+  if(!featured.length)return;container.innerHTML="";
+  featured.forEach(art=>{
+    const item=document.createElement("a");item.className="featured-item";item.href=art.link;
+    const src=`https://finderskeepers.market/${art.image}`;
+    const price=art.price?`$${art.price.toLocaleString()}`:"Price on request";
+    item.innerHTML=`<img class="featured-thumb" src="${src}" alt="${art.title}" onerror="this.outerHTML='<div class=featured-thumb-placeholder>✦</div>'" /><div><div class="featured-name">${art.title}</div><div class="featured-artist">${art.artistName}</div><div class="featured-price">${price}</div></div>`;
+    container.appendChild(item);
+  });
+}
+load();
+</script>
+</body>
+</html>

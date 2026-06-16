@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Furniture — Finders Keepers Market</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../fk-styles.css" />
+  <style>
+    nav { position: sticky; }
+    .page-banner { background: var(--sage-light); padding: 5rem 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .banner-eyebrow { font-size: 0.66rem; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(30,26,22,0.55); margin-bottom: 0.75rem; }
+    .banner-title { font-family: "Playfair Display", serif; font-size: clamp(2rem,4vw,3rem); color: var(--ink); line-height: 1.1; margin-bottom: 1.25rem; }
+    .banner-title em { font-style: italic; color: #fff; text-shadow: 0 1px 8px rgba(107,143,122,0.3); }
+    .banner-body { color: rgba(30,26,22,0.65); line-height: 1.9; font-size: 0.93rem; }
+    .banner-right { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .banner-tile { aspect-ratio: 1; background: rgba(107,143,122,0.2); overflow: hidden; }
+    .banner-tile img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+    .banner-tile-placeholder { width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(107,143,122,0.4);font-size:1.5rem; }
+    @media (max-width:768px) { .page-banner{grid-template-columns:1fr;padding:3rem 1.5rem;gap:2rem;} }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../" class="nav-back">Finders Keepers</a>
+  <span class="nav-title">Furniture</span>
+  <div class="nav-links"><a href="../shop-a-room/">Shop a Room</a><a href="../original-art/">Original Art</a><a href="../clothing/">Clothing</a></div>
+</nav>
+<div class="page-banner">
+  <div>
+    <p class="banner-eyebrow">Handcrafted &amp; Reimagined</p>
+    <h1 class="banner-title">Furniture with a <em>story</em></h1>
+    <p class="banner-body">Every piece has been made, found, or transformed by hand. One of a kind, every time.</p>
+  </div>
+  <div class="banner-right" id="banner-tiles">
+    <div class="banner-tile"><div class="banner-tile-placeholder">🪑</div></div>
+    <div class="banner-tile"><div class="banner-tile-placeholder">🪑</div></div>
+    <div class="banner-tile"><div class="banner-tile-placeholder">🪑</div></div>
+    <div class="banner-tile"><div class="banner-tile-placeholder">🪑</div></div>
+  </div>
+</div>
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-pill active" onclick="filterGallery('all',this)">All</button>
+  <button class="filter-pill" onclick="filterGallery('seating',this)">Seating</button>
+  <button class="filter-pill" onclick="filterGallery('tables',this)">Tables</button>
+  <button class="filter-pill" onclick="filterGallery('storage',this)">Storage</button>
+  <button class="filter-pill" onclick="filterGallery('tanks',this)">Fish Tanks</button>
+  <button class="filter-pill" onclick="filterGallery('decor',this)">Decor</button>
+</div>
+<section class="gallery-section">
+  <div class="gallery-grid" id="gallery-grid"><div class="empty-state"><p>New pieces arriving soon.</p></div></div>
+</section>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-img-wrap" id="modal-img"></div>
+    <div class="modal-body">
+      <p class="modal-eyebrow">FINDERS KEEPERS ORIGINAL</p>
+      <h2 class="modal-title" id="modal-title"></h2>
+      <div class="modal-price" id="modal-price"></div>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div id="modal-details"></div>
+      <div class="modal-cta" id="modal-cta"></div>
+    </div>
+  </div>
+</div>
+<footer><span>© Finders Keepers Market</span><a href="../">Back to Home</a><a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a></footer>
+<script>
+let allFurniture=[];let currentFilter="all";
+async function load(){try{const data=await(await fetch("https://finderskeepers.market/art-data.json")).json();allFurniture=data.furniture||[];renderGallery();renderBanner();}catch(e){}}
+function renderGallery(){
+  const grid=document.getElementById("gallery-grid");
+  const items=currentFilter==="all"?allFurniture:allFurniture.filter(a=>a.tags&&a.tags.includes(currentFilter));
+  if(!items.length){grid.innerHTML='<div class="empty-state"><p>New pieces arriving soon.</p></div>';return;}
+  grid.innerHTML="";
+  items.forEach(art=>{
+    const card=document.createElement("div");card.className="art-card";
+    const src=`https://finderskeepers.market/${art.image}`;
+    const price=art.price?`$${art.price.toLocaleString()}`:"Price on request";
+    card.innerHTML=`${art.image?`<img src="${src}" alt="${art.title}" onerror="this.style.display='none'" />`:"<div class=art-card-placeholder>Image coming soon</div>"}<div class="art-card-overlay"><div class="art-card-title">${art.title}</div><div class="art-card-medium">${art.medium||""}</div><div class="art-card-price${art.price?"":' inquire'}">${price}</div></div>`;
+    card.addEventListener("click",()=>openModal(art));grid.appendChild(card);
+  });
+}
+function renderBanner(){const pieces=allFurniture.filter(a=>a.image).slice(0,4);if(!pieces.length)return;const c=document.getElementById("banner-tiles");c.innerHTML="";pieces.forEach(art=>{const t=document.createElement("div");t.className="banner-tile";t.innerHTML=`<img src="https://finderskeepers.market/${art.image}" alt="${art.title}" />`;c.appendChild(t);});}
+function filterGallery(f,btn){currentFilter=f;document.querySelectorAll(".filter-pill").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderGallery();}
+function openModal(art){
+  const src=`https://finderskeepers.market/${art.image}`;
+  document.getElementById("modal-img").innerHTML=art.image?`<img src="${src}" alt="${art.title}" />`:"<div style='width:100%;min-height:460px;display:flex;align-items:center;justify-content:center;background:var(--warm);font-family:Playfair Display,serif;font-style:italic;color:var(--muted)'>Image coming soon</div>";
+  document.getElementById("modal-title").textContent=art.title;
+  const p=document.getElementById("modal-price");p.textContent=art.price?`$${art.price.toLocaleString()}`:"Price on request";p.className="modal-price"+(art.price?"":' inquire');
+  document.getElementById("modal-desc").textContent=art.description||"";
+  document.getElementById("modal-details").innerHTML=[art.medium?`<div class="modal-detail-row"><span class="modal-detail-label">Medium</span><span class="modal-detail-val">${art.medium}</span></div>`:"",art.dimensions?`<div class="modal-detail-row"><span class="modal-detail-label">Dimensions</span><span class="modal-detail-val">${art.dimensions}</span></div>`:"",art.shipping?`<div class="modal-detail-row"><span class="modal-detail-label">Shipping</span><span class="modal-detail-val">${art.shipping}</span></div>`:""].join("");
+  const s=encodeURIComponent(`Inquiry: ${art.title}`);const b=encodeURIComponent(`Hello,\n\nI'm interested in "${art.title}".\n\nIs it available?\n\nThank you!`);
+  document.getElementById("modal-cta").innerHTML=art.available?`<a href="mailto:hello@finderskeepers.market?subject=${s}&body=${b}" class="btn-primary">Inquire About This Piece</a>`:"<div style='text-align:center;padding:1rem;border:1px solid var(--border);color:var(--muted);font-style:italic;font-size:0.9rem'>This piece has found its home.</div>";
+  document.getElementById("modal-overlay").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeModal(){document.getElementById("modal-overlay").classList.remove("open");document.body.style.overflow="";}
+document.getElementById("modal-close").addEventListener("click",closeModal);
+document.getElementById("modal-overlay").addEventListener("click",e=>{if(e.target===document.getElementById("modal-overlay"))closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+load();
+</script>
+</body>
+</html>

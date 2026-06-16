@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clothing — Finders Keepers Market</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&family=Dancing+Script:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../fk-styles.css" />
+  <style>
+    nav { position: sticky; }
+    .page-hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 50vh; border-bottom: 1px solid var(--border); }
+    .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 4rem 3rem; background: var(--sage-pale); }
+    .hero-eyebrow { font-size: 0.66rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--sage); margin-bottom: 1rem; }
+    .hero-title { font-family: "Playfair Display", serif; font-size: clamp(2rem,4vw,3rem); line-height: 1.1; margin-bottom: 1rem; }
+    .hero-title em { font-style: italic; color: var(--blush); }
+    .hero-sub { color: var(--muted); line-height: 1.8; max-width: 360px; font-size: 0.93rem; }
+    .hero-script { font-family: "Dancing Script", cursive; font-size: 1.3rem; color: var(--sage); margin-top: 1.5rem; }
+    .hero-right { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; background: var(--sage-light); }
+    .hero-tile { background: rgba(107,143,122,0.2); overflow: hidden; }
+    .hero-tile img { width:100%;height:100%;object-fit:cover; }
+    .hero-tile-placeholder { width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(107,143,122,0.4);font-size:1.5rem; }
+    .hero-tile:first-child { grid-row: 1/3; }
+    .lookbook-section { padding: 3rem; background: var(--linen); }
+    .lookbook-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+    .look-card { cursor: pointer; }
+    .look-card:hover .look-img img { transform: scale(1.04); }
+    .look-img { aspect-ratio: 2/3; overflow: hidden; background: var(--sage-pale); margin-bottom: 1rem; position: relative; }
+    .look-img img { width:100%;height:100%;object-fit:cover;transition:transform 0.5s;display:block; }
+    .look-img-placeholder { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",serif;font-style:italic;color:rgba(100,80,60,0.25);font-size:0.85rem; }
+    .look-badge { position:absolute;top:0.75rem;left:0.75rem;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.25rem 0.6rem; }
+    .look-badge.vintage { background: var(--warm); color: var(--clay); }
+    .look-badge.handmade { background: var(--sage-light); color: #fff; }
+    .look-badge.sold { background: rgba(0,0,0,0.35); color: #fff; }
+    .look-name { font-family:"Playfair Display",serif;font-size:1.05rem;margin-bottom:0.2rem; }
+    .look-detail { font-size:0.78rem;color:var(--muted);margin-bottom:0.4rem; }
+    .look-price { font-size:0.95rem;color:var(--sage-mid); }
+    .look-price.inquire { font-style:italic;color:var(--muted);font-size:0.82rem; }
+    .look-size { font-size:0.7rem;color:var(--muted);letter-spacing:0.05em;margin-top:0.2rem; }
+    @media (max-width:900px) { .lookbook-grid{grid-template-columns:repeat(2,1fr);gap:1.5rem;} }
+    @media (max-width:768px) { .page-hero{grid-template-columns:1fr;} .hero-left{padding:3rem 1.5rem;} .hero-right{min-height:260px;} .lookbook-section{padding:1.5rem;} .lookbook-grid{grid-template-columns:repeat(2,1fr);gap:1rem;} }
+    @media (max-width:420px) { .lookbook-grid{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../" class="nav-back">Finders Keepers</a>
+  <span class="nav-title">Clothing</span>
+  <div class="nav-links"><a href="../shop-a-room/">Shop a Room</a><a href="../original-art/">Original Art</a><a href="../furniture/">Furniture</a></div>
+</nav>
+<div class="page-hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Vintage Finds &amp; Handmade Wearables</p>
+    <h1 class="hero-title">Wear something with a <em>past</em></h1>
+    <p class="hero-sub">Carefully curated vintage clothing and handmade wearables. Each piece has lived a life — now it's ready for yours.</p>
+    <p class="hero-script">Found with love.</p>
+  </div>
+  <div class="hero-right" id="hero-tiles">
+    <div class="hero-tile"><div class="hero-tile-placeholder">👗</div></div>
+    <div class="hero-tile"><div class="hero-tile-placeholder">👗</div></div>
+    <div class="hero-tile"><div class="hero-tile-placeholder">👗</div></div>
+  </div>
+</div>
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-pill active" onclick="filterLooks('all',this)">All</button>
+  <button class="filter-pill" onclick="filterLooks('vintage',this)">Vintage</button>
+  <button class="filter-pill" onclick="filterLooks('handmade',this)">Handmade</button>
+  <button class="filter-pill" onclick="filterLooks('tops',this)">Tops</button>
+  <button class="filter-pill" onclick="filterLooks('bottoms',this)">Bottoms</button>
+  <button class="filter-pill" onclick="filterLooks('dresses',this)">Dresses</button>
+  <button class="filter-pill" onclick="filterLooks('accessories',this)">Accessories</button>
+</div>
+<section class="lookbook-section">
+  <div class="lookbook-grid" id="lookbook-grid"><div class="empty-state"><p>New pieces arriving soon.</p></div></div>
+</section>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-img-wrap" id="modal-img"></div>
+    <div class="modal-body">
+      <p class="modal-eyebrow">FINDERS KEEPERS CLOTHING</p>
+      <h2 class="modal-title" id="modal-title"></h2>
+      <div class="modal-price" id="modal-price"></div>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div id="modal-details"></div>
+      <div class="modal-cta" id="modal-cta"></div>
+    </div>
+  </div>
+</div>
+<footer><span>© Finders Keepers Market</span><a href="../">Back to Home</a><a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a></footer>
+<script>
+let allClothing=[];let currentFilter="all";
+async function load(){try{const data=await(await fetch("https://finderskeepers.market/art-data.json")).json();allClothing=data.clothing||[];renderLooks();renderHeroTiles();}catch(e){}}
+function renderLooks(){
+  const grid=document.getElementById("lookbook-grid");
+  const items=currentFilter==="all"?allClothing:allClothing.filter(a=>a.tags&&a.tags.includes(currentFilter));
+  if(!items.length){grid.innerHTML='<div class="empty-state"><p>New pieces arriving soon.</p></div>';return;}
+  grid.innerHTML="";
+  items.forEach((item,i)=>{
+    const card=document.createElement("div");card.className="look-card";
+    const src=`https://finderskeepers.market/${item.image}`;
+    const price=item.price?`$${item.price.toLocaleString()}`:"Price on request";
+    const isVintage=item.tags&&item.tags.includes("vintage");const isHandmade=item.tags&&item.tags.includes("handmade");
+    const badge=!item.available?"<div class=look-badge.sold>Sold</div>":isHandmade?"<div class='look-badge handmade'>Handmade</div>":isVintage?"<div class='look-badge vintage'>Vintage</div>":"";
+    card.innerHTML=`<div class="look-img">${item.image?`<img src="${src}" alt="${item.title}" onerror="this.style.display='none'" />`:"<div class=look-img-placeholder>Image coming soon</div>"}${badge}</div><div class="look-info"><div class="look-name">${item.title}</div><div class="look-detail">${item.medium||""}</div><div class="look-price${item.price?"":' inquire'}">${price}</div>${item.size?`<div class="look-size">Size: ${item.size}</div>`:""}</div>`;
+    card.addEventListener("click",()=>openModal(item));grid.appendChild(card);
+  });
+}
+function renderHeroTiles(){const pieces=allClothing.filter(a=>a.image).slice(0,3);if(!pieces.length)return;const c=document.getElementById("hero-tiles");c.innerHTML="";pieces.forEach((item,i)=>{const t=document.createElement("div");t.className="hero-tile";if(i===0)t.style.gridRow="1/3";t.innerHTML=`<img src="https://finderskeepers.market/${item.image}" alt="${item.title}" />`;c.appendChild(t);});}
+function filterLooks(f,btn){currentFilter=f;document.querySelectorAll(".filter-pill").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderLooks();}
+function openModal(item){
+  const src=`https://finderskeepers.market/${item.image}`;
+  document.getElementById("modal-img").innerHTML=item.image?`<img src="${src}" alt="${item.title}" />`:"<div style='width:100%;min-height:460px;display:flex;align-items:center;justify-content:center;background:var(--sage-pale);font-family:Playfair Display,serif;font-style:italic;color:var(--muted)'>Image coming soon</div>";
+  document.getElementById("modal-title").textContent=item.title;
+  const p=document.getElementById("modal-price");p.textContent=item.price?`$${item.price.toLocaleString()}`:"Price on request";p.className="modal-price"+(item.price?"":' inquire');
+  document.getElementById("modal-desc").textContent=item.description||"";
+  document.getElementById("modal-details").innerHTML=[item.medium?`<div class="modal-detail-row"><span class="modal-detail-label">Type</span><span class="modal-detail-val">${item.medium}</span></div>`:"",item.size?`<div class="modal-detail-row"><span class="modal-detail-label">Size</span><span class="modal-detail-val">${item.size}</span></div>`:"",item.shipping?`<div class="modal-detail-row"><span class="modal-detail-label">Shipping</span><span class="modal-detail-val">${item.shipping}</span></div>`:""].join("");
+  const s=encodeURIComponent(`Inquiry: ${item.title}`);const b=encodeURIComponent(`Hello,\n\nI'm interested in "${item.title}".\n\nIs it available?\n\nThank you!`);
+  document.getElementById("modal-cta").innerHTML=item.available?`<a href="mailto:hello@finderskeepers.market?subject=${s}&body=${b}" class="btn-primary">Inquire About This Piece</a>`:"<div style='text-align:center;padding:1rem;border:1px solid var(--border);color:var(--muted);font-style:italic'>This piece has found its home.</div>";
+  document.getElementById("modal-overlay").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeModal(){document.getElementById("modal-overlay").classList.remove("open");document.body.style.overflow="";}
+document.getElementById("modal-close").addEventListener("click",closeModal);
+document.getElementById("modal-overlay").addEventListener("click",e=>{if(e.target===document.getElementById("modal-overlay"))closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+load();
+</script>
+</body>
+</html>

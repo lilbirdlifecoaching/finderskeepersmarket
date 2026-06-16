@@ -3,254 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finders Keepers Market — Original Art & Handcrafted Work</title>
-  <meta name="description" content="Original handcrafted art and market finds. Each piece tells a story worth keeping." />
+  <title>Finders Keepers Market</title>
+  <meta name="description" content="Finders Keepers Market — curated furniture, original art, vintage clothing, and handcrafted finds." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="fk-styles.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --cream: #FAF7F2;
-      --warm: #F0E8D8;
-      --clay: #B8714A;
-      --clay-dark: #8B5A3A;
-      --forest: #3D5A47;
-      --ink: #1C1814;
-      --muted: #7A6E64;
-      --border: rgba(100,80,60,0.15);
-      --border-warm: rgba(100,80,60,0.3);
-    }
-    html { scroll-behavior: smooth; }
-    body { background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; }
-    nav { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 3rem; border-bottom: 1px solid var(--border); background: var(--cream); position: sticky; top: 0; z-index: 100; }
-    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--ink); text-decoration: none; }
-    .nav-links { display: flex; gap: 2.5rem; align-items: center; }
-    .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--clay); }
-    .kg-link { background: var(--ink) !important; color: var(--cream) !important; padding: 0.55rem 1.25rem !important; }
-    .kg-link:hover { background: #3a2a1a !important; }
-    .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 88vh; }
-    .hero-text { display: flex; flex-direction: column; justify-content: center; padding: 5rem 4rem 5rem 3rem; }
-    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--clay); margin-bottom: 1.5rem; }
-    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 5vw, 4.5rem); line-height: 1.05; margin-bottom: 1.75rem; }
-    .hero-title em { font-style: italic; color: var(--clay); }
-    .hero-body { color: var(--muted); line-height: 1.9; max-width: 400px; margin-bottom: 2.5rem; font-size: 1.05rem; }
-    .btn-primary { display: inline-block; background: var(--clay); color: #fff; text-decoration: none; padding: 0.9rem 2.25rem; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; transition: background 0.2s; }
-    .btn-primary:hover { background: var(--clay-dark); }
-    .hero-right { background: var(--warm); display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; }
-    .hero-tile { background: #e8ddc8; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .hero-tile img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-tile-placeholder { font-family: 'Playfair Display', serif; font-style: italic; color: rgba(100,80,60,0.3); font-size: 0.85rem; }
-    .hero-tile:first-child { grid-row: 1/3; }
-    .intro-strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .intro-item { padding: 3rem 2.5rem; border-right: 1px solid var(--border); }
-    .intro-item:last-child { border-right: none; }
-    .intro-icon { font-size: 1.5rem; margin-bottom: 1rem; color: var(--clay); }
-    .intro-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-    .intro-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 0.75rem; }
-    .intro-body { font-size: 0.9rem; color: var(--muted); line-height: 1.8; }
-    .gallery-section { padding: 5rem 3rem; }
-    .section-header { text-align: center; margin-bottom: 3.5rem; }
-    .section-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--clay); display: block; margin-bottom: 0.75rem; }
-    .section-title { font-family: 'Playfair Display', serif; font-size: 2.4rem; }
-    .section-sub { color: var(--muted); margin-top: 0.75rem; line-height: 1.7; max-width: 480px; margin-inline: auto; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-    .art-card { background: #fff; border: 1px solid var(--border); cursor: pointer; transition: transform 0.25s, box-shadow 0.25s; }
-    .art-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(80,50,30,0.1); }
-    .art-card-img-wrap { aspect-ratio: 4/5; overflow: hidden; background: var(--warm); display: flex; align-items: center; justify-content: center; }
-    .art-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-    .art-card:hover .art-card-img-wrap img { transform: scale(1.04); }
-    .art-card-img-placeholder { font-family: 'Playfair Display', serif; font-style: italic; color: var(--muted); font-size: 0.85rem; }
-    .art-card-body { padding: 1.25rem 1.5rem; }
-    .art-card-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 0.25rem; }
-    .art-card-medium { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.85rem; }
-    .art-card-footer { display: flex; align-items: center; justify-content: space-between; }
-    .art-card-price { font-size: 1.1rem; font-weight: 500; color: var(--clay); }
-    .art-card-price.inquire { font-style: italic; font-size: 0.85rem; font-weight: 300; color: var(--muted); }
-    .art-badge { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.65rem; background: #f3f0eb; color: var(--muted); }
-    .art-badge.sold { background: #f5ede8; color: var(--clay); }
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(20,15,10,0.75); z-index: 500; align-items: center; justify-content: center; padding: 2rem; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: var(--cream); max-width: 860px; width: 100%; max-height: 90vh; overflow-y: auto; display: grid; grid-template-columns: 1.1fr 1fr; position: relative; }
-    .modal-img-wrap { background: var(--warm); min-height: 460px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .modal-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    .modal-body { padding: 2.75rem 2.5rem; display: flex; flex-direction: column; gap: 1rem; }
-    .modal-eyebrow { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); }
-    .modal-title { font-family: 'Playfair Display', serif; font-size: 2rem; line-height: 1.1; }
-    .modal-price { font-family: 'Playfair Display', serif; font-size: 1.75rem; color: var(--clay-dark); }
-    .modal-price.inquire { font-style: italic; font-size: 1.1rem; color: var(--muted); }
-    .modal-desc { font-size: 1rem; color: var(--muted); line-height: 1.85; border-top: 1px solid var(--border); padding-top: 1rem; }
-    .modal-detail-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
-    .modal-detail-label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-    .modal-detail-val { color: var(--ink); text-align: right; max-width: 60%; }
-    .modal-cta { margin-top: auto; display: flex; flex-direction: column; gap: 0.75rem; }
-    .btn-buy { font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--clay); border: none; padding: 0.95rem; width: 100%; cursor: pointer; transition: background 0.2s; text-decoration: none; display: block; text-align: center; }
-    .btn-buy:hover { background: var(--clay-dark); }
-    .modal-close { position: absolute; top: 1.25rem; right: 1.5rem; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--muted); z-index: 10; }
-    .modal-close:hover { color: var(--ink); }
-    .kg-callout { display: grid; grid-template-columns: 1fr 1.2fr; border-top: 1px solid var(--border); }
-    .kg-callout-left { background: var(--ink); padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; }
-    .kg-callout-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 1rem; }
-    .kg-callout-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #fff; line-height: 1.1; margin-bottom: 1.5rem; }
-    .kg-callout-title em { font-style: italic; color: #c9a84c; }
-    .kg-callout-body { color: rgba(255,255,255,0.6); line-height: 1.9; margin-bottom: 2.5rem; font-size: 1rem; max-width: 380px; }
-    .btn-gold { display: inline-block; background: #c9a84c; color: var(--ink); text-decoration: none; padding: 0.9rem 2.25rem; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; transition: background 0.2s; width: fit-content; }
-    .btn-gold:hover { background: #e8c97a; }
-    .kg-callout-right { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; background: #111; }
-    .kg-sample-tile { background: #1a1510; overflow: hidden; min-height: 200px; display: flex; align-items: center; justify-content: center; }
-    .kg-sample-tile img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: opacity 0.3s; }
-    .kg-sample-tile:hover img { opacity: 1; }
-    .kg-sample-tile-placeholder { color: rgba(255,255,255,0.15); font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.8rem; }
-    .empty-state { grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--muted); }
-    .empty-state p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.2rem; }
-    footer { padding: 2rem 3rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 0.75rem; }
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--clay); }
-    @media (max-width: 768px) {
-      nav { padding: 1rem 1.5rem; }
-      .hero { grid-template-columns: 1fr; }
-      .hero-right { min-height: 300px; }
-      .hero-text { padding: 3rem 1.5rem; }
-      .intro-strip { grid-template-columns: 1fr; }
-      .intro-item { border-right: none; border-bottom: 1px solid var(--border); }
-      .gallery-section { padding: 3rem 1.5rem; }
-      .modal { grid-template-columns: 1fr; }
-      .modal-img-wrap { min-height: 260px; }
-      .modal-body { padding: 1.75rem; }
-      .kg-callout { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    .hero { display: grid; grid-template-columns: 1fr 2fr; min-height: 100vh; padding-top: 70px; }
+    .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 4rem 3rem; background: var(--linen); border-right: 1px solid var(--border); }
+    .hero-eyebrow { display: flex; align-items: center; gap: 0.75rem; font-size: 0.64rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--sage); margin-bottom: 1.5rem; }
+    .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--sage-light); }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 3vw, 2.8rem); line-height: 1.08; margin-bottom: 1.5rem; }
+    .hero-title em { font-style: italic; color: var(--sage-light); }
+    .hero-title .blush { color: var(--blush); }
+    .hero-body { color: var(--muted); line-height: 1.9; font-size: 0.93rem; margin-bottom: 2rem; max-width: 340px; }
+    .hero-divider { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; max-width: 160px; }
+    .hero-divider-line { width: 40px; height: 1px; background: var(--blush); opacity: 0.5; }
+    .hero-divider-gem { width: 5px; height: 5px; background: var(--blush); transform: rotate(45deg); opacity: 0.7; flex-shrink: 0; }
+    .hero-tagline { font-family: 'Dancing Script', cursive; font-size: 1.25rem; color: var(--sage); margin-bottom: 2rem; }
+    .hero-scene-link { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage-mid); border: 1px solid var(--border-sage); padding: 0.5rem 1rem; text-decoration: none; transition: all 0.2s; }
+    .hero-scene-link:hover { background: var(--sage-faint); border-color: var(--sage); }
+    .hero-scene-link .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); animation: pulse-sm 2s ease-in-out infinite; flex-shrink: 0; }
+    @keyframes pulse-sm { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    .hero-right { position: relative; overflow: hidden; background: var(--warm); }
+    .scene-img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; position: absolute; inset: 0; }
+    .scene-placeholder { width: 100%; height: 100%; min-height: 600px; background: linear-gradient(160deg,#C4B895 0%,#B0A07A 45%,#A09060 100%); display: flex; align-items: center; justify-content: center; font-family:'Playfair Display',serif; font-style:italic; color:rgba(100,80,40,0.3); }
+    .scene-fade { position: absolute; top: 0; left: 0; bottom: 0; width: 120px; background: linear-gradient(to right, var(--linen), transparent); pointer-events: none; z-index: 5; }
+    .scene-month-tag { position: absolute; top: 1.25rem; right: 1.25rem; z-index: 10; background: rgba(74,107,88,0.85); backdrop-filter: blur(4px); color: #fff; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.35rem 0.85rem; }
+    .about-strip { background: var(--sage-light); padding: 5rem 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; border-top: 4px solid rgba(201,107,107,0.3); }
+    .about-label { font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 0.85rem; }
+    .about-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--ink); line-height: 1.1; margin-bottom: 1.25rem; }
+    .about-title em { font-style: italic; color: #fff; text-shadow: 0 1px 8px rgba(107,143,122,0.3); }
+    .about-body { color: rgba(30,26,22,0.7); line-height: 1.9; font-size: 0.93rem; }
+    .about-body p+p { margin-top: 0.9rem; }
+    .about-stats { display: flex; flex-direction: column; gap: 1.5rem; }
+    .about-stat { border-left: 2px solid rgba(255,255,255,0.5); padding-left: 1.1rem; }
+    .about-stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #fff; }
+    .about-stat-label { font-size: 0.72rem; color: rgba(255,255,255,0.55); letter-spacing: 0.1em; text-transform: uppercase; }
+    @media (max-width: 1000px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 3rem 1.5rem; }
+      .hero-right { min-height: 55vw; }
+      .about-strip { grid-template-columns: 1fr; gap: 2.5rem; padding: 3.5rem 1.5rem; }
     }
   </style>
 </head>
 <body>
 <nav>
-  <a href="/" class="nav-logo">Finders Keepers Market</a>
+  <a href="/" class="nav-logo">
+    <img src="images/fk-logo.png" alt="Finders Keepers Market" onerror="this.outerHTML='<div class=nav-logo-fallback>Finders Keepers Market<span>finderskeepers.market</span></div>'" />
+  </a>
   <div class="nav-links">
-    <a href="#gallery">Shop</a>
-    <a href="#about">About</a>
-    <a href="mailto:angelahaythorpe@gmail.com">Contact</a>
-    <a href="kindnessgrace/index.html" class="kg-link">✦ Art by Kindness Grace</a>
+    <a href="shop-a-room/">Shop a Room</a>
+    <a href="furniture/">Furniture</a>
+    <a href="original-art/">Original Art</a>
+    <a href="clothing/">Clothing</a>
+    <a href="mailto:hello@finderskeepers.market" class="nav-cta">Contact</a>
   </div>
 </nav>
 <section class="hero">
-  <div class="hero-text">
-    <p class="hero-eyebrow">Handcrafted · Original · One of a Kind</p>
-    <h1 class="hero-title">Art made with <em>heart</em><br>and found with love</h1>
-    <p class="hero-body">Every piece in this market has a story. Handmade originals, crafted with care and meant for walls that need something real.</p>
-    <a href="#gallery" class="btn-primary">Browse the Market</a>
+  <div class="hero-left">
+    <p class="hero-eyebrow">Est. with love · finderskeepers.market</p>
+    <h1 class="hero-title">Where every find<br>tells a <em>story</em><br>worth <span class="blush">keeping</span></h1>
+    <p class="hero-body">Finders Keepers Market is a curated collection of handcrafted furniture, original art, vintage clothing, and one-of-a-kind finds. Each piece is chosen with intention.</p>
+    <div class="hero-divider"><div class="hero-divider-line"></div><div class="hero-divider-gem"></div><div class="hero-divider-line"></div></div>
+    <p class="hero-tagline">Handpicked. Handmade. Yours.</p>
+    <a href="shop-a-room/" class="hero-scene-link" id="scene-label"><span class="dot"></span><span id="scene-label-text">This month's scene — hover to explore</span></a>
   </div>
-  <div class="hero-right">
-    <div class="hero-tile"><div class="hero-tile-placeholder">Your art here</div></div>
-    <div class="hero-tile"><div class="hero-tile-placeholder">Your art here</div></div>
-    <div class="hero-tile"><div class="hero-tile-placeholder">Your art here</div></div>
+  <div class="hero-right" id="hero-scene">
+    <div class="scene-placeholder" id="scene-placeholder">Loading scene…</div>
+    <div class="scene-fade"></div>
+    <div class="scene-month-tag" id="scene-month-tag">This Month</div>
+    <div class="scene-tooltip" id="scene-tooltip">
+      <div class="tt-name" id="tt-name"></div>
+      <div class="tt-desc" id="tt-desc"></div>
+      <div class="tt-price" id="tt-price"></div>
+      <a class="tt-btn" id="tt-btn" href="#">Inquire About This Piece</a>
+    </div>
   </div>
 </section>
-<div class="intro-strip">
-  <div class="intro-item"><div class="intro-icon">✦</div><div class="intro-label">Every Piece</div><div class="intro-title">Truly Original</div><div class="intro-body">No prints, no reproductions. Every work is made by hand, signed, and one of a kind.</div></div>
-  <div class="intro-item"><div class="intro-icon">◈</div><div class="intro-label">Shipping</div><div class="intro-title">Carefully Packed</div><div class="intro-body">Each piece is wrapped with care. Large sculptural works ship by custom quote.</div></div>
-  <div class="intro-item"><div class="intro-icon">◇</div><div class="intro-label">Questions?</div><div class="intro-title">Just Ask</div><div class="intro-body">Reach out about any piece, commission, or custom request. We love to hear from you.</div></div>
+<div class="sections-bar">
+  <a href="shop-a-room/" class="section-link"><div class="section-icon">🛋️</div><div class="section-name">Shop a Room</div><div class="section-desc">Monthly curated scenes — explore every piece</div><div class="section-arrow">Explore →</div></a>
+  <a href="furniture/" class="section-link"><div class="section-icon">🪑</div><div class="section-name">Furniture</div><div class="section-desc">Handcrafted & reimagined pieces for your home</div><div class="section-arrow">Browse →</div></a>
+  <a href="original-art/" class="section-link"><div class="section-icon">🎨</div><div class="section-name">Original Art</div><div class="section-desc">Works by Momma Ange & Kindness Grace</div><div class="section-arrow">View →</div></a>
+  <a href="clothing/" class="section-link"><div class="section-icon">👗</div><div class="section-name">Clothing</div><div class="section-desc">Vintage finds & handmade wearables</div><div class="section-arrow">Shop →</div></a>
 </div>
-<section class="gallery-section" id="gallery">
-  <div class="section-header">
-    <span class="section-label">The Collection</span>
-    <h2 class="section-title">Shop the Market</h2>
-    <p class="section-sub">Original works available now. Click any piece to learn more.</p>
+<section class="about-strip">
+  <div>
+    <p class="about-label">Our Story</p>
+    <h2 class="about-title">Made with hands,<br>found with <em>heart</em></h2>
+    <div class="about-body">
+      <p>Finders Keepers Market began as a love of hunting for beautiful, forgotten things — and transforming them into something new.</p>
+      <p>We are a family of makers. Come find something worth keeping.</p>
+    </div>
   </div>
-  <div class="gallery-grid" id="wife-gallery">
-    <div class="empty-state"><p>New pieces arriving soon — check back shortly.</p></div>
-  </div>
-</section>
-<section class="kg-callout" id="about">
-  <div class="kg-callout-left">
-    <p class="kg-callout-label">Also in This Family</p>
-    <h2 class="kg-callout-title">Art by<br><em>Kindness Grace</em></h2>
-    <p class="kg-callout-body">Hand-sculpted creatures born from paper, paint, and wonder. Turtles. Octopi. Dinosaurs. Moths. Each one a living thing that demands a wall.</p>
-    <a href="kindnessgrace/index.html" class="btn-gold">Enter the Gallery</a>
-  </div>
-  <div class="kg-callout-right" id="kg-preview">
-    <div class="kg-sample-tile"><div class="kg-sample-tile-placeholder">Kindness Grace</div></div>
-    <div class="kg-sample-tile"><div class="kg-sample-tile-placeholder">Sculptures</div></div>
-    <div class="kg-sample-tile"><div class="kg-sample-tile-placeholder">One of a Kind</div></div>
-    <div class="kg-sample-tile"><div class="kg-sample-tile-placeholder">Enter Gallery →</div></div>
+  <div class="about-stats">
+    <div class="about-stat"><div class="about-stat-num">100%</div><div class="about-stat-label">Original & one of a kind</div></div>
+    <div class="about-stat"><div class="about-stat-num">2</div><div class="about-stat-label">Artists in the family</div></div>
+    <div class="about-stat"><div class="about-stat-num">∞</div><div class="about-stat-label">Stories worth keeping</div></div>
   </div>
 </section>
 <footer>
   <span>© Finders Keepers Market. All rights reserved.</span>
-  <a href="mailto:angelahaythorpe@gmail.com">angelahaythorpe@gmail.com</a>
-  <a href="kindnessgrace/index.html">Art by Kindness Grace</a>
+  <span>finderskeepers.market</span>
+  <a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a>
 </footer>
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <button class="modal-close" id="modal-close">✕</button>
-    <div class="modal-img-wrap" id="modal-img-wrap"></div>
-    <div class="modal-body">
-      <p class="modal-eyebrow">ORIGINAL WORK</p>
-      <h2 class="modal-title" id="modal-title"></h2>
-      <div class="modal-price" id="modal-price"></div>
-      <p class="modal-desc" id="modal-desc"></p>
-      <div id="modal-details"></div>
-      <div class="modal-cta" id="modal-cta"></div>
-    </div>
-  </div>
-</div>
 <script>
-  async function loadData() {
-    try {
-      const r = await fetch('art-data.json');
-      const data = await r.json();
-      if ((data.wife||[]).length) renderWife(data.wife);
-      renderKGPreview(data.daughter || []);
-    } catch(e) {}
-  }
-  function renderWife(artworks) {
-    const grid = document.getElementById('wife-gallery');
-    grid.innerHTML = '';
-    artworks.forEach(art => {
-      const card = document.createElement('div');
-      card.className = 'art-card';
-      const priceEl = art.price ? `<span class="art-card-price">$${art.price.toLocaleString()}</span>` : `<span class="art-card-price inquire">Price on request</span>`;
-      card.innerHTML = `<div class="art-card-img-wrap">${art.image?`<img src="${art.image}" alt="${art.title}" />`:`<div class="art-card-img-placeholder">Image coming soon</div>`}</div><div class="art-card-body"><div class="art-card-title">${art.title}</div><div class="art-card-medium">${art.medium||''}</div><div class="art-card-footer">${priceEl}<span class="art-badge${!art.available?' sold':''}">${!art.available?'Sold':'Available'}</span></div></div>`;
-      card.addEventListener('click', () => openModal(art));
-      grid.appendChild(card);
-    });
-  }
-  function renderKGPreview(artworks) {
-    const pieces = artworks.filter(a => a.image).slice(0, 4);
-    if (!pieces.length) return;
-    const container = document.getElementById('kg-preview');
-    container.innerHTML = '';
-    pieces.forEach(art => {
-      const tile = document.createElement('div');
-      tile.className = 'kg-sample-tile';
-      tile.innerHTML = `<img src="https://finderskeepers.market/${art.image}" alt="${art.title}" />`;
-      container.appendChild(tile);
-    });
-  }
-  function openModal(art) {
-    document.getElementById('modal-img-wrap').innerHTML = art.image ? `<img src="${art.image}" alt="${art.title}" />` : `<div style="width:100%;min-height:460px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;color:var(--muted)">Image coming soon</div>`;
-    document.getElementById('modal-title').textContent = art.title;
-    const p = document.getElementById('modal-price');
-    p.textContent = art.price ? `$${art.price.toLocaleString()}` : 'Price on request';
-    p.className = 'modal-price' + (art.price ? '' : ' inquire');
-    document.getElementById('modal-desc').textContent = art.description || '';
-    document.getElementById('modal-details').innerHTML = [
-      art.medium?`<div class="modal-detail-row"><span class="modal-detail-label">Medium</span><span class="modal-detail-val">${art.medium}</span></div>`:'',
-      art.dimensions?`<div class="modal-detail-row"><span class="modal-detail-label">Dimensions</span><span class="modal-detail-val">${art.dimensions}</span></div>`:'',
-      art.shipping?`<div class="modal-detail-row"><span class="modal-detail-label">Shipping</span><span class="modal-detail-val">${art.shipping}</span></div>`:'',
-    ].join('');
-    const s = encodeURIComponent(`Inquiry: ${art.title}`);
-    const b = encodeURIComponent(`Hello,\n\nI'm interested in "${art.title}".\n\nIs it available?\n\nThank you!`);
-    document.getElementById('modal-cta').innerHTML = art.available
-      ? `<a href="mailto:angelahaythorpe@gmail.com?subject=${s}&body=${b}" class="btn-buy">Inquire About This Piece</a>`
-      : `<div style="text-align:center;padding:1rem;border:1px solid var(--border);color:var(--muted);font-style:italic">This piece has found its home.</div>`;
-    document.getElementById('modal-overlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; }
-  document.getElementById('modal-close').addEventListener('click', closeModal);
-  document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target===document.getElementById('modal-overlay')) closeModal(); });
-  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
-  loadData();
+const DATA_URL='https://finderskeepers.market/art-data.json';
+async function loadScene(){try{const r=await fetch(DATA_URL);const data=await r.json();const scene=(data.scenes||[]).find(s=>s.current);if(!scene)return;renderScene(scene);}catch(e){}}
+function renderScene(scene){
+  const container=document.getElementById('hero-scene');
+  const placeholder=document.getElementById('scene-placeholder');
+  document.getElementById('scene-month-tag').textContent=scene.month||'This Month';
+  document.getElementById('scene-label-text').textContent=`${scene.title} — hover to explore`;
+  if(scene.image){const img=document.createElement('img');img.className='scene-img';img.src=`https://finderskeepers.market/${scene.image}`;img.alt=scene.title;img.onerror=()=>img.remove();container.insertBefore(img,placeholder);placeholder.style.display='none';}
+  const tooltip=document.getElementById('scene-tooltip');let activeId=null;
+  (scene.items||[]).forEach(item=>{
+    const hs=document.createElement('div');hs.className='hotspot';hs.style.left=item.x+'%';hs.style.top=item.y+'%';hs.dataset.id=item.id;
+    hs.innerHTML='<div class="hotspot-ring"><div class="hotspot-dot"></div></div>';
+    container.insertBefore(hs,tooltip);
+    const show=()=>{
+      document.querySelectorAll('#hero-scene .hotspot').forEach(h=>h.classList.remove('active'));
+      hs.classList.add('active');activeId=item.id;
+      document.getElementById('tt-name').textContent=item.name;
+      document.getElementById('tt-desc').textContent=item.desc;
+      const p=document.getElementById('tt-price');p.textContent=item.price?`$${item.price.toLocaleString()}`:'Price on request';p.className='tt-price'+(item.price?'':' inquire');
+      const sub=encodeURIComponent(`Inquiry: ${item.name}`);const bod=encodeURIComponent(`Hello,\n\nI'm interested in "${item.name}".\n\nIs it available?\n\nThank you!`);
+      const btn=document.getElementById('tt-btn');
+      if(!item.available){btn.textContent='This piece has sold';btn.style.pointerEvents='none';btn.style.opacity='0.5';btn.href='#';}
+      else{btn.textContent='Inquire About This Piece';btn.style.pointerEvents='';btn.style.opacity='';btn.href=`mailto:hello@finderskeepers.market?subject=${sub}&body=${bod}`;}
+      const sr=container.getBoundingClientRect();const hr=hs.getBoundingClientRect();
+      let left=hr.left-sr.left+44;let top=hr.top-sr.top-50;
+      if(left+240>sr.width)left=hr.left-sr.left-244;if(top<0)top=hr.top-sr.top+44;
+      tooltip.style.left=left+'px';tooltip.style.top=top+'px';tooltip.classList.add('visible');
+    };
+    hs.addEventListener('mouseenter',show);
+    hs.addEventListener('click',e=>{e.stopPropagation();if(activeId===item.id&&tooltip.classList.contains('visible')){tooltip.classList.remove('visible');hs.classList.remove('active');activeId=null;}else show();});
+    hs.addEventListener('mouseleave',e=>{if(!tooltip.contains(e.relatedTarget))setTimeout(()=>{if(!tooltip.matches(':hover')){tooltip.classList.remove('visible');hs.classList.remove('active');activeId=null;}},200);});
+  });
+  tooltip.addEventListener('mouseleave',()=>{tooltip.classList.remove('visible');document.querySelectorAll('#hero-scene .hotspot').forEach(h=>h.classList.remove('active'));activeId=null;});
+  container.addEventListener('click',e=>{if(!e.target.closest('.hotspot')&&!e.target.closest('.scene-tooltip')){tooltip.classList.remove('visible');document.querySelectorAll('#hero-scene .hotspot').forEach(h=>h.classList.remove('active'));activeId=null;}});
+}
+loadScene();
 </script>
 </body>
 </html>
