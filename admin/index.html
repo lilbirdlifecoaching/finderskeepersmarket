@@ -1,7 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"
+  function checkToken() {
+    if (!GITHUB_TOKEN) {
+      document.getElementById('token-setup').style.display = 'block';
+    } else {
+      document.getElementById('token-setup').style.display = 'none';
+    }
+  }
+
+  async function saveToken() {
+    const input = document.getElementById('token-input').value.trim();
+    if (!input || !input.startsWith('ghp_')) {
+      document.getElementById('token-error').style.display = 'block';
+      document.getElementById('token-error').textContent = 'Please enter a valid GitHub token starting with ghp_';
+      return;
+    }
+    try {
+      const r = await fetch('https://api.github.com/repos/lilbirdlifecoaching/finderskeepersmarket', {
+        headers: { Authorization: 'token ' + input, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (!r.ok) throw new Error('Invalid token — got ' + r.status);
+      GITHUB_TOKEN = input;
+      localStorage.setItem('fk_gh_token', input);
+      document.getElementById('token-setup').style.display = 'none';
+      document.getElementById('token-error').style.display = 'none';
+      document.getElementById('token-input').value = '';
+      loadData();
+    } catch(e) {
+      document.getElementById('token-error').style.display = 'block';
+      document.getElementById('token-error').textContent = 'Token failed: ' + e.message;
+    }
+  }
+
+  function clearToken() {
+    localStorage.removeItem('fk_gh_token');
+    GITHUB_TOKEN = '';
+    checkToken();
+  }
+
+ />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Art Manager — Finders Keepers</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -151,6 +190,17 @@
 </header>
 
 <div class="container">
+  <!-- TOKEN SETUP -->
+  <div id="token-setup" style="display:none;background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1.5rem;">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.5rem;">Enter your GitHub Token</h2>
+    <p style="font-size:0.85rem;color:#7A6E64;margin-bottom:1.25rem;line-height:1.7;">Your token is saved only on this device — it never goes to GitHub's servers. You only need to do this once per device.</p>
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+      <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="flex:1;min-width:200px;padding:0.75rem 1rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:monospace;font-size:0.85rem;outline:none;" />
+      <button onclick="saveToken()" style="background:#C9943A;color:#fff;border:none;padding:0.75rem 1.5rem;font-family:'Jost',sans-serif;font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;">Save Token</button>
+    </div>
+    <div id="token-error" style="display:none;color:#c0392b;font-size:0.82rem;margin-top:0.75rem;"></div>
+  </div>
+
   <div class="tab-nav">
     <button class="tab-btn active" onclick="showTab('manage')">Manage Listings</button>
     <button class="tab-btn" onclick="showTab('add')">Add New Piece</button>
@@ -428,7 +478,7 @@ function positionTooltip(tooltip, hs, container) {
   tooltip.classList.add('visible');
 }
 
-const GITHUB_TOKEN = ['ghp_2g','FqoSUxHi7Ca168nY','UGiHT746BnN44ZZp2T'].join('');
+let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
   const REPO_OWNER = 'lilbirdlifecoaching';
   const REPO_NAME = 'finderskeepersmarket';
   const API = 'https://api.github.com';
@@ -559,10 +609,10 @@ const GITHUB_TOKEN = ['ghp_2g','FqoSUxHi7Ca168nY','UGiHT746BnN44ZZp2T'].join('')
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('panel-' + tab).classList.add('active');
     const tabBtns = document.querySelectorAll('.tab-btn');
-    if (tab === 'manage') { tabBtns[0].classList.add('active'); loadData(); }
+    if (tab === 'manage') { tabBtns[0].classList.add('active'); if(GITHUB_TOKEN) loadData(); else checkToken(); }
     else if (tab === 'add') { tabBtns[1].classList.add('active'); renderAddForm(); }
     else if (tab === 'scene') { tabBtns[2].classList.add('active'); initSceneBuilder(); }
-    else if (tab === 'scenes') { tabBtns[3].classList.add('active'); loadScenesList(); }
+    else if (tab === 'scenes') { tabBtns[3].classList.add('active'); if(GITHUB_TOKEN) loadScenesList(); else checkToken(); }
     else if (tab === 'edit-scene') { /* handled by openEditScene */ }
   }
 
@@ -1373,7 +1423,8 @@ const GITHUB_TOKEN = ['ghp_2g','FqoSUxHi7Ca168nY','UGiHT746BnN44ZZp2T'].join('')
   }
 
   // Init
-  loadData();
+  checkToken();
+  if (GITHUB_TOKEN) loadData();
   renderAddForm();
   renderSceneItemsList();
 </script>
