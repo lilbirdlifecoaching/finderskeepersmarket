@@ -146,6 +146,19 @@
   </style>
 </head>
 <body>
+<!-- ── PASSWORD LOCK SCREEN ── -->
+<div id="lock-screen" style="position:fixed;inset:0;background:#FAF7F2;z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="max-width:340px;width:100%;background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2.5rem;text-align:center;">
+    <div style="font-size:1.75rem;margin-bottom:1rem;">🔒</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.5rem;color:#1C1814;">Finders Keepers</h2>
+    <p style="font-size:0.85rem;color:#7A6E64;margin-bottom:1.5rem;">Enter the password to access the art manager.</p>
+    <input type="password" id="lock-password-input" placeholder="Password" autocomplete="off" style="width:100%;padding:0.85rem 1rem;border:1px solid rgba(100,80,60,0.25);background:#FAF7F2;font-family:'Jost',sans-serif;font-size:0.95rem;outline:none;margin-bottom:0.75rem;text-align:center;letter-spacing:0.05em;" />
+    <button onclick="checkLockPassword()" style="width:100%;background:#C9943A;color:#fff;border:none;padding:0.85rem;font-family:'Jost',sans-serif;font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">Unlock</button>
+    <div id="lock-error" style="display:none;color:#c0392b;font-size:0.8rem;margin-top:0.75rem;">Incorrect password — try again.</div>
+  </div>
+</div>
+
+
 <header>
   <h1>Finders Keepers — Art Manager</h1>
   <span>Private Tool</span>
@@ -461,7 +474,46 @@ function positionTooltip(tooltip, hs, container) {
   tooltip.classList.add('visible');
 }
 
-let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
+// ── PASSWORD LOCK ──
+  const PASSWORD_HASH = 'c3845a9cbd181115fa96c353dd6241afd578378f7b8292a69148ce537b649bee';
+
+  async function sha256(text) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function checkLockPassword() {
+    const input = document.getElementById('lock-password-input').value;
+    const hash = await sha256(input);
+    if (hash === PASSWORD_HASH) {
+      sessionStorage.setItem('fk_unlocked', 'yes');
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('lock-error').style.display = 'none';
+    } else {
+      document.getElementById('lock-error').style.display = 'block';
+      document.getElementById('lock-password-input').value = '';
+      document.getElementById('lock-password-input').focus();
+    }
+  }
+
+  function checkUnlocked() {
+    if (sessionStorage.getItem('fk_unlocked') === 'yes') {
+      document.getElementById('lock-screen').style.display = 'none';
+    }
+  }
+  checkUnlocked();
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('lock-password-input');
+    if (input) {
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') checkLockPassword(); });
+      if (sessionStorage.getItem('fk_unlocked') !== 'yes') input.focus();
+    }
+  });
+
+  let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
 
   function checkToken() {
     if (!GITHUB_TOKEN) {
