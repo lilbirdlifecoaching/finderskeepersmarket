@@ -488,7 +488,7 @@ function positionTooltip(tooltip, hs, container) {
     const input = document.getElementById('lock-password-input').value;
     const hash = await sha256(input);
     if (hash === PASSWORD_HASH) {
-      sessionStorage.setItem('fk_unlocked', 'yes');
+      localStorage.setItem('fk_unlocked', 'yes');
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('lock-error').style.display = 'none';
     } else {
@@ -499,7 +499,7 @@ function positionTooltip(tooltip, hs, container) {
   }
 
   function checkUnlocked() {
-    if (sessionStorage.getItem('fk_unlocked') === 'yes') {
+    if (localStorage.getItem('fk_unlocked') === 'yes') {
       document.getElementById('lock-screen').style.display = 'none';
     }
   }
@@ -509,7 +509,7 @@ function positionTooltip(tooltip, hs, container) {
     const input = document.getElementById('lock-password-input');
     if (input) {
       input.addEventListener('keydown', e => { if (e.key === 'Enter') checkLockPassword(); });
-      if (sessionStorage.getItem('fk_unlocked') !== 'yes') input.focus();
+      if (localStorage.getItem('fk_unlocked') !== 'yes') input.focus();
     }
   });
 
