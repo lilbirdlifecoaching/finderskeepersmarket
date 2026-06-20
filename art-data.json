@@ -155,13 +155,13 @@
     {
       "id": "kg009",
       "title": "Phoenix Rising",
-      "price": null,
+      "price": 950,
       "shipping": "Contact for shipping quote",
       "description": "A sculptural phoenix in full wingspan, mounted within a gilded ornate frame — the bird breaking free of the canvas itself.",
       "medium": "Sculpted paper mache, acrylic paint, antique gilded frame",
       "dimensions": "Approx. 18\" x 20\" framed",
       "image": "images/kg/phoenix.jpg",
-      "available": true,
+      "available": false,
       "featured": false,
       "date": "2024-01-09",
       "tags": [
