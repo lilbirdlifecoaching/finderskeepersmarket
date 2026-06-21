@@ -28,7 +28,7 @@ nav { position: sticky; top: 0; z-index: 300; display: flex; align-items: center
 .nav-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ink); }
 
 /* SECTIONS BAR */
-.sections-bar { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--border); }
+.sections-bar { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--border); }
 .section-link { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; text-decoration: none; gap: 0.6rem; border-right: 1px solid var(--border); background: var(--cream); transition: background 0.25s; position: relative; overflow: hidden; }
 .section-link:last-child { border-right: none; }
 .section-link::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--blush-line); transform: scaleX(0); transition: transform 0.3s; }
@@ -139,4 +139,28 @@ footer a:hover { color: #fff; }
 @media (max-width: 540px) {
   .sections-bar { grid-template-columns: 1fr; }
   nav .nav-links { display: none; }
+}
+
+/* ── KEEPERS CLOSET COLOR OVERRIDES ── */
+.kc-header { border-bottom-color: var(--clay); }
+.kc-header .page-eyebrow { color: var(--clay); }
+.kc-header .page-title em { color: var(--clay); }
+.kc-featured-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; padding: 2.5rem 3rem; }
+.kc-item-card { border-top: 3px solid var(--clay); background: var(--linen); display: flex; flex-direction: column; }
+.kc-item-img { aspect-ratio: 4/5; overflow: hidden; background: var(--warm); }
+.kc-item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.kc-item-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-style: italic; color: var(--muted); font-size: 0.85rem; text-align: center; padding: 1rem; }
+.kc-item-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
+.kc-item-eyebrow { color: var(--clay); font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; }
+.kc-item-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+.kc-item-story { color: var(--muted); line-height: 1.85; font-size: 0.92rem; }
+.kc-item-price { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--clay); margin-top: auto; }
+.kc-btn { background: var(--clay) !important; }
+.kc-btn:hover { background: var(--blush) !important; }
+.kc-depop-cta { text-align: center; padding: 4rem 3rem; background: var(--warm); }
+.kc-depop-label { font-family: Georgia, serif; font-size: 1.1rem; color: var(--muted); margin-bottom: 1.5rem; }
+.kc-btn-large { display: inline-block; width: auto; padding: 1.1rem 2.5rem; font-size: 0.85rem; }
+@media (max-width: 768px) {
+  .kc-featured-grid { padding: 1.5rem; grid-template-columns: 1fr; }
+  .kc-depop-cta { padding: 2.5rem 1.5rem; }
 }

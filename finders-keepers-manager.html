@@ -155,6 +155,7 @@
     <button class="tab-btn active" onclick="showTab('manage')">Manage Listings</button>
     <button class="tab-btn" onclick="showTab('add')">Add New Piece</button>
     <button class="tab-btn" onclick="showTab('scene')">🛋️ Scene Builder</button>
+    <button class="tab-btn" onclick="showTab('scenes')">📋 Manage Scenes</button>
   </div>
 
   <!-- ── MANAGE PANEL ── -->
@@ -279,6 +280,96 @@
     </div>
   </div>
 
+  <!-- ── MANAGE SCENES PANEL ── -->
+  <div class="panel" id="panel-scenes">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;">Your Scenes</h2>
+      <button onclick="showTab('scene')" style="background:var(--clay);color:#fff;border:none;padding:0.6rem 1.25rem;font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">+ Build New Scene</button>
+    </div>
+    <div id="scenes-list"><div style="text-align:center;padding:3rem;font-family:'Playfair Display',serif;font-style:italic;color:var(--muted);">Loading scenes…</div></div>
+  </div>
+
+  <!-- ── EDIT SCENE PANEL ── -->
+  <div class="panel" id="panel-edit-scene">
+    <button class="btn-back" onclick="showTab('scenes')">← Back to Scenes</button>
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15);">Scene Details</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Title</label>
+          <input type="text" id="edit-scene-title" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Month</label>
+          <input type="text" id="edit-scene-month" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem;">
+        <label style="font-size:0.76rem;font-weight:500;">Description</label>
+        <textarea id="edit-scene-desc" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;min-height:70px;resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <input type="checkbox" id="edit-scene-current" style="width:18px;height:18px;accent-color:#C9943A;" />
+        <label for="edit-scene-current" style="font-size:0.88rem;cursor:pointer;">Set as current featured scene</label>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15);">Scene Photo</div>
+      <div id="edit-scene-current-img" style="margin-bottom:0.75rem;"></div>
+      <div style="font-size:0.78rem;color:#7A6E64;margin-bottom:0.5rem;">Upload a new photo to replace the current one (optional):</div>
+      <div style="border:2px dashed rgba(100,80,60,0.2);padding:1.5rem;text-align:center;cursor:pointer;position:relative;background:#FAF7F2;">
+        <input type="file" id="edit-scene-image-file" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleEditSceneImage(this)" />
+        <div style="font-size:0.9rem;color:#7A6E64;">📷 Tap to choose a replacement photo</div>
+      </div>
+      <div id="edit-scene-new-img-preview" style="display:none;margin-top:0.75rem;font-size:0.8rem;color:#3D7A5A;"></div>
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(100,80,60,0.2);padding:2rem;margin-bottom:1rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15);">Hotspot Items</div>
+      <div id="edit-scene-items-list" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;"></div>
+      <div style="border:1px solid rgba(100,80,60,0.15);padding:1.25rem;background:#FAF7F2;">
+        <div style="font-size:0.72rem;color:#7A6E64;margin-bottom:0.75rem;font-weight:500;">Add a New Item</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="text" id="edit-item-name" placeholder="Item name" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+          <input type="number" id="edit-item-price" placeholder="Price (blank = on request)" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+        </div>
+        <textarea id="edit-item-desc" placeholder="Description" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;min-height:60px;resize:vertical;margin-bottom:0.75rem;display:block;"></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="number" id="edit-item-x" placeholder="X position (0-100%)" min="0" max="100" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+          <input type="number" id="edit-item-y" placeholder="Y position (0-100%)" min="0" max="100" style="padding:0.6rem 0.8rem;border:1px solid rgba(100,80,60,0.2);background:#fff;font-family:Jost,sans-serif;font-size:0.88rem;width:100%;outline:none;" />
+        </div>
+        <div style="font-size:0.72rem;color:#7A6E64;margin-bottom:0.75rem;">💡 X and Y are percentages across the photo (e.g. X:50 Y:50 = centre of image)</div>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+          <input type="checkbox" id="edit-item-available" checked style="width:16px;height:16px;accent-color:#C9943A;" />
+          <label for="edit-item-available" style="font-size:0.84rem;">Available for purchase</label>
+        </div>
+        <button onclick="addEditSceneItem()" style="background:#C9943A;color:#fff;border:none;padding:0.65rem 1.5rem;font-family:Jost,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Add Item</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+      <button class="btn-submit" id="edit-scene-save-btn" onclick="saveEditedScene()" style="flex:1;">Save Changes ✦</button>
+      <button onclick="confirmDeleteScene()" style="background:none;border:1px solid #c0392b;color:#c0392b;padding:1rem 1.5rem;font-family:Jost,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Delete Scene</button>
+    </div>
+    <div class="progress-bar" id="edit-scene-progress-bar"><div class="progress-fill" id="edit-scene-progress-fill"></div></div>
+    <div class="status-msg" id="edit-scene-status-msg"></div>
+    <div class="error-box" id="edit-scene-error-box"><p id="edit-scene-error-msg"></p></div>
+    <div class="success-box" id="edit-scene-success-box">
+      <h3>✓ Scene updated!</h3>
+      <p>Changes are live on the website within about 60 seconds.</p>
+      <button class="btn-another" onclick="showTab('scenes')">Back to Scenes</button>
+    </div>
+    <div class="delete-confirm" id="delete-scene-confirm" style="display:none;">
+      <h3>Delete this scene?</h3>
+      <p id="delete-scene-msg">This will permanently remove the scene from the website.</p>
+      <div class="delete-confirm-btns">
+        <button class="btn-cancel" onclick="document.getElementById('delete-scene-confirm').style.display='none'">Cancel</button>
+        <button class="btn-delete-go" onclick="executeDeleteScene()">Yes, Delete It</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── EDIT PANEL ── -->
   <div class="panel" id="panel-edit">
     <button class="btn-back" onclick="showTab('manage')">← Back to Listings</button>
@@ -309,7 +400,35 @@
 </div>
 
 <script>
-  const GITHUB_TOKEN = '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';
+  
+function positionTooltip(tooltip, hs, container) {
+  const isMobile = window.innerWidth < 768;
+  if (isMobile) {
+    tooltip.style.left = '0';
+    tooltip.style.right = '0';
+    tooltip.style.top = 'auto';
+    tooltip.style.bottom = '0';
+    tooltip.style.width = '100%';
+    tooltip.style.position = 'absolute';
+  } else {
+    tooltip.style.width = '230px';
+    tooltip.style.bottom = '';
+    tooltip.style.right = '';
+    const sr = container.getBoundingClientRect();
+    const hr = hs.getBoundingClientRect();
+    let left = hr.left - sr.left + 44;
+    let top = hr.top - sr.top - 60;
+    if (left + 240 > sr.width) left = hr.left - sr.left - 254;
+    if (left < 8) left = 8;
+    if (top < 8) top = hr.top - sr.top + 44;
+    if (top + 220 > sr.height) top = sr.height - 230;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+  }
+  tooltip.classList.add('visible');
+}
+
+const GITHUB_TOKEN = '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';
   const REPO_OWNER = 'lilbirdlifecoaching';
   const REPO_NAME = 'finderskeepersmarket';
   const API = 'https://api.github.com';
@@ -440,6 +559,8 @@
     if (tab === 'manage') { tabBtns[0].classList.add('active'); loadData(); }
     else if (tab === 'add') { tabBtns[1].classList.add('active'); renderAddForm(); }
     else if (tab === 'scene') { tabBtns[2].classList.add('active'); initSceneBuilder(); }
+    else if (tab === 'scenes') { tabBtns[3].classList.add('active'); loadScenesList(); }
+    else if (tab === 'edit-scene') { /* handled by openEditScene */ }
   }
 
   // ── FORM HTML ──
@@ -990,6 +1111,256 @@
     document.getElementById('scene-submit-btn').disabled = false;
     document.getElementById('scene-submit-btn').textContent = 'Publish Scene to Website ✦';
     renderSceneItemsList();
+  }
+
+  // ── MANAGE SCENES ──
+  let editingScene = null;
+  let editSceneItems = [];
+  let editSceneImageFile = null;
+
+  async function loadScenesList() {
+    const list = document.getElementById('scenes-list');
+    list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:var(--muted);">Loading…</div>';
+    try {
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      const scenes = allData.scenes || [];
+      if (!scenes.length) {
+        list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:Playfair Display,serif;font-style:italic;color:var(--muted);">No scenes yet — build your first one!</div>';
+        return;
+      }
+      list.innerHTML = '';
+      scenes.forEach(scene => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#fff;border:1px solid rgba(100,80,60,0.2);display:flex;align-items:stretch;overflow:hidden;margin-bottom:0.75rem;transition:box-shadow 0.2s;';
+        const imgSrc = scene.image ? `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${scene.image}` : null;
+        const itemCount = (scene.items || []).length;
+        const isCurrent = scene.current;
+        card.innerHTML = `
+          <div style="width:100px;flex-shrink:0;background:#EBE4D5;overflow:hidden;">
+            ${imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />` : '<div style="width:100%;height:100%;min-height:80px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🛋️</div>'}
+          </div>
+          <div style="flex:1;padding:1rem;display:flex;flex-direction:column;justify-content:center;gap:0.25rem;min-width:0;">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <div style="font-family:'Playfair Display',serif;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${scene.title}</div>
+              ${isCurrent ? '<span style="font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;background:#A8C4B4;color:#fff;padding:0.15rem 0.5rem;">Current</span>' : ''}
+            </div>
+            <div style="font-size:0.76rem;color:#7A6E64;">${scene.month || ''} · ${itemCount} item${itemCount !== 1 ? 's' : ''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;border-left:1px solid rgba(100,80,60,0.15);">
+            <button onclick="openEditScene('${scene.slug}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#7A6E64;border-bottom:1px solid rgba(100,80,60,0.15);transition:all 0.2s;" onmouseover="this.style.background='#EBE4D5'" onmouseout="this.style.background='none'">Edit</button>
+            <button onclick="confirmDeleteSceneBySlug('${scene.slug}', '${scene.title.replace(/'/g, "\'")}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#c0392b;transition:all 0.2s;" onmouseover="this.style.background='#fdf0f0'" onmouseout="this.style.background='none'">Delete</button>
+          </div>`;
+        list.appendChild(card);
+      });
+    } catch(e) {
+      list.innerHTML = `<div style="color:#c0392b;padding:1rem;">Could not load scenes: ${e.message}</div>`;
+    }
+  }
+
+  function openEditScene(slug) {
+    if (!allData || !allData.scenes) return;
+    editingScene = allData.scenes.find(s => s.slug === slug);
+    if (!editingScene) return;
+    editSceneItems = JSON.parse(JSON.stringify(editingScene.items || []));
+    editSceneImageFile = null;
+
+    document.getElementById('edit-scene-title').value = editingScene.title || '';
+    document.getElementById('edit-scene-month').value = editingScene.month || '';
+    document.getElementById('edit-scene-desc').value = editingScene.description || '';
+    document.getElementById('edit-scene-current').checked = !!editingScene.current;
+
+    // Show current image
+    const imgWrap = document.getElementById('edit-scene-current-img');
+    if (editingScene.image) {
+      const src = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${editingScene.image}`;
+      imgWrap.innerHTML = `<div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;background:#EBE4D5;border:1px solid rgba(100,80,60,0.15);margin-bottom:0.75rem;"><img src="${src}" style="width:80px;height:60px;object-fit:cover;" /><div style="font-size:0.8rem;color:#7A6E64;"><strong style="display:block;color:#1C1814;">Current photo</strong>Upload a new one below to replace it</div></div>`;
+    } else {
+      imgWrap.innerHTML = '<div style="font-size:0.8rem;color:#7A6E64;margin-bottom:0.5rem;">No photo yet — upload one below.</div>';
+    }
+
+    document.getElementById('edit-scene-new-img-preview').style.display = 'none';
+    document.getElementById('edit-scene-image-file').value = '';
+    document.getElementById('edit-scene-save-btn').style.display = 'block';
+    document.getElementById('edit-scene-save-btn').disabled = false;
+    document.getElementById('edit-scene-save-btn').textContent = 'Save Changes ✦';
+    document.getElementById('edit-scene-progress-bar').style.display = 'none';
+    document.getElementById('edit-scene-status-msg').textContent = '';
+    document.getElementById('edit-scene-error-box').style.display = 'none';
+    document.getElementById('edit-scene-success-box').style.display = 'none';
+    document.getElementById('delete-scene-confirm').style.display = 'none';
+
+    renderEditSceneItems();
+
+    // Show panel
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-edit-scene').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleEditSceneImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    editSceneImageFile = file;
+    document.getElementById('edit-scene-new-img-preview').style.display = 'block';
+    document.getElementById('edit-scene-new-img-preview').textContent = `✓ New photo selected: ${file.name}`;
+  }
+
+  function renderEditSceneItems() {
+    const list = document.getElementById('edit-scene-items-list');
+    if (!editSceneItems.length) {
+      list.innerHTML = '<div style="font-size:0.8rem;color:#7A6E64;font-style:italic;padding:0.5rem 0;">No items yet — add one below.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    editSceneItems.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:#FAF7F2;border:1px solid rgba(100,80,60,0.15);';
+      row.innerHTML = `
+        <span style="font-family:Playfair Display,serif;font-size:1.1rem;color:#C9943A;opacity:0.5;min-width:1.5rem;">${i+1}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.88rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.name}</div>
+          <div style="font-size:0.72rem;color:#7A6E64;">${item.price ? '$'+item.price : 'Price on request'} · ${item.available ? 'Available' : 'Sold'} · pos: ${item.x}%, ${item.y}%</div>
+        </div>
+        <div style="display:flex;gap:0.4rem;">
+          <button onclick="toggleEditItemAvailable(${i})" style="background:none;border:1px solid rgba(100,80,60,0.2);color:#7A6E64;padding:0.25rem 0.6rem;cursor:pointer;font-size:0.68rem;">${item.available ? 'Mark Sold' : 'Mark Available'}</button>
+          <button onclick="removeEditSceneItem(${i})" style="background:none;border:1px solid rgba(100,80,60,0.2);color:#c0392b;padding:0.25rem 0.6rem;cursor:pointer;font-size:0.7rem;">✕</button>
+        </div>`;
+      list.appendChild(row);
+    });
+  }
+
+  function addEditSceneItem() {
+    const name = document.getElementById('edit-item-name').value.trim();
+    if (!name) { alert('Please enter an item name.'); return; }
+    const x = parseFloat(document.getElementById('edit-item-x').value) || 50;
+    const y = parseFloat(document.getElementById('edit-item-y').value) || 50;
+    const price = document.getElementById('edit-item-price').value.trim();
+    editSceneItems.push({
+      id: 's' + Date.now().toString().slice(-5),
+      name,
+      desc: document.getElementById('edit-item-desc').value.trim(),
+      price: price ? parseInt(price) : null,
+      available: document.getElementById('edit-item-available').checked,
+      x, y
+    });
+    document.getElementById('edit-item-name').value = '';
+    document.getElementById('edit-item-desc').value = '';
+    document.getElementById('edit-item-price').value = '';
+    document.getElementById('edit-item-x').value = '';
+    document.getElementById('edit-item-y').value = '';
+    document.getElementById('edit-item-available').checked = true;
+    renderEditSceneItems();
+  }
+
+  function removeEditSceneItem(index) {
+    editSceneItems.splice(index, 1);
+    renderEditSceneItems();
+  }
+
+  function toggleEditItemAvailable(index) {
+    editSceneItems[index].available = !editSceneItems[index].available;
+    renderEditSceneItems();
+  }
+
+  async function saveEditedScene() {
+    if (!editingScene) return;
+    document.getElementById('edit-scene-save-btn').disabled = true;
+    document.getElementById('edit-scene-save-btn').textContent = 'Saving…';
+    document.getElementById('edit-scene-error-box').style.display = 'none';
+
+    try {
+      let imagePath = editingScene.image;
+
+      // Upload new photo if provided
+      if (editSceneImageFile) {
+        setProgress('edit-scene', 20, 'Uploading new photo…');
+        const ext = editSceneImageFile.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+        imagePath = `images/scenes/${editingScene.slug}.${ext}`;
+        const b64 = await fileToBase64(editSceneImageFile);
+        let imgSha = null;
+        try { const ex = await githubGet(imagePath); imgSha = ex.sha; } catch(e) {}
+        await githubPutBinary(imagePath, b64, imgSha, `Update scene photo: ${editingScene.title}`);
+      }
+
+      setProgress('edit-scene', 50, 'Reading data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+
+      setProgress('edit-scene', 70, 'Saving changes…');
+      const isCurrent = document.getElementById('edit-scene-current').checked;
+      if (isCurrent) allData.scenes.forEach(s => s.current = false);
+
+      const idx = allData.scenes.findIndex(s => s.slug === editingScene.slug);
+      if (idx >= 0) {
+        allData.scenes[idx] = {
+          ...allData.scenes[idx],
+          title: document.getElementById('edit-scene-title').value.trim(),
+          month: document.getElementById('edit-scene-month').value.trim(),
+          description: document.getElementById('edit-scene-desc').value.trim(),
+          current: isCurrent,
+          image: imagePath,
+          thumb: imagePath,
+          items: editSceneItems
+        };
+      }
+
+      setProgress('edit-scene', 88, 'Writing to website…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Update scene: ${editingScene.title}`);
+
+      setProgress('edit-scene', 100, 'Done!');
+      setTimeout(() => {
+        document.getElementById('edit-scene-progress-bar').style.display = 'none';
+        document.getElementById('edit-scene-status-msg').textContent = '';
+        document.getElementById('edit-scene-save-btn').style.display = 'none';
+        document.getElementById('edit-scene-success-box').style.display = 'block';
+      }, 500);
+    } catch(err) {
+      document.getElementById('edit-scene-error-box').style.display = 'block';
+      document.getElementById('edit-scene-error-msg').textContent = 'Something went wrong: ' + err.message;
+      document.getElementById('edit-scene-save-btn').disabled = false;
+      document.getElementById('edit-scene-save-btn').textContent = 'Save Changes ✦';
+      document.getElementById('edit-scene-status-msg').textContent = '';
+    }
+  }
+
+  function confirmDeleteScene() {
+    if (!editingScene) return;
+    document.getElementById('delete-scene-msg').textContent = `This will permanently remove "${editingScene.title}" from the website.`;
+    document.getElementById('delete-scene-confirm').style.display = 'block';
+    document.getElementById('delete-scene-confirm').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function confirmDeleteSceneBySlug(slug, title) {
+    if (!allData || !allData.scenes) return;
+    editingScene = allData.scenes.find(s => s.slug === slug);
+    openEditScene(slug);
+    setTimeout(() => confirmDeleteScene(), 200);
+  }
+
+  async function executeDeleteScene() {
+    if (!editingScene) return;
+    document.getElementById('delete-scene-confirm').innerHTML = '<p style="color:var(--muted);font-size:0.88rem;padding:0.5rem 0;">Deleting…</p>';
+    try {
+      setProgress('edit-scene', 40, 'Reading data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      allData.scenes = (allData.scenes || []).filter(s => s.slug !== editingScene.slug);
+      setProgress('edit-scene', 80, 'Removing scene…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Delete scene: ${editingScene.title}`);
+      setProgress('edit-scene', 100, 'Deleted!');
+      setTimeout(() => showTab('scenes'), 800);
+    } catch(err) {
+      document.getElementById('edit-scene-error-box').style.display = 'block';
+      document.getElementById('edit-scene-error-msg').textContent = 'Delete failed: ' + err.message;
+    }
   }
 
   // Init
