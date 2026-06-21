@@ -64,6 +64,7 @@
     /* FORM STYLES */
     .form-card { background: #fff; border: 1px solid var(--border); padding: 2rem; }
     .page-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.75rem; }
+    .page-selector.kc-grid { grid-template-columns: repeat(4, 1fr); }
     .page-btn { padding: 1.1rem; border: 2px solid var(--border); background: #fff; cursor: pointer; text-align: left; transition: all 0.2s; font-family: 'Jost', sans-serif; }
     .page-btn:hover { border-color: var(--clay); }
     .page-btn.selected { border-color: var(--clay); background: #fff8f4; }
@@ -191,6 +192,8 @@
         <button class="filter-pill active" onclick="filterListings('all', this)">All</button>
         <button class="filter-pill" onclick="filterListings('wife', this)">Market</button>
         <button class="filter-pill" onclick="filterListings('daughter', this)">Kindness Grace</button>
+        <button class="filter-pill" onclick="filterListings('furniture', this)">Furniture</button>
+        <button class="filter-pill" onclick="filterListings('clothing', this)">Keepers Closet</button>
       </div>
     </div>
     <div class="listings-grid" id="listings-grid">
@@ -200,7 +203,7 @@
 
   <!-- ── ADD PANEL ── -->
   <div class="panel" id="panel-add">
-    <div class="page-selector">
+    <div class="page-selector kc-grid">
       <button class="page-btn selected" data-page="wife" onclick="selectPage('wife', this)">
         <div class="icon">🏪</div>
         <span class="name">Finders Keepers Market</span>
@@ -210,6 +213,16 @@
         <div class="icon">✦</div>
         <span class="name">Art by Kindness Grace</span>
         <span class="desc">Kindness Grace gallery page</span>
+      </button>
+      <button class="page-btn" data-page="furniture" onclick="selectPage('furniture', this)">
+        <div class="icon">🪑</div>
+        <span class="name">Furniture</span>
+        <span class="desc">Furniture gallery page</span>
+      </button>
+      <button class="page-btn" data-page="clothing" onclick="selectPage('clothing', this)">
+        <div class="icon">👜</div>
+        <span class="name">Keepers Closet</span>
+        <span class="desc">Vintage clothing — links to Depop</span>
       </button>
     </div>
     <div class="form-card">
@@ -221,8 +234,9 @@
       <div class="success-box" id="add-success-box">
         <h3>✓ It's live!</h3>
         <p>The piece has been added and will appear on the website within about 60 seconds.<br><br>
-          <a href="https://finderskeepersmarket.com" target="_blank">View main site</a> &nbsp;·&nbsp;
-          <a href="https://finderskeepersmarket.com/kindnessgrace/" target="_blank">View Kindness Grace gallery</a>
+          <a href="https://finderskeepers.market" target="_blank">View main site</a> &nbsp;·&nbsp;
+          <a href="https://finderskeepers.market/original-art/" target="_blank">View Kindness Grace gallery</a> &nbsp;·&nbsp;
+          <a href="https://finderskeepers.market/keepers-closet/" target="_blank">View Keepers Closet</a>
         </p>
         <button class="btn-another" onclick="resetAdd()">Add Another Piece</button>
       </div>
@@ -428,8 +442,9 @@
       <div class="success-box" id="edit-success-box">
         <h3>✓ Changes saved!</h3>
         <p>The listing has been updated and will reflect on the website within about 60 seconds.<br><br>
-          <a href="https://finderskeepersmarket.com" target="_blank">View main site</a> &nbsp;·&nbsp;
-          <a href="https://finderskeepersmarket.com/kindnessgrace/" target="_blank">View Kindness Grace gallery</a>
+          <a href="https://finderskeepers.market" target="_blank">View main site</a> &nbsp;·&nbsp;
+          <a href="https://finderskeepers.market/original-art/" target="_blank">View Kindness Grace gallery</a> &nbsp;·&nbsp;
+          <a href="https://finderskeepers.market/keepers-closet/" target="_blank">View Keepers Closet</a>
         </p>
         <button class="btn-another" onclick="showTab('manage')">Back to Listings</button>
       </div>
@@ -630,15 +645,17 @@ function positionTooltip(tooltip, hs, container) {
   }
 
   // ── RENDER LISTINGS ──
+  const SECTION_LABELS = { wife: 'Market', daughter: 'Kindness Grace', furniture: 'Furniture', clothing: 'Keepers Closet' };
+  const SECTION_BADGE_CLASS = { wife: 'badge-wife', daughter: 'badge-kg', furniture: 'badge-wife', clothing: 'badge-kg' };
+
   function renderListings() {
     const grid = document.getElementById('listings-grid');
     let items = [];
-    if (currentFilter === 'all' || currentFilter === 'wife') {
-      (allData.wife || []).forEach(a => items.push({ ...a, _section: 'wife' }));
-    }
-    if (currentFilter === 'all' || currentFilter === 'daughter') {
-      (allData.daughter || []).forEach(a => items.push({ ...a, _section: 'daughter' }));
-    }
+    ['wife', 'daughter', 'furniture', 'clothing'].forEach(section => {
+      if (currentFilter === 'all' || currentFilter === section) {
+        (allData[section] || []).forEach(a => items.push({ ...a, _section: section }));
+      }
+    });
 
     if (!items.length) {
       grid.innerHTML = `<div class="empty-state"><p>No pieces here yet — add one!</p></div>`;
@@ -659,7 +676,7 @@ function positionTooltip(tooltip, hs, container) {
           <div class="listing-meta">${art.medium || 'No medium listed'} ${art.price ? '· $' + art.price.toLocaleString() : '· Price on request'}</div>
           <div class="listing-badges">
             <span class="badge ${art.available ? 'badge-available' : 'badge-sold'}">${art.available ? 'Available' : 'Sold'}</span>
-            <span class="badge ${art._section === 'wife' ? 'badge-wife' : 'badge-kg'}">${art._section === 'wife' ? 'Market' : 'Kindness Grace'}</span>
+            <span class="badge ${SECTION_BADGE_CLASS[art._section] || 'badge-wife'}">${SECTION_LABELS[art._section] || art._section}</span>
           </div>
         </div>
         <div class="listing-actions">
@@ -691,7 +708,8 @@ function positionTooltip(tooltip, hs, container) {
   }
 
   // ── FORM HTML ──
-  function formFieldsHTML(art = {}, pfx = 'f') {
+  function formFieldsHTML(art = {}, pfx = 'f', section = null) {
+    const isClothing = section === 'clothing';
     return `
       <div class="form-section">
         <div class="form-section-title">About the Piece</div>
@@ -719,6 +737,15 @@ function positionTooltip(tooltip, hs, container) {
           <div class="form-group">
             <label for="${pfx}-tags">Tags <span class="opt">(comma separated)</span></label>
             <input type="text" id="${pfx}-tags" value="${escAttr((art.tags || []).join(', '))}" placeholder='e.g. ocean, turtle, large' autocomplete="off" />
+          </div>
+        </div>
+      </div>
+      <div class="form-section" id="${pfx}-depop-section" style="${isClothing ? '' : 'display:none;'}">
+        <div class="form-section-title">Depop Link</div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label for="${pfx}-depop">Depop Listing URL <span class="opt">(where buyers go to purchase)</span></label>
+            <input type="text" id="${pfx}-depop" value="${escAttr(art.depopUrl || 'https://www.depop.com/meowmeowmeow617/')}" placeholder="https://www.depop.com/your-shop/" autocomplete="off" />
           </div>
         </div>
       </div>
@@ -798,7 +825,7 @@ function positionTooltip(tooltip, hs, container) {
   // ── ADD FORM ──
   function renderAddForm() {
     addImageFile = null;
-    document.getElementById('add-form-body').innerHTML = formFieldsHTML({}, 'add') + imageUploadHTML('add');
+    document.getElementById('add-form-body').innerHTML = formFieldsHTML({}, 'add', selectedPage) + imageUploadHTML('add');
     document.getElementById('add-submit-btn').style.display = 'block';
     document.getElementById('add-submit-btn').disabled = false;
     document.getElementById('add-submit-btn').textContent = 'Upload to Website ✦';
@@ -812,9 +839,12 @@ function positionTooltip(tooltip, hs, container) {
     selectedPage = page;
     document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    const depopSection = document.getElementById('add-depop-section');
+    if (depopSection) depopSection.style.display = (page === 'clothing') ? '' : 'none';
   }
 
   function getFormValues(pfx) { pfx = pfx || 'f';
+    const depopField = document.getElementById(pfx+'-depop');
     return {
       title: document.getElementById(pfx+'-title').value.trim(),
       medium: document.getElementById(pfx+'-medium').value.trim() || null,
@@ -824,7 +854,8 @@ function positionTooltip(tooltip, hs, container) {
       shipping: document.getElementById(pfx+'-shipping').value.trim() || 'Contact for shipping info',
       available: document.getElementById(pfx+'-available').checked,
       featured: document.getElementById(pfx+'-featured') ? document.getElementById(pfx+'-featured').checked : false,
-      tags: document.getElementById(pfx+'-tags').value.trim() ? document.getElementById(pfx+'-tags').value.trim().split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : []
+      tags: document.getElementById(pfx+'-tags').value.trim() ? document.getElementById(pfx+'-tags').value.trim().split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : [],
+      depopUrl: depopField ? (depopField.value.trim() || null) : undefined
     };
   }
 
@@ -846,15 +877,20 @@ function positionTooltip(tooltip, hs, container) {
     const vals = getFormValues('add');
     if (!vals.title) { alert('Please enter a title.'); return; }
     if (!addImageFile) { alert('Please choose a photo.'); return; }
+    if (vals.depopUrl === undefined) delete vals.depopUrl;
+    if (selectedPage !== 'clothing') delete vals.depopUrl;
 
     const ext = addImageFile.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
     const slug = slugify(vals.title);
-    const folderMap = { wife: 'images/wife', daughter: 'images/kg', furniture: 'images/furniture', clothing: 'images/clothing' };
+    const folderMap = { wife: 'images/wife', daughter: 'images/kg', furniture: 'images/furniture', clothing: 'images/kc' };
     const folder = folderMap[selectedPage] || 'images/misc';
     const imagePath = `${folder}/${slug}.${ext}`;
 
+    const idPrefixMap = { wife: 'w', daughter: 'd', furniture: 'fu', clothing: 'kc' };
+    const idPrefix = idPrefixMap[selectedPage] || 'x';
+
     const newEntry = {
-      id: (selectedPage === 'wife' ? 'w' : 'd') + Date.now().toString().slice(-6),
+      id: idPrefix + Date.now().toString().slice(-6),
       ...vals, image: imagePath,
       date: new Date().toISOString().split('T')[0]
     };
@@ -916,7 +952,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('panel-edit').classList.add('active');
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-    document.getElementById('edit-form-body').innerHTML = formFieldsHTML(art, 'edit') + imageUploadHTML('edit', art.image || null);
+    document.getElementById('edit-form-body').innerHTML = formFieldsHTML(art, 'edit', section) + imageUploadHTML('edit', art.image || null);
     document.getElementById('edit-submit-btn').style.display = 'block';
     document.getElementById('edit-submit-btn').disabled = false;
     document.getElementById('edit-submit-btn').textContent = 'Save Changes ✦';
@@ -945,7 +981,7 @@ function positionTooltip(tooltip, hs, container) {
       if (editImageFile) {
         setProgress('edit', 20, 'Uploading new photo…');
         const ext = editImageFile.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
-        const folderMap2 = { wife: 'images/wife', daughter: 'images/kg', furniture: 'images/furniture', clothing: 'images/clothing' }; const folder = folderMap2[editingSection] || 'images/misc';
+        const folderMap2 = { wife: 'images/wife', daughter: 'images/kg', furniture: 'images/furniture', clothing: 'images/kc' }; const folder = folderMap2[editingSection] || 'images/misc';
         imagePath = `${folder}/${slugify(vals.title)}.${ext}`;
         const b64 = await fileToBase64(editImageFile);
         let imgSha = null;

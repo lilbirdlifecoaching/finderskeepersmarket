@@ -193,7 +193,21 @@
     }
   ],
   "furniture": [],
-  "clothing": [],
+  "clothing": [
+    {
+      "id": "kc001",
+      "title": "The Terracotta Bralette",
+      "price": 42,
+      "depopUrl": "https://www.depop.com/meowmeowmeow617/",
+      "description": "Summer festival. Your favorite vendor. The one with the handmade things you could never quite find anywhere else. This terracotta crochet bralette is the piece you would have bought that day and kept forever. Tie back. Fringe detail. Handmade with the kind of care that shows.",
+      "medium": "Handmade · Boho",
+      "image": "images/kc/terracotta-bralette.jpg",
+      "available": true,
+      "featured": true,
+      "date": "2025-07-01",
+      "tags": ["handmade", "boho", "bralette"]
+    }
+  ],
   "scenes": [
     {
       "id": "scene-the-studio-corner-june-2026",
