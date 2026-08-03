@@ -200,6 +200,114 @@
   .card-link:hover{ text-decoration:underline; }
 
   .cost-chips{ display:flex; gap:0.4rem; flex-wrap:wrap; }
+
+  /* ---------- reactions ---------- */
+  .reactions-row{
+    display:flex;
+    gap:0.35rem;
+    flex-wrap:wrap;
+    margin:0.7rem 0 0;
+  }
+  .reaction-btn{
+    font-family:'Inter';
+    font-size:0.82rem;
+    padding:0.22rem 0.55rem;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:0.3rem;
+    line-height:1;
+  }
+  .reaction-btn .rcount{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    color:rgba(30,42,36,0.55);
+  }
+  .reaction-btn.active{
+    background:#FBEBD0;
+    border-color:var(--ochre);
+  }
+  .reaction-btn.active .rcount{ color:var(--ochre); font-weight:700; }
+
+  /* ---------- comments / questions / concerns ---------- */
+  .comments-panel{
+    margin-top:0.8rem;
+    padding-top:0.7rem;
+    border-top:1px dashed var(--line);
+  }
+  .comment-item{
+    margin-bottom:0.6rem;
+    font-size:0.85rem;
+    line-height:1.4;
+  }
+  .comment-item:last-child{ margin-bottom:0; }
+  .comment-tag{
+    font-family:'Space Mono',monospace;
+    font-size:0.58rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:0.1rem 0.4rem;
+    border-radius:3px;
+    margin-right:0.4rem;
+    display:inline-block;
+  }
+  .comment-tag.note{ background:var(--paper2); color:rgba(30,42,36,0.65); }
+  .comment-tag.question{ background:#F2D98A; color:#5C4A16; }
+  .comment-tag.concern{ background:#F0B4A3; color:#7A2E1D; }
+  .comment-meta{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    color:rgba(30,42,36,0.4);
+    margin-top:0.15rem;
+  }
+  .comment-compose{ margin-top:0.7rem; }
+  .comment-tagpicker{ display:flex; gap:0.35rem; margin-bottom:0.5rem; }
+  .comment-tagpicker button{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:0.28rem 0.55rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .comment-tagpicker button.active.note{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .comment-tagpicker button.active.question{ background:#C9971E; color:#fff; border-color:#C9971E; }
+  .comment-tagpicker button.active.concern{ background:var(--coral); color:#fff; border-color:var(--coral); }
+  .comment-input-row{ display:flex; gap:0.5rem; }
+  .comment-input-row input{
+    flex:1;
+    font-family:'Inter';
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:3px;
+    padding:0.5rem 0.65rem;
+    font-size:0.88rem;
+  }
+  .comment-post-btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:3px;
+    padding:0.5rem 0.8rem;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .no-comments-yet{
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    color:rgba(30,42,36,0.4);
+  }
   .cost-chip.estimate{ background:var(--paper2); color:rgba(30,42,36,0.65); }
   .cost-chip.firm{ background:var(--eucalyptus); color:var(--paper); font-weight:700; }
 
@@ -531,6 +639,10 @@
   .card.collapsed{ padding:0.65rem 1rem; }
   .card.collapsed .card-notes,
   .card.collapsed .card-meta,
+  .card.collapsed .badge-row,
+  .card.collapsed .card-link,
+  .card.collapsed .reactions-row,
+  .card.collapsed .comments-panel,
   .card.collapsed .card-footer{ display:none; }
   .card.collapsed .card-title{
     padding-right:2rem;
@@ -715,6 +827,9 @@
   let editingId = null;
   let editState = null; // { title, notes, category, effort, cost, help }
   let collapsedIds = new Set();
+  let openComments = new Set();
+  let commentTagChoice = {}; // ideaId -> 'note' | 'question' | 'concern'
+  const REACTION_EMOJIS = ['👍','❤️','😂','🎉','❓','⚠️'];
 
   const statusLine = document.getElementById('status-line');
   const nameGate = document.getElementById('name-gate');
@@ -746,6 +861,15 @@
     topicFilter = e.target.value;
     render();
   });
+
+  function requireName(){
+    if(!userName){
+      nameGate.style.display = 'flex';
+      nameGate.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+    return true;
+  }
 
   async function loadProfile(){
     try{
@@ -848,7 +972,9 @@
     await loadBoard();
 
     pollTimer = setInterval(() => {
-      if(editingId === null) loadBoard(true);
+      const active = document.activeElement;
+      const isTypingComment = active && active.id && active.id.startsWith('comment-input-');
+      if(editingId === null && !isTypingComment) loadBoard(true);
     }, 20000);
   }
 
@@ -905,6 +1031,56 @@
   const STATUS_LABELS = { idea: 'Status: Idea', plan: 'Status: Plan', promise: 'Status: Promise' };
   const TOPIC_LABELS = { kids: 'Kids & Family', australia: 'Australia Setup', wrapup: 'Wrapping Up America', other: 'Other' };
 
+  function reactionsRowHTML(idea){
+    const reactions = idea.reactions || {};
+    const btns = REACTION_EMOJIS.map(emoji => {
+      const names = reactions[emoji] || [];
+      const active = userName && names.includes(userName);
+      const title = names.length ? names.join(', ') : 'Be the first';
+      return `<button type="button" class="reaction-btn ${active ? 'active' : ''}" data-reaction="${emoji}" title="${escapeHTML(title)}">
+        <span>${emoji}</span>${names.length ? `<span class="rcount">${names.length}</span>` : ''}
+      </button>`;
+    }).join('');
+    return `<div class="reactions-row">${btns}</div>`;
+  }
+
+  function commentsPanelHTML(idea){
+    const isOpen = openComments.has(idea.id);
+    const comments = idea.comments || [];
+    const countLabel = comments.length ? `💬 ${comments.length}` : '💬 Add a note';
+    const toggleBtn = `<button data-toggle-comments="1">${countLabel}</button>`;
+
+    if(!isOpen) return { toggleBtn, panel: '' };
+
+    const tagOrder = [['note','Note'],['question','Question'],['concern','Concern']];
+    const currentTag = commentTagChoice[idea.id] || 'note';
+
+    const list = comments.length
+      ? comments.map(c => `
+          <div class="comment-item">
+            <span class="comment-tag ${c.tag}">${c.tag}</span>${escapeHTML(c.text)}
+            <div class="comment-meta">${escapeHTML(c.author || 'someone')} · ${timeAgo(c.createdAt)}</div>
+          </div>
+        `).join('')
+      : `<div class="no-comments-yet">No notes yet — first to say something?</div>`;
+
+    const panel = `
+      <div class="comments-panel" data-id="${idea.id}">
+        ${list}
+        <div class="comment-compose">
+          <div class="comment-tagpicker">
+            ${tagOrder.map(t => `<button type="button" class="${t[0]} ${currentTag===t[0]?'active':''}" data-comment-tag="${t[0]}">${t[1]}</button>`).join('')}
+          </div>
+          <div class="comment-input-row">
+            <input type="text" id="comment-input-${idea.id}" placeholder="${currentTag === 'question' ? 'What do you need clarity on?' : currentTag === 'concern' ? 'What is the concern?' : 'Say something nice, or just say something'}">
+            <button class="comment-post-btn" data-comment-post="1">Post</button>
+          </div>
+        </div>
+      </div>
+    `;
+    return { toggleBtn, panel };
+  }
+
   function cardHTML(idea){
     if(idea.id === editingId){
       return editCardHTML(idea);
@@ -921,6 +1097,8 @@
     const costChips = [];
     if(idea.costActual != null) costChips.push(`<span class="cost-chip firm">Firm ${fmtMoney(idea.costActual)}</span>`);
     if(idea.costEstimate != null) costChips.push(`<span class="cost-chip estimate">Est. ${fmtMoney(idea.costEstimate)}</span>`);
+
+    const { toggleBtn: commentsToggleBtn, panel: commentsPanel } = commentsPanelHTML(idea);
 
     return `
       <div class="card ${idea.category} ${isCollapsed ? 'collapsed' : ''}" data-id="${idea.id}">
@@ -940,14 +1118,17 @@
           </div>
           ${costChips.length ? `<div class="cost-chips">${costChips.join('')}</div>` : ''}
         </div>
+        ${reactionsRowHTML(idea)}
         <div class="card-footer">
           <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
           <div class="actions">
             ${nextActions.map(a => `<button data-move="${a[0]}">${a[1]}</button>`).join('')}
+            ${commentsToggleBtn}
             <button data-edit="1">Edit</button>
             <button class="danger" data-del="1">✕</button>
           </div>
         </div>
+        ${commentsPanel}
       </div>
     `;
   }
@@ -1078,6 +1259,64 @@
         if(collapsedIds.has(id)) collapsedIds.delete(id);
         else collapsedIds.add(id);
         render();
+      });
+    });
+
+    document.querySelectorAll('[data-reaction]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if(!requireName()) return;
+        const id = e_id(btn);
+        const emoji = btn.dataset.reaction;
+        const item = ideas.find(i => i.id === id);
+        if(!item) return;
+        if(!item.reactions) item.reactions = {};
+        if(!item.reactions[emoji]) item.reactions[emoji] = [];
+        const idx = item.reactions[emoji].indexOf(userName);
+        if(idx === -1) item.reactions[emoji].push(userName);
+        else item.reactions[emoji].splice(idx, 1);
+        render();
+        await saveBoard();
+      });
+    });
+
+    document.querySelectorAll('[data-toggle-comments]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = e_id(btn);
+        if(openComments.has(id)) openComments.delete(id);
+        else openComments.add(id);
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-comment-tag]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = e_id(btn);
+        commentTagChoice[id] = btn.dataset.commentTag;
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-comment-post]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if(!requireName()) return;
+        const id = e_id(btn);
+        const input = document.getElementById('comment-input-' + id);
+        if(!input) return;
+        const text = input.value.trim();
+        if(!text) return;
+        const item = ideas.find(i => i.id === id);
+        if(!item) return;
+        if(!item.comments) item.comments = [];
+        item.comments.push({
+          id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+          text,
+          tag: commentTagChoice[id] || 'note',
+          author: userName,
+          createdAt: Date.now()
+        });
+        openComments.add(id);
+        render();
+        await saveBoard();
       });
     });
 
