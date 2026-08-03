@@ -419,6 +419,60 @@
     border-radius:3px;
     display:inline-block;
   }
+
+  /* ---------- collapse/expand ---------- */
+  .collapse-toggle{
+    position:absolute;
+    top:0.7rem;
+    right:0.8rem;
+    width:22px;height:22px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .card.promise .collapse-toggle{ right:3.9rem; }
+  .card.collapsed{ padding:0.65rem 1rem; }
+  .card.collapsed .card-notes,
+  .card.collapsed .card-meta,
+  .card.collapsed .card-footer{ display:none; }
+  .card.collapsed .card-title{
+    padding-right:2rem;
+    margin:0;
+    font-size:0.92rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .card.collapsed .stamp{
+    width:34px;height:34px;
+    top:0.5rem;
+    font-size:0.42rem;
+  }
+  .lane-controls{
+    text-align:right;
+    margin-bottom:0.6rem;
+  }
+  .lane-controls button{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    background:none;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:0.25rem 0.55rem;
+    color:rgba(30,42,36,0.6);
+    cursor:pointer;
+  }
+  .lane-controls button:hover{ background:var(--paper2); }
 </style>
 </head>
 <body>
@@ -502,6 +556,7 @@
           <div class="lane-sub">Just floating</div>
         </div>
       </div>
+      <div class="lane-controls"><button data-lane-toggle="idea">Collapse all</button></div>
       <div class="cards" id="col-idea"></div>
     </div>
     <div class="lane lane-plan">
@@ -512,6 +567,7 @@
           <div class="lane-sub">Shaping up, not greenlit</div>
         </div>
       </div>
+      <div class="lane-controls"><button data-lane-toggle="plan">Collapse all</button></div>
       <div class="cards" id="col-plan"></div>
     </div>
     <div class="lane lane-promise">
@@ -522,6 +578,7 @@
           <div class="lane-sub">Locked in</div>
         </div>
       </div>
+      <div class="lane-controls"><button data-lane-toggle="promise">Collapse all</button></div>
       <div class="cards" id="col-promise"></div>
     </div>
   </div>
@@ -538,6 +595,7 @@
   let selectedCat = 'plan';
   let editingId = null;
   let editState = null; // { title, notes, category, effort, cost, help }
+  let collapsedIds = new Set();
 
   const statusLine = document.getElementById('status-line');
   const nameGate = document.getElementById('name-gate');
@@ -724,6 +782,7 @@
     if(idea.id === editingId){
       return editCardHTML(idea);
     }
+    const isCollapsed = collapsedIds.has(idea.id);
     const stamp = idea.category === 'promise'
       ? '<div class="stamp">Locked<br>in</div>' : '';
     const nextActions = [];
@@ -732,7 +791,8 @@
     if(idea.category === 'promise') nextActions.push(['plan','← Plan']);
 
     return `
-      <div class="card ${idea.category}" data-id="${idea.id}">
+      <div class="card ${idea.category} ${isCollapsed ? 'collapsed' : ''}" data-id="${idea.id}">
+        <button class="collapse-toggle" data-toggle-collapse="1" title="${isCollapsed ? 'Expand' : 'Collapse'}">${isCollapsed ? '▸' : '▾'}</button>
         ${stamp}
         <div class="card-title">${escapeHTML(idea.title)}</div>
         ${idea.notes ? `<div class="card-notes">${escapeHTML(idea.notes)}</div>` : ''}
@@ -846,9 +906,40 @@
       } else {
         el.innerHTML = cols[cat].map(cardHTML).join('');
       }
+      const laneBtn = document.querySelector(`[data-lane-toggle="${cat}"]`);
+      if(laneBtn){
+        const laneIds = cols[cat].map(i => i.id);
+        const allCollapsed = laneIds.length > 0 && laneIds.every(id => collapsedIds.has(id));
+        laneBtn.textContent = allCollapsed ? 'Expand all' : 'Collapse all';
+        laneBtn.disabled = laneIds.length === 0;
+        laneBtn.style.opacity = laneIds.length === 0 ? '0.4' : '1';
+      }
     });
 
     updateBudget();
+
+    document.querySelectorAll('[data-toggle-collapse]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = e_id(btn);
+        if(collapsedIds.has(id)) collapsedIds.delete(id);
+        else collapsedIds.add(id);
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-lane-toggle]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.laneToggle;
+        const laneIds = ideas.filter(i => i.category === cat).map(i => i.id);
+        const allCollapsed = laneIds.length > 0 && laneIds.every(id => collapsedIds.has(id));
+        if(allCollapsed){
+          laneIds.forEach(id => collapsedIds.delete(id));
+        } else {
+          laneIds.forEach(id => collapsedIds.add(id));
+        }
+        render();
+      });
+    });
 
     document.querySelectorAll('[data-move]').forEach(btn => {
       btn.addEventListener('click', async (e) => {
