@@ -127,7 +127,8 @@
     letter-spacing:0.12em;
     color:var(--ocean);
   }
-  #add-form input[type=text], #add-form textarea{
+  #add-form input[type=text], #add-form textarea, #add-form select,
+  .card input[type=text], .card textarea, .card select, .card input[type=number]{
     width:100%;
     font-family:'Inter';
     border:1px solid var(--line);
@@ -136,6 +137,93 @@
     padding:0.6rem 0.7rem;
     font-size:0.95rem;
     margin-top:0.35rem;
+  }
+  .card select{ appearance:none; cursor:pointer; }
+  .cost-fields-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    margin-top:0.9rem;
+  }
+  @media (max-width:480px){
+    .cost-fields-row{grid-template-columns:1fr;}
+  }
+
+  /* ---------- status badge & topic tag ---------- */
+  .status-badge{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:0.15rem 0.5rem;
+    border-radius:3px;
+    display:inline-block;
+    border:1px solid currentColor;
+  }
+  .status-badge.idea{ color:var(--eucalyptus); }
+  .status-badge.plan{ color:var(--ocean); }
+  .status-badge.promise{ color:var(--coral); }
+
+  .topic-tag{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:0.15rem 0.5rem;
+    border-radius:3px;
+    display:inline-block;
+    color:var(--paper);
+  }
+  .topic-tag.kids{ background:#8B6F9E; }
+  .topic-tag.australia{ background:var(--ochre); }
+  .topic-tag.wrapup{ background:#556B7A; }
+  .topic-tag.other{ background:#8A8574; }
+
+  .badge-row{
+    display:flex;
+    gap:0.4rem;
+    flex-wrap:wrap;
+    margin-bottom:0.5rem;
+  }
+
+  .card-link{
+    display:inline-flex;
+    align-items:center;
+    gap:0.3rem;
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    color:var(--ocean);
+    text-decoration:none;
+    margin-bottom:0.6rem;
+    word-break:break-all;
+  }
+  .card-link:hover{ text-decoration:underline; }
+
+  .cost-chips{ display:flex; gap:0.4rem; flex-wrap:wrap; }
+  .cost-chip.estimate{ background:var(--paper2); color:rgba(30,42,36,0.65); }
+  .cost-chip.firm{ background:var(--eucalyptus); color:var(--paper); font-weight:700; }
+
+  .filter-row{
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+    margin-bottom:1.4rem;
+    flex-wrap:wrap;
+  }
+  .filter-row label{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:rgba(30,42,36,0.55);
+  }
+  .filter-row select{
+    font-family:'Inter';
+    border:1px solid var(--line);
+    background:var(--card);
+    border-radius:3px;
+    padding:0.4rem 0.6rem;
+    font-size:0.85rem;
   }
   #add-form textarea{resize:vertical;min-height:2.4rem;}
   .field-label{
@@ -438,6 +526,7 @@
     align-items:center;
     justify-content:center;
   }
+  .card.promise .badge-row{ padding-right:3.6rem; }
   .card.promise .collapse-toggle{ right:3.9rem; }
   .card.collapsed{ padding:0.65rem 1rem; }
   .card.collapsed .card-notes,
@@ -495,9 +584,20 @@
     <input type="text" id="f-title" placeholder="e.g. Ship the car, rent out the house, start school in term 1..." required>
 
     <label class="field-label">Details (optional)</label>
-    <textarea id="f-notes" placeholder="Any notes, links, or context"></textarea>
+    <textarea id="f-notes" placeholder="Any notes or context"></textarea>
 
-    <label class="field-label">How solid is it?</label>
+    <label class="field-label">Link (optional)</label>
+    <input type="text" id="f-link" placeholder="e.g. https://... a listing, article, or form">
+
+    <label class="field-label">Category</label>
+    <select id="f-topic">
+      <option value="kids">Kids &amp; Family</option>
+      <option value="australia">Australia Setup</option>
+      <option value="wrapup">Wrapping Up America (incl. moving costs)</option>
+      <option value="other">Other</option>
+    </select>
+
+    <label class="field-label">Status — how solid is it?</label>
     <div class="segmented" id="cat-picker">
       <button type="button" class="seg-btn" data-cat="idea">Idea</button>
       <button type="button" class="seg-btn active" data-cat="plan">Plan</button>
@@ -510,19 +610,26 @@
         <div class="dots" data-field="effort"></div>
       </div>
       <div class="rating-group">
-        <span class="field-label">Cost (rough)</span>
-        <div class="dots" data-field="cost"></div>
-      </div>
-      <div class="rating-group">
         <span class="field-label">Help needed</span>
         <div class="dots" data-field="help"></div>
       </div>
     </div>
 
-    <label class="field-label">Known cost, if you have a number (optional)</label>
-    <div class="cost-input-row">
-      <span>$</span>
-      <input type="number" id="f-cost-amount" min="0" step="1" placeholder="e.g. 3200">
+    <div class="cost-fields-row">
+      <div>
+        <label class="field-label">Estimated cost (optional)</label>
+        <div class="cost-input-row">
+          <span>$</span>
+          <input type="number" id="f-cost-estimate" min="0" step="1" placeholder="e.g. 3200">
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Firm cost, once known (optional)</label>
+        <div class="cost-input-row">
+          <span>$</span>
+          <input type="number" id="f-cost-actual" min="0" step="1" placeholder="e.g. 2950">
+        </div>
+      </div>
     </div>
 
     <button type="submit" id="submit-btn">Add to board</button>
@@ -545,6 +652,17 @@
       <span class="btlabel">Running total</span>
       <div class="btvalue" id="bt-total">$0</div>
     </div>
+  </div>
+
+  <div class="filter-row">
+    <label for="topic-filter">Show category</label>
+    <select id="topic-filter">
+      <option value="all">All categories</option>
+      <option value="kids">Kids &amp; Family</option>
+      <option value="australia">Australia Setup</option>
+      <option value="wrapup">Wrapping Up America</option>
+      <option value="other">Other</option>
+    </select>
   </div>
 
   <div class="board">
@@ -591,8 +709,9 @@
   const PROFILE_KEY = 'southbound:profile';
   let ideas = [];
   let userName = '';
-  let ratings = { effort: 2, cost: 2, help: 2 };
+  let ratings = { effort: 2, help: 2 };
   let selectedCat = 'plan';
+  let topicFilter = 'all';
   let editingId = null;
   let editState = null; // { title, notes, category, effort, cost, help }
   let collapsedIds = new Set();
@@ -621,6 +740,11 @@
       btn.classList.add('active');
       selectedCat = btn.dataset.cat;
     });
+  });
+
+  document.getElementById('topic-filter').addEventListener('change', (e) => {
+    topicFilter = e.target.value;
+    render();
   });
 
   async function loadProfile(){
@@ -778,6 +902,9 @@
     return html;
   }
 
+  const STATUS_LABELS = { idea: 'Status: Idea', plan: 'Status: Plan', promise: 'Status: Promise' };
+  const TOPIC_LABELS = { kids: 'Kids & Family', australia: 'Australia Setup', wrapup: 'Wrapping Up America', other: 'Other' };
+
   function cardHTML(idea){
     if(idea.id === editingId){
       return editCardHTML(idea);
@@ -789,20 +916,29 @@
     if(idea.category === 'idea') nextActions.push(['plan','→ Plan']);
     if(idea.category === 'plan'){ nextActions.push(['idea','← Idea']); nextActions.push(['promise','→ Promise']); }
     if(idea.category === 'promise') nextActions.push(['plan','← Plan']);
+    const topic = idea.topic || 'other';
+
+    const costChips = [];
+    if(idea.costActual != null) costChips.push(`<span class="cost-chip firm">Firm ${fmtMoney(idea.costActual)}</span>`);
+    if(idea.costEstimate != null) costChips.push(`<span class="cost-chip estimate">Est. ${fmtMoney(idea.costEstimate)}</span>`);
 
     return `
       <div class="card ${idea.category} ${isCollapsed ? 'collapsed' : ''}" data-id="${idea.id}">
         <button class="collapse-toggle" data-toggle-collapse="1" title="${isCollapsed ? 'Expand' : 'Collapse'}">${isCollapsed ? '▸' : '▾'}</button>
         ${stamp}
+        <div class="badge-row">
+          <span class="status-badge ${idea.category}">${STATUS_LABELS[idea.category] || idea.category}</span>
+          <span class="topic-tag ${topic}">${TOPIC_LABELS[topic] || topic}</span>
+        </div>
         <div class="card-title">${escapeHTML(idea.title)}</div>
         ${idea.notes ? `<div class="card-notes">${escapeHTML(idea.notes)}</div>` : ''}
+        ${idea.linkUrl ? `<a class="card-link" href="${escapeHTML(idea.linkUrl)}" target="_blank" rel="noopener noreferrer">🔗 ${escapeHTML(idea.linkUrl)}</a>` : ''}
         <div class="card-meta">
           <div class="mini-ratings">
             <div class="mini-rating"><span class="rlabel">EFFORT</span>${miniDots('effort', idea.effort)}</div>
-            <div class="mini-rating"><span class="rlabel">COST</span>${miniDots('cost', idea.cost)}</div>
             <div class="mini-rating"><span class="rlabel">HELP</span>${miniDots('help', idea.help)}</div>
           </div>
-          ${idea.costAmount != null ? `<span class="cost-chip">${fmtMoney(idea.costAmount)}</span>` : ''}
+          ${costChips.length ? `<div class="cost-chips">${costChips.join('')}</div>` : ''}
         </div>
         <div class="card-footer">
           <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
@@ -827,6 +963,7 @@
   function editCardHTML(idea){
     const s = editState;
     const cats = [['idea','Idea'],['plan','Plan'],['promise','Promise']];
+    const topics = [['kids','Kids & Family'],['australia','Australia Setup'],['wrapup','Wrapping Up America'],['other','Other']];
     return `
       <div class="card ${idea.category}" data-id="${idea.id}" style="border-style:solid;">
         <label class="field-label">What's the idea?</label>
@@ -835,7 +972,15 @@
         <label class="field-label">Details (optional)</label>
         <textarea id="edit-notes">${escapeHTML(s.notes)}</textarea>
 
-        <label class="field-label">How solid is it?</label>
+        <label class="field-label">Link (optional)</label>
+        <input type="text" id="edit-link" value="${s.linkUrl ? escapeHTML(s.linkUrl) : ''}" placeholder="https://...">
+
+        <label class="field-label">Category</label>
+        <select id="edit-topic">
+          ${topics.map(t => `<option value="${t[0]}" ${s.topic===t[0]?'selected':''}>${t[1]}</option>`).join('')}
+        </select>
+
+        <label class="field-label">Status — how solid is it?</label>
         <div class="segmented">
           ${cats.map(c => `<button type="button" class="seg-btn ${s.category===c[0]?'active':''}" data-editcat="${c[0]}">${c[1]}</button>`).join('')}
         </div>
@@ -846,19 +991,26 @@
             <div class="dots">${editDotsHTML('effort', s.effort)}</div>
           </div>
           <div class="rating-group">
-            <span class="field-label">Cost (rough)</span>
-            <div class="dots">${editDotsHTML('cost', s.cost)}</div>
-          </div>
-          <div class="rating-group">
             <span class="field-label">Help needed</span>
             <div class="dots">${editDotsHTML('help', s.help)}</div>
           </div>
         </div>
 
-        <label class="field-label">Known cost, if you have a number (optional)</label>
-        <div class="cost-input-row">
-          <span>$</span>
-          <input type="number" id="edit-cost-amount" min="0" step="1" value="${s.costAmount != null ? s.costAmount : ''}">
+        <div class="cost-fields-row">
+          <div>
+            <label class="field-label">Estimated cost</label>
+            <div class="cost-input-row">
+              <span>$</span>
+              <input type="number" id="edit-cost-estimate" min="0" step="1" value="${s.costEstimate != null ? s.costEstimate : ''}">
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Firm cost, once known</label>
+            <div class="cost-input-row">
+              <span>$</span>
+              <input type="number" id="edit-cost-actual" min="0" step="1" value="${s.costActual != null ? s.costActual : ''}">
+            </div>
+          </div>
         </div>
 
         <div class="card-footer" style="border-top:none;margin-top:1rem;padding-top:0;">
@@ -881,8 +1033,9 @@
   function updateBudget(){
     const totals = { idea: 0, plan: 0, promise: 0 };
     ideas.forEach(i => {
-      if(i.costAmount != null && totals.hasOwnProperty(i.category)){
-        totals[i.category] += i.costAmount;
+      const effective = i.costActual != null ? i.costActual : i.costEstimate;
+      if(effective != null && totals.hasOwnProperty(i.category)){
+        totals[i.category] += effective;
       }
     });
     const grand = totals.idea + totals.plan + totals.promise;
@@ -896,6 +1049,7 @@
     const cols = { idea: [], plan: [], promise: [] };
     ideas
       .slice()
+      .filter(idea => topicFilter === 'all' || (idea.topic || 'other') === topicFilter)
       .sort((a,b) => b.createdAt - a.createdAt)
       .forEach(idea => { if(cols[idea.category]) cols[idea.category].push(idea); });
 
@@ -930,7 +1084,9 @@
     document.querySelectorAll('[data-lane-toggle]').forEach(btn => {
       btn.addEventListener('click', () => {
         const cat = btn.dataset.laneToggle;
-        const laneIds = ideas.filter(i => i.category === cat).map(i => i.id);
+        const laneIds = ideas
+          .filter(i => i.category === cat && (topicFilter === 'all' || (i.topic || 'other') === topicFilter))
+          .map(i => i.id);
         const allCollapsed = laneIds.length > 0 && laneIds.every(id => collapsedIds.has(id));
         if(allCollapsed){
           laneIds.forEach(id => collapsedIds.delete(id));
@@ -952,7 +1108,10 @@
     document.querySelectorAll('[data-del]').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const id = e.target.closest('.card').dataset.id;
-        if(!confirm('Remove this from the board?')) return;
+        const item = ideas.find(i => i.id === id);
+        const label = item ? `"${item.title}"` : 'this entry';
+        const typed = window.prompt(`Type DELETE to permanently remove ${label} from the board.`);
+        if(typed !== 'DELETE') return;
         ideas = ideas.filter(i => i.id !== id);
         render();
         await saveBoard();
@@ -967,13 +1126,29 @@
         editingId = id;
         editState = {
           title: item.title, notes: item.notes || '',
+          linkUrl: item.linkUrl || '', topic: item.topic || 'other',
           category: item.category,
-          effort: item.effort, cost: item.cost, help: item.help,
-          costAmount: item.costAmount != null ? item.costAmount : null
+          effort: item.effort, help: item.help,
+          costEstimate: item.costEstimate != null ? item.costEstimate : null,
+          costActual: item.costActual != null ? item.costActual : null
         };
         render();
       });
     });
+
+    function syncEditTextFields(){
+      if(!editState || editingId === null) return;
+      const t = document.getElementById('edit-title');
+      const n = document.getElementById('edit-notes');
+      const l = document.getElementById('edit-link');
+      const ce = document.getElementById('edit-cost-estimate');
+      const ca = document.getElementById('edit-cost-actual');
+      if(t) editState.title = t.value;
+      if(n) editState.notes = n.value;
+      if(l) editState.linkUrl = l.value;
+      if(ce) editState.costEstimate = ce.value;
+      if(ca) editState.costActual = ca.value;
+    }
 
     document.querySelectorAll('[data-cancel-edit]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -985,13 +1160,24 @@
 
     document.querySelectorAll('[data-editcat]').forEach(btn => {
       btn.addEventListener('click', () => {
+        syncEditTextFields();
         editState.category = btn.dataset.editcat;
         render();
       });
     });
 
+    const editTopicSelect = document.getElementById('edit-topic');
+    if(editTopicSelect){
+      editTopicSelect.addEventListener('change', (e) => {
+        syncEditTextFields();
+        editState.topic = e.target.value;
+        render();
+      });
+    }
+
     document.querySelectorAll('[data-editfield]').forEach(btn => {
       btn.addEventListener('click', () => {
+        syncEditTextFields();
         editState[btn.dataset.editfield] = parseInt(btn.dataset.val, 10);
         render();
       });
@@ -1004,15 +1190,20 @@
         if(!item) return;
         const titleVal = document.getElementById('edit-title').value.trim();
         const notesVal = document.getElementById('edit-notes').value.trim();
-        const costRaw = document.getElementById('edit-cost-amount').value;
+        const linkVal = normalizeUrl(document.getElementById('edit-link').value);
+        const topicVal = document.getElementById('edit-topic').value;
+        const estRaw = document.getElementById('edit-cost-estimate').value;
+        const actRaw = document.getElementById('edit-cost-actual').value;
         if(!titleVal) return;
         item.title = titleVal;
         item.notes = notesVal;
+        item.linkUrl = linkVal;
+        item.topic = topicVal;
         item.category = editState.category;
         item.effort = editState.effort;
-        item.cost = editState.cost;
         item.help = editState.help;
-        item.costAmount = costRaw !== '' ? Math.max(0, parseFloat(costRaw)) : null;
+        item.costEstimate = estRaw !== '' ? Math.max(0, parseFloat(estRaw)) : null;
+        item.costActual = actRaw !== '' ? Math.max(0, parseFloat(actRaw)) : null;
         editingId = null;
         editState = null;
         render();
@@ -1025,6 +1216,14 @@
     return el.closest('.card').dataset.id;
   }
 
+  function normalizeUrl(raw){
+    if(!raw) return null;
+    const trimmed = raw.trim();
+    if(!trimmed) return null;
+    if(/^https?:\/\//i.test(trimmed)) return trimmed;
+    return 'https://' + trimmed;
+  }
+
   document.getElementById('add-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('f-title').value.trim();
@@ -1034,16 +1233,19 @@
       return;
     }
     const notes = document.getElementById('f-notes').value.trim();
-    const costRaw = document.getElementById('f-cost-amount').value;
-    const costAmount = costRaw !== '' ? Math.max(0, parseFloat(costRaw)) : null;
+    const linkUrl = normalizeUrl(document.getElementById('f-link').value);
+    const topic = document.getElementById('f-topic').value;
+    const estRaw = document.getElementById('f-cost-estimate').value;
+    const actRaw = document.getElementById('f-cost-actual').value;
+    const costEstimate = estRaw !== '' ? Math.max(0, parseFloat(estRaw)) : null;
+    const costActual = actRaw !== '' ? Math.max(0, parseFloat(actRaw)) : null;
     const newIdea = {
       id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
-      title, notes,
+      title, notes, linkUrl, topic,
       category: selectedCat,
       effort: ratings.effort,
-      cost: ratings.cost,
       help: ratings.help,
-      costAmount,
+      costEstimate, costActual,
       addedBy: userName,
       createdAt: Date.now()
     };
@@ -1051,7 +1253,9 @@
     render();
     document.getElementById('f-title').value = '';
     document.getElementById('f-notes').value = '';
-    document.getElementById('f-cost-amount').value = '';
+    document.getElementById('f-link').value = '';
+    document.getElementById('f-cost-estimate').value = '';
+    document.getElementById('f-cost-actual').value = '';
     await saveBoard();
   });
 
