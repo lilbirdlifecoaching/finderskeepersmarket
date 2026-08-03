@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Southbound — Move Planning Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A24;
+    --paper:#F3EEDE;
+    --paper2:#EAE1C6;
+    --card:#FBF8EF;
+    --ocean:#2B5876;
+    --ochre:#B5651D;
+    --eucalyptus:#5C7A5C;
+    --coral:#D95D39;
+    --line: rgba(30,42,36,0.16);
+    --line-soft: rgba(30,42,36,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ochre);color:var(--paper);}
+
+  /* ---------- header ---------- */
+  header{
+    padding:2.6rem 1.4rem 1.6rem;
+    max-width:920px;
+    margin:0 auto;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ocean);
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+  .eyebrow::before{
+    content:"";
+    width:18px;height:1px;
+    background:var(--ocean);
+    display:inline-block;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(2.2rem,6vw,3.2rem);
+    margin:0.3rem 0 0.4rem;
+    letter-spacing:-0.01em;
+  }
+  h1 em{ font-style:italic; color:var(--ochre); font-weight:500; }
+  header p{
+    margin:0;
+    max-width:44ch;
+    color:rgba(30,42,36,0.7);
+    font-size:0.98rem;
+    line-height:1.5;
+  }
+
+  main{max-width:920px;margin:0 auto;padding:1.6rem 1.4rem 4rem;}
+
+  /* ---------- name capture ---------- */
+  #name-gate{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1rem 1.2rem;
+    margin-bottom:1.6rem;
+    display:flex;
+    gap:0.8rem;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  #name-gate span{font-size:0.9rem;color:rgba(30,42,36,0.75);}
+  #name-gate input{
+    font-family:'Inter';
+    padding:0.5rem 0.7rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    font-size:0.9rem;
+    flex:1;
+    min-width:140px;
+  }
+  #name-gate button{
+    font-family:'Space Mono',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:0.55rem 1rem;
+    border-radius:3px;
+    cursor:pointer;
+  }
+
+  /* ---------- add form ---------- */
+  #add-form{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.3rem;
+    margin-bottom:2.4rem;
+    position:relative;
+  }
+  #add-form::before{
+    content:"NEW ENTRY";
+    position:absolute;
+    top:-0.6rem;
+    left:1.2rem;
+    background:var(--paper);
+    padding:0 0.5rem;
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.12em;
+    color:var(--ocean);
+  }
+  #add-form input[type=text], #add-form textarea{
+    width:100%;
+    font-family:'Inter';
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:3px;
+    padding:0.6rem 0.7rem;
+    font-size:0.95rem;
+    margin-top:0.35rem;
+  }
+  #add-form textarea{resize:vertical;min-height:2.4rem;}
+  .field-label{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:rgba(30,42,36,0.55);
+    display:block;
+    margin-top:0.9rem;
+  }
+  .field-label:first-child{margin-top:0;}
+
+  .segmented{
+    display:flex;
+    gap:0.5rem;
+    margin-top:0.4rem;
+    flex-wrap:wrap;
+  }
+  .seg-btn{
+    flex:1;
+    min-width:100px;
+    font-family:'Space Mono',monospace;
+    font-size:0.76rem;
+    letter-spacing:0.03em;
+    padding:0.55rem 0.5rem;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    cursor:pointer;
+    text-align:center;
+    transition:all .15s ease;
+  }
+  .seg-btn[data-cat="idea"].active{ background:var(--paper2); border-color:var(--eucalyptus); color:var(--eucalyptus); border-style:dashed;}
+  .seg-btn[data-cat="plan"].active{ background:#e4edf1; border-color:var(--ocean); color:var(--ocean);}
+  .seg-btn[data-cat="promise"].active{ background:#f7e6de; border-color:var(--coral); color:var(--coral); font-weight:700;}
+
+  .ratings-row{
+    display:flex;
+    gap:1.4rem;
+    margin-top:0.5rem;
+    flex-wrap:wrap;
+  }
+  .rating-group{display:flex;flex-direction:column;gap:0.3rem;}
+  .rating-group .field-label{margin-top:0;}
+  .dots{display:flex;gap:0.35rem;}
+  .dot-btn{
+    width:22px;height:22px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--paper);
+    cursor:pointer;
+    padding:0;
+  }
+  .dot-btn.filled{background:var(--ochre);border-color:var(--ochre);}
+
+  #submit-btn{
+    margin-top:1.3rem;
+    font-family:'Space Mono',monospace;
+    font-size:0.8rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:0.7rem 1.4rem;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  #submit-btn:hover{background:var(--eucalyptus);}
+
+  /* ---------- board ---------- */
+  .board{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1.1rem;
+  }
+  @media (max-width:760px){
+    .board{grid-template-columns:1fr;}
+  }
+  .lane-head{
+    display:flex;
+    align-items:baseline;
+    gap:0.5rem;
+    padding-bottom:0.6rem;
+    margin-bottom:0.9rem;
+    border-bottom:2px solid var(--line);
+  }
+  .lane-head .marker{width:14px;height:14px;flex-shrink:0;}
+  .lane-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1.15rem;
+  }
+  .lane-sub{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:rgba(30,42,36,0.45);
+  }
+  .lane-idea .marker{ border:1.5px dashed var(--eucalyptus); border-radius:50%; }
+  .lane-plan .marker{ background:linear-gradient(90deg,var(--ocean) 60%,transparent 0); background-size:6px 2px; height:2px; margin-top:6px; }
+  .lane-promise .marker{ background:var(--coral); border-radius:50%; }
+
+  .lane{min-height:60px;}
+  .cards{display:flex;flex-direction:column;gap:0.8rem;}
+
+  .empty-slot{
+    font-family:'Space Mono',monospace;
+    font-size:0.75rem;
+    color:rgba(30,42,36,0.35);
+    padding:0.8rem 0;
+    text-align:center;
+    border:1px dashed var(--line-soft);
+    border-radius:4px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:0.9rem 1rem;
+    position:relative;
+    overflow:hidden;
+  }
+  .card.idea{ border-style:dashed; }
+  .card.idea::after{
+    content:"";
+    position:absolute; top:0; right:0;
+    width:0; height:0;
+    border-style:solid;
+    border-width:0 14px 14px 0;
+    border-color:transparent var(--paper2) transparent transparent;
+  }
+  .card.plan{ border-left:3px solid var(--ocean); }
+  .card.promise{ border-left:3px solid var(--coral); }
+  .card.promise .stamp{
+    position:absolute;
+    top:0.6rem; right:0.7rem;
+    width:52px;height:52px;
+    border:1.5px dashed var(--coral);
+    border-radius:50%;
+    transform:rotate(-11deg);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Mono',monospace;
+    font-size:0.52rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--coral);
+    text-align:center;
+    line-height:1.1;
+    pointer-events:none;
+  }
+
+  .card-title{
+    font-weight:600;
+    font-size:0.98rem;
+    margin:0 0 0.25rem;
+    padding-right:3.2rem;
+  }
+  .card-notes{
+    font-size:0.86rem;
+    color:rgba(30,42,36,0.72);
+    line-height:1.4;
+    margin:0 0 0.7rem;
+  }
+  .card-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:0.5rem;
+  }
+  .mini-ratings{display:flex;gap:0.7rem;}
+  .mini-rating{display:flex;flex-direction:column;align-items:flex-start;gap:0.15rem;}
+  .mini-rating .rlabel{
+    font-family:'Space Mono',monospace;
+    font-size:0.6rem;
+    color:rgba(30,42,36,0.4);
+    letter-spacing:0.05em;
+  }
+  .mini-dots{display:flex;gap:0.18rem;}
+  .mini-dot{width:6px;height:6px;border-radius:50%;background:var(--line);}
+  .mini-dot.on{background:var(--ochre);}
+
+  .card-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:0.7rem;
+    padding-top:0.6rem;
+    border-top:1px solid var(--line-soft);
+  }
+  .by-line{
+    font-family:'Space Mono',monospace;
+    font-size:0.66rem;
+    color:rgba(30,42,36,0.45);
+  }
+  .actions{display:flex;gap:0.4rem;}
+  .actions button{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.03em;
+    background:none;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:0.28rem 0.5rem;
+    color:var(--ink);
+    cursor:pointer;
+    text-transform:uppercase;
+  }
+  .actions button:hover{background:var(--paper2);}
+  .actions button.danger{color:var(--coral);border-color:var(--coral);}
+
+  #status-line{
+    text-align:center;
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    color:rgba(30,42,36,0.4);
+    margin-top:2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Family relocation · Australia</div>
+  <h1>South<em>bound</em></h1>
+  <p>Throw in anything — a stray idea, a loose plan, or something we've actually promised each other. We'll sort it by how solid it is as we go.</p>
+</header>
+
+<main>
+  <div id="name-gate" style="display:none;">
+    <span>Who's adding ideas? (so we know who said what)</span>
+    <input id="name-input" type="text" placeholder="Your name">
+    <button id="name-save">Save</button>
+  </div>
+
+  <form id="add-form">
+    <label class="field-label">What's the idea?</label>
+    <input type="text" id="f-title" placeholder="e.g. Ship the car, rent out the house, start school in term 1..." required>
+
+    <label class="field-label">Details (optional)</label>
+    <textarea id="f-notes" placeholder="Any notes, links, or context"></textarea>
+
+    <label class="field-label">How solid is it?</label>
+    <div class="segmented" id="cat-picker">
+      <button type="button" class="seg-btn" data-cat="idea">Idea</button>
+      <button type="button" class="seg-btn active" data-cat="plan">Plan</button>
+      <button type="button" class="seg-btn" data-cat="promise">Promise</button>
+    </div>
+
+    <div class="ratings-row">
+      <div class="rating-group">
+        <span class="field-label">Effort</span>
+        <div class="dots" data-field="effort"></div>
+      </div>
+      <div class="rating-group">
+        <span class="field-label">Cost</span>
+        <div class="dots" data-field="cost"></div>
+      </div>
+      <div class="rating-group">
+        <span class="field-label">Help needed</span>
+        <div class="dots" data-field="help"></div>
+      </div>
+    </div>
+
+    <button type="submit" id="submit-btn">Add to board</button>
+  </form>
+
+  <div class="board">
+    <div class="lane lane-idea">
+      <div class="lane-head">
+        <span class="marker"></span>
+        <div>
+          <div class="lane-title">Idea</div>
+          <div class="lane-sub">Just floating</div>
+        </div>
+      </div>
+      <div class="cards" id="col-idea"></div>
+    </div>
+    <div class="lane lane-plan">
+      <div class="lane-head">
+        <span class="marker"></span>
+        <div>
+          <div class="lane-title">Plan</div>
+          <div class="lane-sub">Shaping up, not greenlit</div>
+        </div>
+      </div>
+      <div class="cards" id="col-plan"></div>
+    </div>
+    <div class="lane lane-promise">
+      <div class="lane-head">
+        <span class="marker"></span>
+        <div>
+          <div class="lane-title">Promise</div>
+          <div class="lane-sub">Locked in</div>
+        </div>
+      </div>
+      <div class="cards" id="col-promise"></div>
+    </div>
+  </div>
+
+  <div id="status-line">Loading board…</div>
+</main>
+
+<script>
+(function(){
+  const BOARD_KEY = 'southbound:ideas';
+  const PROFILE_KEY = 'southbound:profile';
+  let ideas = [];
+  let userName = '';
+  let ratings = { effort: 2, cost: 2, help: 2 };
+  let selectedCat = 'plan';
+
+  const statusLine = document.getElementById('status-line');
+  const nameGate = document.getElementById('name-gate');
+
+  function labelFor(cat){
+    return cat === 'idea' ? 'CROSSED\nOFF? NO —\nIDEA' : ''; // unused, placeholder removed below
+  }
+
+  function buildDots(container, field){
+    container.innerHTML = '';
+    for(let i=1;i<=3;i++){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'dot-btn' + (i <= ratings[field] ? ' filled' : '');
+      b.addEventListener('click', () => {
+        ratings[field] = i;
+        buildDots(container, field);
+      });
+      container.appendChild(b);
+    }
+  }
+  document.querySelectorAll('.dots').forEach(el => buildDots(el, el.dataset.field));
+
+  document.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedCat = btn.dataset.cat;
+    });
+  });
+
+  async function loadProfile(){
+    try{
+      const res = await window.storage.get(PROFILE_KEY, false);
+      if(res && res.value){
+        const p = JSON.parse(res.value);
+        userName = p.name || '';
+      }
+    }catch(e){ /* no profile yet */ }
+    if(!userName){
+      nameGate.style.display = 'flex';
+    }
+  }
+
+  document.getElementById('name-save').addEventListener('click', async () => {
+    const val = document.getElementById('name-input').value.trim();
+    if(!val) return;
+    userName = val;
+    try{
+      await window.storage.set(PROFILE_KEY, JSON.stringify({name: val}), false);
+    }catch(e){ console.error('profile save failed', e); }
+    nameGate.style.display = 'none';
+  });
+
+  async function loadBoard(){
+    statusLine.textContent = 'Loading board…';
+    try{
+      const res = await window.storage.get(BOARD_KEY, true);
+      ideas = res && res.value ? JSON.parse(res.value) : [];
+    }catch(e){
+      ideas = [];
+    }
+    render();
+    statusLine.textContent = 'Shared board — visible to everyone with this link.';
+  }
+
+  async function saveBoard(){
+    try{
+      const result = await window.storage.set(BOARD_KEY, JSON.stringify(ideas), true);
+      if(!result){ statusLine.textContent = 'Could not save — try again.'; }
+    }catch(e){
+      console.error('save failed', e);
+      statusLine.textContent = 'Could not save — try again.';
+    }
+  }
+
+  function timeAgo(ts){
+    const diff = Date.now() - ts;
+    const mins = Math.floor(diff/60000);
+    if(mins < 1) return 'just now';
+    if(mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins/60);
+    if(hrs < 24) return hrs + 'h ago';
+    return Math.floor(hrs/24) + 'd ago';
+  }
+
+  function miniDots(field, value){
+    let html = '<div class="mini-dots">';
+    for(let i=1;i<=3;i++){
+      html += `<span class="mini-dot ${i<=value?'on':''}"></span>`;
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function cardHTML(idea){
+    const stamp = idea.category === 'promise'
+      ? '<div class="stamp">Locked<br>in</div>' : '';
+    const nextActions = [];
+    if(idea.category === 'idea') nextActions.push(['plan','→ Plan']);
+    if(idea.category === 'plan'){ nextActions.push(['idea','← Idea']); nextActions.push(['promise','→ Promise']); }
+    if(idea.category === 'promise') nextActions.push(['plan','← Plan']);
+
+    return `
+      <div class="card ${idea.category}" data-id="${idea.id}">
+        ${stamp}
+        <div class="card-title">${escapeHTML(idea.title)}</div>
+        ${idea.notes ? `<div class="card-notes">${escapeHTML(idea.notes)}</div>` : ''}
+        <div class="card-meta">
+          <div class="mini-ratings">
+            <div class="mini-rating"><span class="rlabel">EFFORT</span>${miniDots('effort', idea.effort)}</div>
+            <div class="mini-rating"><span class="rlabel">COST</span>${miniDots('cost', idea.cost)}</div>
+            <div class="mini-rating"><span class="rlabel">HELP</span>${miniDots('help', idea.help)}</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
+          <div class="actions">
+            ${nextActions.map(a => `<button data-move="${a[0]}">${a[1]}</button>`).join('')}
+            <button class="danger" data-del="1">✕</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function escapeHTML(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function render(){
+    const cols = { idea: [], plan: [], promise: [] };
+    ideas
+      .slice()
+      .sort((a,b) => b.createdAt - a.createdAt)
+      .forEach(idea => { if(cols[idea.category]) cols[idea.category].push(idea); });
+
+    ['idea','plan','promise'].forEach(cat => {
+      const el = document.getElementById('col-' + cat);
+      if(cols[cat].length === 0){
+        el.innerHTML = '<div class="empty-slot">Nothing here yet</div>';
+      } else {
+        el.innerHTML = cols[cat].map(cardHTML).join('');
+      }
+    });
+
+    document.querySelectorAll('[data-move]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.closest('.card').dataset.id;
+        const cat = e.target.dataset.move;
+        const item = ideas.find(i => i.id === id);
+        if(item){ item.category = cat; render(); await saveBoard(); }
+      });
+    });
+    document.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.closest('.card').dataset.id;
+        if(!confirm('Remove this from the board?')) return;
+        ideas = ideas.filter(i => i.id !== id);
+        render();
+        await saveBoard();
+      });
+    });
+  }
+
+  document.getElementById('add-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('f-title').value.trim();
+    if(!title) return;
+    if(!userName){
+      nameGate.style.display = 'flex';
+      return;
+    }
+    const notes = document.getElementById('f-notes').value.trim();
+    const newIdea = {
+      id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      title, notes,
+      category: selectedCat,
+      effort: ratings.effort,
+      cost: ratings.cost,
+      help: ratings.help,
+      addedBy: userName,
+      createdAt: Date.now()
+    };
+    ideas.push(newIdea);
+    render();
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-notes').value = '';
+    await saveBoard();
+  });
+
+  loadProfile();
+  loadBoard();
+})();
+</script>
+
+</body>
+</html>
