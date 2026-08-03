@@ -359,6 +359,66 @@
     color:rgba(30,42,36,0.4);
     margin-top:2rem;
   }
+
+  /* ---------- budget summary ---------- */
+  #budget-summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0.9rem;
+    margin-bottom:2rem;
+  }
+  @media (max-width:640px){
+    #budget-summary{grid-template-columns:repeat(2,1fr);}
+  }
+  .budget-tile{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:0.8rem 0.9rem;
+  }
+  .budget-tile .btlabel{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:rgba(30,42,36,0.5);
+    display:block;
+  }
+  .budget-tile .btvalue{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1.5rem;
+    margin-top:0.2rem;
+  }
+  .budget-tile.total{ border-color:var(--ochre); }
+  .budget-tile.total .btvalue{ color:var(--ochre); }
+  .budget-tile.promise .btvalue{ color:var(--coral); }
+  .budget-tile.plan .btvalue{ color:var(--ocean); }
+  .budget-tile.idea .btvalue{ color:var(--eucalyptus); }
+
+  .cost-input-row{ display:flex; align-items:center; gap:0.3rem; margin-top:0.35rem; }
+  .cost-input-row span{
+    font-family:'Space Mono',monospace;
+    color:rgba(30,42,36,0.5);
+  }
+  .cost-input-row input{
+    width:100%;
+    font-family:'Inter';
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:3px;
+    padding:0.6rem 0.7rem;
+    font-size:0.95rem;
+  }
+  .cost-chip{
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    background:var(--paper2);
+    color:var(--ink);
+    padding:0.15rem 0.5rem;
+    border-radius:3px;
+    display:inline-block;
+  }
 </style>
 </head>
 <body>
@@ -396,7 +456,7 @@
         <div class="dots" data-field="effort"></div>
       </div>
       <div class="rating-group">
-        <span class="field-label">Cost</span>
+        <span class="field-label">Cost (rough)</span>
         <div class="dots" data-field="cost"></div>
       </div>
       <div class="rating-group">
@@ -405,8 +465,33 @@
       </div>
     </div>
 
+    <label class="field-label">Known cost, if you have a number (optional)</label>
+    <div class="cost-input-row">
+      <span>$</span>
+      <input type="number" id="f-cost-amount" min="0" step="1" placeholder="e.g. 3200">
+    </div>
+
     <button type="submit" id="submit-btn">Add to board</button>
   </form>
+
+  <div id="budget-summary">
+    <div class="budget-tile idea">
+      <span class="btlabel">Idea costs</span>
+      <div class="btvalue" id="bt-idea">$0</div>
+    </div>
+    <div class="budget-tile plan">
+      <span class="btlabel">Plan costs</span>
+      <div class="btvalue" id="bt-plan">$0</div>
+    </div>
+    <div class="budget-tile promise">
+      <span class="btlabel">Promised (locked in)</span>
+      <div class="btvalue" id="bt-promise">$0</div>
+    </div>
+    <div class="budget-tile total">
+      <span class="btlabel">Running total</span>
+      <div class="btvalue" id="bt-total">$0</div>
+    </div>
+  </div>
 
   <div class="board">
     <div class="lane lane-idea">
@@ -452,6 +537,8 @@
   let userName = '';
   let ratings = { effort: 2, cost: 2, help: 2 };
   let selectedCat = 'plan';
+  let editingId = null;
+  let editState = null; // { title, notes, category, effort, cost, help }
 
   const statusLine = document.getElementById('status-line');
   const nameGate = document.getElementById('name-gate');
@@ -538,6 +625,10 @@
     return Math.floor(hrs/24) + 'd ago';
   }
 
+  function fmtMoney(n){
+    return '$' + Math.round(n).toLocaleString();
+  }
+
   function miniDots(field, value){
     let html = '<div class="mini-dots">';
     for(let i=1;i<=3;i++){
@@ -548,6 +639,9 @@
   }
 
   function cardHTML(idea){
+    if(idea.id === editingId){
+      return editCardHTML(idea);
+    }
     const stamp = idea.category === 'promise'
       ? '<div class="stamp">Locked<br>in</div>' : '';
     const nextActions = [];
@@ -566,12 +660,70 @@
             <div class="mini-rating"><span class="rlabel">COST</span>${miniDots('cost', idea.cost)}</div>
             <div class="mini-rating"><span class="rlabel">HELP</span>${miniDots('help', idea.help)}</div>
           </div>
+          ${idea.costAmount != null ? `<span class="cost-chip">${fmtMoney(idea.costAmount)}</span>` : ''}
         </div>
         <div class="card-footer">
           <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
           <div class="actions">
             ${nextActions.map(a => `<button data-move="${a[0]}">${a[1]}</button>`).join('')}
+            <button data-edit="1">Edit</button>
             <button class="danger" data-del="1">✕</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function editDotsHTML(field, value){
+    let html = '';
+    for(let i=1;i<=3;i++){
+      html += `<button type="button" class="dot-btn ${i<=value?'filled':''}" data-editfield="${field}" data-val="${i}"></button>`;
+    }
+    return html;
+  }
+
+  function editCardHTML(idea){
+    const s = editState;
+    const cats = [['idea','Idea'],['plan','Plan'],['promise','Promise']];
+    return `
+      <div class="card ${idea.category}" data-id="${idea.id}" style="border-style:solid;">
+        <label class="field-label">What's the idea?</label>
+        <input type="text" id="edit-title" value="${escapeHTML(s.title)}">
+
+        <label class="field-label">Details (optional)</label>
+        <textarea id="edit-notes">${escapeHTML(s.notes)}</textarea>
+
+        <label class="field-label">How solid is it?</label>
+        <div class="segmented">
+          ${cats.map(c => `<button type="button" class="seg-btn ${s.category===c[0]?'active':''}" data-editcat="${c[0]}">${c[1]}</button>`).join('')}
+        </div>
+
+        <div class="ratings-row">
+          <div class="rating-group">
+            <span class="field-label">Effort</span>
+            <div class="dots">${editDotsHTML('effort', s.effort)}</div>
+          </div>
+          <div class="rating-group">
+            <span class="field-label">Cost (rough)</span>
+            <div class="dots">${editDotsHTML('cost', s.cost)}</div>
+          </div>
+          <div class="rating-group">
+            <span class="field-label">Help needed</span>
+            <div class="dots">${editDotsHTML('help', s.help)}</div>
+          </div>
+        </div>
+
+        <label class="field-label">Known cost, if you have a number (optional)</label>
+        <div class="cost-input-row">
+          <span>$</span>
+          <input type="number" id="edit-cost-amount" min="0" step="1" value="${s.costAmount != null ? s.costAmount : ''}">
+        </div>
+
+        <div class="card-footer" style="border-top:none;margin-top:1rem;padding-top:0;">
+          <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
+          <div class="actions">
+            <button data-cancel-edit="1">Cancel</button>
+            <button data-save-edit="1" style="border-color:var(--eucalyptus);color:var(--eucalyptus);">Save</button>
           </div>
         </div>
       </div>
@@ -582,6 +734,20 @@
     const d = document.createElement('div');
     d.textContent = str;
     return d.innerHTML;
+  }
+
+  function updateBudget(){
+    const totals = { idea: 0, plan: 0, promise: 0 };
+    ideas.forEach(i => {
+      if(i.costAmount != null && totals.hasOwnProperty(i.category)){
+        totals[i.category] += i.costAmount;
+      }
+    });
+    const grand = totals.idea + totals.plan + totals.promise;
+    document.getElementById('bt-idea').textContent = fmtMoney(totals.idea);
+    document.getElementById('bt-plan').textContent = fmtMoney(totals.plan);
+    document.getElementById('bt-promise').textContent = fmtMoney(totals.promise);
+    document.getElementById('bt-total').textContent = fmtMoney(grand);
   }
 
   function render(){
@@ -600,6 +766,8 @@
       }
     });
 
+    updateBudget();
+
     document.querySelectorAll('[data-move]').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const id = e.target.closest('.card').dataset.id;
@@ -617,6 +785,71 @@
         await saveBoard();
       });
     });
+
+    document.querySelectorAll('[data-edit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = e_id(btn);
+        const item = ideas.find(i => i.id === id);
+        if(!item) return;
+        editingId = id;
+        editState = {
+          title: item.title, notes: item.notes || '',
+          category: item.category,
+          effort: item.effort, cost: item.cost, help: item.help,
+          costAmount: item.costAmount != null ? item.costAmount : null
+        };
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-cancel-edit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editingId = null;
+        editState = null;
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-editcat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editState.category = btn.dataset.editcat;
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-editfield]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editState[btn.dataset.editfield] = parseInt(btn.dataset.val, 10);
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-save-edit]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = e_id(btn);
+        const item = ideas.find(i => i.id === id);
+        if(!item) return;
+        const titleVal = document.getElementById('edit-title').value.trim();
+        const notesVal = document.getElementById('edit-notes').value.trim();
+        const costRaw = document.getElementById('edit-cost-amount').value;
+        if(!titleVal) return;
+        item.title = titleVal;
+        item.notes = notesVal;
+        item.category = editState.category;
+        item.effort = editState.effort;
+        item.cost = editState.cost;
+        item.help = editState.help;
+        item.costAmount = costRaw !== '' ? Math.max(0, parseFloat(costRaw)) : null;
+        editingId = null;
+        editState = null;
+        render();
+        await saveBoard();
+      });
+    });
+  }
+
+  function e_id(el){
+    return el.closest('.card').dataset.id;
   }
 
   document.getElementById('add-form').addEventListener('submit', async (e) => {
@@ -628,6 +861,8 @@
       return;
     }
     const notes = document.getElementById('f-notes').value.trim();
+    const costRaw = document.getElementById('f-cost-amount').value;
+    const costAmount = costRaw !== '' ? Math.max(0, parseFloat(costRaw)) : null;
     const newIdea = {
       id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
       title, notes,
@@ -635,6 +870,7 @@
       effort: ratings.effort,
       cost: ratings.cost,
       help: ratings.help,
+      costAmount,
       addedBy: userName,
       createdAt: Date.now()
     };
@@ -642,6 +878,7 @@
     render();
     document.getElementById('f-title').value = '';
     document.getElementById('f-notes').value = '';
+    document.getElementById('f-cost-amount').value = '';
     await saveBoard();
   });
 
