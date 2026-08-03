@@ -531,7 +531,6 @@
 
 <script>
 (function(){
-  const BOARD_KEY = 'southbound:ideas';
   const PROFILE_KEY = 'southbound:profile';
   let ideas = [];
   let userName = '';
@@ -542,10 +541,6 @@
 
   const statusLine = document.getElementById('status-line');
   const nameGate = document.getElementById('name-gate');
-
-  function labelFor(cat){
-    return cat === 'idea' ? 'CROSSED\nOFF? NO —\nIDEA' : ''; // unused, placeholder removed below
-  }
 
   function buildDots(container, field){
     container.innerHTML = '';
@@ -572,12 +567,12 @@
 
   async function loadProfile(){
     try{
-      const res = await window.storage.get(PROFILE_KEY, false);
-      if(res && res.value){
-        const p = JSON.parse(res.value);
+      const saved = localStorage.getItem(PROFILE_KEY);
+      if(saved){
+        const p = JSON.parse(saved);
         userName = p.name || '';
       }
-    }catch(e){ /* no profile yet */ }
+    }catch(e){ /* storage unavailable, will just ask each visit */ }
     if(!userName){
       nameGate.style.display = 'flex';
     }
@@ -588,30 +583,117 @@
     if(!val) return;
     userName = val;
     try{
-      await window.storage.set(PROFILE_KEY, JSON.stringify({name: val}), false);
-    }catch(e){ console.error('profile save failed', e); }
+      localStorage.setItem(PROFILE_KEY, JSON.stringify({name: val}));
+    }catch(e){ /* not critical, will just ask again next visit */ }
     nameGate.style.display = 'none';
   });
 
-  async function loadBoard(){
-    statusLine.textContent = 'Loading board…';
-    try{
-      const res = await window.storage.get(BOARD_KEY, true);
-      ideas = res && res.value ? JSON.parse(res.value) : [];
-    }catch(e){
-      ideas = [];
+  const API_BASE = 'https://jsonblob.com/api/jsonBlob';
+  let boardId = null;
+  let pollTimer = null;
+
+  async function createRemoteBoard(initialData){
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(initialData)
+    });
+    if(!res.ok) throw new Error('create failed');
+    const loc = res.headers.get('Location');
+    if(!loc) throw new Error('no location header returned');
+    return loc.split('/').pop();
+  }
+
+  async function fetchRemoteBoard(id){
+    const res = await fetch(`${API_BASE}/${id}`, { headers: { 'Accept': 'application/json' } });
+    if(!res.ok) throw new Error('not found');
+    return await res.json();
+  }
+
+  async function putRemoteBoard(id, data){
+    const res = await fetch(`${API_BASE}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.ok;
+  }
+
+  function showNewBoardBanner(url){
+    const banner = document.createElement('div');
+    banner.id = 'new-board-banner';
+    banner.style.cssText = 'background:#e4edf1;border:1px solid var(--ocean);border-radius:4px;padding:1rem 1.2rem;margin-bottom:1.6rem;';
+    banner.innerHTML = `
+      <div style="font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ocean);margin-bottom:0.4rem;">Board created</div>
+      <div style="font-size:0.9rem;margin-bottom:0.6rem;">Send this exact link to everyone in the family — it's the one that keeps everyone on the same board:</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+        <input readonly id="share-url" value="${url}" style="flex:1;min-width:200px;font-family:'Space Mono',monospace;font-size:0.8rem;padding:0.5rem 0.6rem;border:1px solid var(--line);border-radius:3px;background:var(--card);">
+        <button id="copy-url-btn" style="font-family:'Space Mono',monospace;font-size:0.75rem;text-transform:uppercase;background:var(--ink);color:var(--paper);border:none;padding:0.5rem 0.9rem;border-radius:3px;cursor:pointer;">Copy link</button>
+      </div>
+    `;
+    document.getElementById('name-gate').insertAdjacentElement('afterend', banner);
+    document.getElementById('copy-url-btn').addEventListener('click', () => {
+      const input = document.getElementById('share-url');
+      input.select();
+      navigator.clipboard && navigator.clipboard.writeText(url).catch(() => {});
+      document.getElementById('copy-url-btn').textContent = 'Copied';
+    });
+  }
+
+  function showFatalError(msg){
+    statusLine.textContent = msg;
+    statusLine.style.color = 'var(--coral)';
+  }
+
+  async function initBoard(){
+    const params = new URLSearchParams(window.location.search);
+    let id = params.get('board');
+
+    if(!id){
+      statusLine.textContent = 'Setting up a new shared board…';
+      try{
+        id = await createRemoteBoard({ ideas: [] });
+      }catch(e){
+        showFatalError('Could not create a board — check your internet connection and reload.');
+        return;
+      }
+      const newUrl = window.location.origin + window.location.pathname + '?board=' + id;
+      window.history.replaceState({}, '', newUrl);
+      showNewBoardBanner(newUrl);
     }
-    render();
-    statusLine.textContent = 'Shared board — visible to everyone with this link.';
+
+    boardId = id;
+    await loadBoard();
+
+    pollTimer = setInterval(() => {
+      if(editingId === null) loadBoard(true);
+    }, 20000);
+  }
+
+  async function loadBoard(silent){
+    if(!silent) statusLine.textContent = 'Loading board…';
+    try{
+      const data = await fetchRemoteBoard(boardId);
+      ideas = (data && Array.isArray(data.ideas)) ? data.ideas : [];
+      render();
+      statusLine.style.color = '';
+      statusLine.textContent = 'Shared board — everyone with this link sees the same data.';
+    }catch(e){
+      if(!silent){
+        showFatalError('Could not load this board. Double-check you used the full shared link.');
+      }
+    }
   }
 
   async function saveBoard(){
     try{
-      const result = await window.storage.set(BOARD_KEY, JSON.stringify(ideas), true);
-      if(!result){ statusLine.textContent = 'Could not save — try again.'; }
+      const ok = await putRemoteBoard(boardId, { ideas });
+      if(!ok){ statusLine.textContent = 'Could not save — try again.'; statusLine.style.color = 'var(--coral)'; }
+      else { statusLine.style.color=''; statusLine.textContent = 'Shared board — everyone with this link sees the same data.'; }
     }catch(e){
       console.error('save failed', e);
-      statusLine.textContent = 'Could not save — try again.';
+      statusLine.textContent = 'Could not save — check your connection and try again.';
+      statusLine.style.color = 'var(--coral)';
     }
   }
 
@@ -883,7 +965,7 @@
   });
 
   loadProfile();
-  loadBoard();
+  initBoard();
 })();
 </script>
 
