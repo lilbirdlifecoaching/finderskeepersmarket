@@ -202,35 +202,53 @@
   .cost-chips{ display:flex; gap:0.4rem; flex-wrap:wrap; }
 
   /* ---------- reactions ---------- */
+  .reactions-label{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ocean);
+    display:block;
+    margin:0.8rem 0 0.4rem;
+  }
   .reactions-row{
     display:flex;
-    gap:0.35rem;
+    gap:0.4rem;
     flex-wrap:wrap;
-    margin:0.7rem 0 0;
+    margin:0;
   }
   .reaction-btn{
     font-family:'Inter';
-    font-size:0.82rem;
-    padding:0.22rem 0.55rem;
+    font-size:1rem;
+    padding:0.32rem 0.65rem;
     border-radius:999px;
-    border:1px solid var(--line);
-    background:var(--paper);
+    border:1.5px solid rgba(30,42,36,0.3);
+    background:var(--card);
+    box-shadow:0 1px 2px rgba(30,42,36,0.06);
     cursor:pointer;
     display:inline-flex;
     align-items:center;
-    gap:0.3rem;
+    gap:0.35rem;
     line-height:1;
+    transition:border-color .12s ease, background .12s ease, transform .08s ease;
+  }
+  .reaction-btn:hover{
+    border-color:var(--ocean);
+    background:#EAF1F4;
+    transform:translateY(-1px);
   }
   .reaction-btn .rcount{
     font-family:'Space Mono',monospace;
-    font-size:0.68rem;
-    color:rgba(30,42,36,0.55);
+    font-size:0.72rem;
+    font-weight:700;
+    color:rgba(30,42,36,0.6);
   }
   .reaction-btn.active{
     background:#FBEBD0;
     border-color:var(--ochre);
+    box-shadow:inset 0 0 0 1px var(--ochre);
   }
-  .reaction-btn.active .rcount{ color:var(--ochre); font-weight:700; }
+  .reaction-btn.active .rcount{ color:var(--ochre); }
 
   /* ---------- comments / questions / concerns ---------- */
   .comments-panel{
@@ -642,6 +660,7 @@
   .card.collapsed .badge-row,
   .card.collapsed .card-link,
   .card.collapsed .reactions-row,
+  .card.collapsed .reactions-label,
   .card.collapsed .comments-panel,
   .card.collapsed .card-footer{ display:none; }
   .card.collapsed .card-title{
@@ -1041,7 +1060,7 @@
         <span>${emoji}</span>${names.length ? `<span class="rcount">${names.length}</span>` : ''}
       </button>`;
     }).join('');
-    return `<div class="reactions-row">${btns}</div>`;
+    return `<span class="reactions-label">React</span><div class="reactions-row">${btns}</div>`;
   }
 
   function commentsPanelHTML(idea){
@@ -1227,6 +1246,8 @@
   }
 
   function render(){
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
     const cols = { idea: [], plan: [], promise: [] };
     ideas
       .slice()
@@ -1449,6 +1470,8 @@
         await saveBoard();
       });
     });
+
+    window.scrollTo(scrollX, scrollY);
   }
 
   function e_id(el){
