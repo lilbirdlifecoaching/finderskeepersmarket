@@ -200,6 +200,22 @@
   .card-link:hover{ text-decoration:underline; }
 
   .cost-chips{ display:flex; gap:0.4rem; flex-wrap:wrap; }
+  .cost-total-line{
+    font-family:'Space Mono',monospace;
+    font-size:0.76rem;
+    color:rgba(30,42,36,0.7);
+    margin-bottom:0.4rem;
+  }
+  .cost-total-line strong{ color:var(--ochre); }
+  .cost-item-running-total{
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    color:rgba(30,42,36,0.55);
+    margin-top:0.5rem;
+    padding-top:0.5rem;
+    border-top:1px dashed var(--line);
+  }
+  .cost-item-running-total strong{ color:var(--ochre); }
 
   /* ---------- reactions ---------- */
   .reactions-label{
@@ -467,20 +483,49 @@
 
   /* ---------- cost item rows (add/edit form) ---------- */
   .cost-items-list{ margin-top:0.4rem; }
+  .cost-item-header{
+    display:grid;
+    grid-template-columns:1fr 1.5fr auto auto;
+    gap:0.5rem;
+    margin-bottom:0.3rem;
+  }
+  .cost-item-header span{
+    font-family:'Space Mono',monospace;
+    font-size:0.6rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:rgba(30,42,36,0.45);
+  }
   .cost-item-row{
     display:grid;
-    grid-template-columns:1fr 1fr auto auto;
+    grid-template-columns:1fr 1.5fr auto auto;
     gap:0.5rem;
     align-items:center;
     margin-bottom:0.5rem;
   }
-  @media (max-width:520px){
-    .cost-item-row{ grid-template-columns:1fr 1fr; }
+  @media (max-width:560px){
+    .cost-item-row, .cost-item-header{ grid-template-columns:1fr 1fr; }
+    .cost-item-header span:nth-child(3), .cost-item-header span:nth-child(4){ display:none; }
   }
-  .cost-item-row input[type=number], .cost-item-row input[type=month]{
+  .cost-item-date-group{
+    display:flex;
+    gap:0.35rem;
+  }
+  .cost-item-row input[type=number]{
     margin-top:0;
     padding:0.5rem 0.6rem;
     font-size:0.88rem;
+  }
+  .cost-item-date-group select{
+    flex:1;
+    margin-top:0;
+    padding:0.5rem 0.4rem;
+    font-size:0.82rem;
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:3px;
+    font-family:'Inter';
+    color:var(--ink);
   }
   .cost-item-type-btn{
     font-family:'Space Mono',monospace;
@@ -1142,6 +1187,7 @@
   let openSubtasks = new Set();
   let commentTagChoice = {}; // ideaId -> 'note' | 'question' | 'concern'
   const REACTION_EMOJIS = ['👍','❤️','😂','🎉','❓','⚠️'];
+  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   const statusLine = document.getElementById('status-line');
   const nameGate = document.getElementById('name-gate');
@@ -1510,24 +1556,79 @@
     return rows.length ? rows : [{ amount: '', month: '', type: 'estimate' }];
   }
 
+  function monthYearOptionsHTML(item){
+    let selMonth = '', selYear = '';
+    if(item.month){
+      const parts = item.month.split('-');
+      selYear = parts[0]; selMonth = parts[1];
+    }
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for(let y = currentYear; y <= currentYear + 4; y++) years.push(y);
+    const monthOptions = ['<option value="">Month</option>'].concat(
+      MONTH_NAMES.map((name, i) => {
+        const val = String(i + 1).padStart(2, '0');
+        return `<option value="${val}" ${val === selMonth ? 'selected' : ''}>${name}</option>`;
+      })
+    ).join('');
+    const yearOptions = ['<option value="">Year</option>'].concat(
+      years.map(y => `<option value="${y}" ${String(y) === selYear ? 'selected' : ''}>${y}</option>`)
+    ).join('');
+    return { monthOptions, yearOptions };
+  }
+
+  function updateCostItemMonth(items, idx, container){
+    const monthSel = container.querySelector(`.ci-month-select[data-idx="${idx}"]`);
+    const yearSel = container.querySelector(`.ci-year-select[data-idx="${idx}"]`);
+    if(!monthSel || !yearSel) return;
+    const m = monthSel.value, y = yearSel.value;
+    items[idx].month = (m && y) ? `${y}-${m}` : null;
+  }
+
+  function computeItemsTotal(items){
+    return items.reduce((sum, it) => {
+      const amt = parseFloat(it.amount);
+      return sum + (isNaN(amt) ? 0 : amt);
+    }, 0);
+  }
+
   function renderCostItemsInto(container, items){
     if(!container) return;
-    container.innerHTML = items.length
-      ? items.map((item, idx) => `
+    const header = items.length
+      ? `<div class="cost-item-header"><span>Amount ($)</span><span>Due date (optional)</span><span></span><span></span></div>`
+      : '';
+    const runningTotal = items.length > 1
+      ? `<div class="cost-item-running-total">Running total: <strong>${fmtMoney(computeItemsTotal(items))}</strong></div>`
+      : '';
+    container.innerHTML = header + (items.length
+      ? items.map((item, idx) => {
+          const { monthOptions, yearOptions } = monthYearOptionsHTML(item);
+          return `
           <div class="cost-item-row" data-idx="${idx}">
             <input type="number" min="0" step="1" placeholder="Amount $" class="ci-amount" data-idx="${idx}" value="${item.amount !== '' && item.amount != null ? item.amount : ''}">
-            <input type="month" class="ci-month" data-idx="${idx}" value="${item.month || ''}">
+            <div class="cost-item-date-group">
+              <select class="ci-month-select" data-idx="${idx}">${monthOptions}</select>
+              <select class="ci-year-select" data-idx="${idx}">${yearOptions}</select>
+            </div>
             <button type="button" class="cost-item-type-btn ${item.type === 'firm' ? 'firm' : ''}" data-idx="${idx}">${item.type === 'firm' ? 'Firm' : 'Estimate'}</button>
             <button type="button" class="cost-item-remove-btn" data-idx="${idx}">✕</button>
           </div>
-        `).join('')
-      : `<div class="no-comments-yet">No costs added yet</div>`;
+        `;
+        }).join('')
+      : `<div class="no-comments-yet">No costs added yet</div>`) + runningTotal;
 
     container.querySelectorAll('.ci-amount').forEach(el => {
-      el.addEventListener('input', () => { items[parseInt(el.dataset.idx, 10)].amount = el.value; });
+      el.addEventListener('input', () => {
+        items[parseInt(el.dataset.idx, 10)].amount = el.value;
+        const totalEl = container.querySelector('.cost-item-running-total strong');
+        if(totalEl) totalEl.textContent = fmtMoney(computeItemsTotal(items));
+      });
     });
-    container.querySelectorAll('.ci-month').forEach(el => {
-      el.addEventListener('input', () => { items[parseInt(el.dataset.idx, 10)].month = el.value; });
+    container.querySelectorAll('.ci-month-select, .ci-year-select').forEach(el => {
+      el.addEventListener('change', () => {
+        const idx = parseInt(el.dataset.idx, 10);
+        updateCostItemMonth(items, idx, container);
+      });
     });
     container.querySelectorAll('.cost-item-type-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1660,6 +1761,10 @@
           idea.costActual != null ? `<span class="timed-cost-chip firm">Firm ${fmtMoney(idea.costActual)}</span>` : '',
           idea.costEstimate != null ? `<span class="timed-cost-chip estimate">Est. ${fmtMoney(idea.costEstimate)}</span>` : ''
         ].filter(Boolean);
+    const itemCount = (idea.costItems && idea.costItems.length) || 0;
+    const costTotalLine = itemCount > 1
+      ? `<div class="cost-total-line">Total across ${itemCount} payments: <strong>${fmtMoney(ideaEffectiveTotal(idea))}</strong></div>`
+      : '';
 
     const { toggleBtn: commentsToggleBtn, panel: commentsPanel } = commentsPanelHTML(idea);
     const { toggleBtn: subtasksToggleBtn, panel: subtasksPanel } = subtasksPanelHTML(idea);
@@ -1682,6 +1787,7 @@
             <div class="mini-rating"><span class="rlabel">EFFORT</span>${miniDots('effort', idea.effort)}</div>
             <div class="mini-rating"><span class="rlabel">HELP</span>${miniDots('help', idea.help)}</div>
           </div>
+          ${costTotalLine}
           ${costChips.length ? `<div class="cost-chips">${costChips.join('')}</div>` : ''}
         </div>
         ${reactionsRowHTML(idea)}
