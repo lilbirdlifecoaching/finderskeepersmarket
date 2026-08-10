@@ -974,7 +974,19 @@
 
   async function initBoard(){
     const params = new URLSearchParams(window.location.search);
+    const LAST_BOARD_KEY = 'southbound:last-board-id';
     let id = params.get('board');
+    let recoveredFromMemory = false;
+
+    if(!id){
+      try{
+        const remembered = localStorage.getItem(LAST_BOARD_KEY);
+        if(remembered){
+          id = remembered;
+          recoveredFromMemory = true;
+        }
+      }catch(e){ /* localStorage unavailable */ }
+    }
 
     if(!id){
       statusLine.textContent = 'Setting up a new shared board…';
@@ -987,16 +999,29 @@
       const newUrl = window.location.origin + window.location.pathname + '?board=' + id;
       window.history.replaceState({}, '', newUrl);
       showNewBoardBanner(newUrl);
+    } else if(recoveredFromMemory){
+      const newUrl = window.location.origin + window.location.pathname + '?board=' + id;
+      window.history.replaceState({}, '', newUrl);
     }
+
+    try{ localStorage.setItem(LAST_BOARD_KEY, id); }catch(e){ /* not critical */ }
 
     boardId = id;
     await loadBoard();
+    showBoardIdFooter(id);
 
     pollTimer = setInterval(() => {
       const active = document.activeElement;
       const isTypingComment = active && active.id && active.id.startsWith('comment-input-');
       if(editingId === null && !isTypingComment && !isSaving) loadBoard(true);
     }, 20000);
+  }
+
+  function showBoardIdFooter(id){
+    const el = document.createElement('div');
+    el.style.cssText = 'text-align:center;font-family:"Space Mono",monospace;font-size:0.62rem;color:rgba(30,42,36,0.3);margin-top:0.5rem;';
+    el.textContent = 'Board ID: ' + id;
+    statusLine.insertAdjacentElement('afterend', el);
   }
 
   async function loadBoard(silent){
