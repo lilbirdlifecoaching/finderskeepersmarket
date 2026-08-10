@@ -5,7 +5,7 @@
       "id": "kg001",
       "title": "Turtle Blues",
       "price": 450,
-      "shipping": "Contact for shipping quote — large sculptural piece",
+      "shipping": "Contact for shipping quote \u2014 large sculptural piece",
       "description": "A large-scale sea turtle rendered in deep slate blues and silver, with tribal and Celtic-inspired engravings across every inch of the shell. The kind of piece that stops people mid-conversation. Hand-sculpted paper mache by Kindness Grace. Original. Breathtaking.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 24\" x 20\"",
@@ -42,8 +42,8 @@
       "id": "kg003",
       "title": "Sea Leopard",
       "price": 600,
-      "shipping": "Contact for shipping quote — large sculptural piece",
-      "description": "An octopus of mythic proportions. Deep teal and forest green with iridescent lavender suckers that shimmer when the light catches them. Tentacles reaching in every direction. This is not wall art — this is a statement. Hand-sculpted paper mache by Kindness Grace. Original. Unmistakable.",
+      "shipping": "Contact for shipping quote \u2014 large sculptural piece",
+      "description": "An octopus of mythic proportions. Deep teal and forest green with iridescent lavender suckers that shimmer when the light catches them. Tentacles reaching in every direction. This is not wall art \u2014 this is a statement. Hand-sculpted paper mache by Kindness Grace. Original. Unmistakable.",
       "medium": "Sculpted paper mache, acrylic paint, iridescent accents",
       "dimensions": "Approx. 22\" x 28\"",
       "image": "images/kg/sea-leopard.jpg",
@@ -62,7 +62,7 @@
       "title": "Dilophosaurus",
       "price": 850,
       "shipping": "Contact for shipping quote",
-      "description": "You remember the moment. The frill opened. The sound. Jurassic Park, 1993. This Dilophosaurus bust by Kindness Grace captures that exact confrontational energy — volcanic yellows and reds radiating through the frill, teeth bared, eyes locked on yours. Hand-sculpted paper mache. The most talked-about piece in any room it enters.",
+      "description": "You remember the moment. The frill opened. The sound. Jurassic Park, 1993. This Dilophosaurus bust by Kindness Grace captures that exact confrontational energy \u2014 volcanic yellows and reds radiating through the frill, teeth bared, eyes locked on yours. Hand-sculpted paper mache. The most talked-about piece in any room it enters.",
       "medium": "Sculpted paper mache, acrylic paint",
       "dimensions": "Approx. 28\" x 22\"",
       "image": "images/kg/dilophosaurus.jpg",
@@ -81,7 +81,7 @@
       "title": "Mariposa",
       "price": 250,
       "shipping": "Ships in custom box, $22 flat rate",
-      "description": "A monarch butterfly in full glory, wings spread wide over a yellow flower — mounted in a black shadow box.",
+      "description": "A monarch butterfly in full glory, wings spread wide over a yellow flower \u2014 mounted in a black shadow box.",
       "medium": "Sculpted paper mache, acrylic paint, shadow box",
       "dimensions": "Approx. 16\" x 16\"",
       "image": "images/kg/mariposa.jpg",
@@ -118,7 +118,7 @@
       "id": "kg007",
       "title": "Canned Tuna",
       "price": 444,
-      "shipping": "Contact for shipping quote — very large piece",
+      "shipping": "Contact for shipping quote \u2014 very large piece",
       "description": "A life-size tuna built from hundreds of individual spoon-shaped scales, creating a shimmering metallic surface unlike anything else.",
       "medium": "Sculpted paper mache, metallic paint, mixed media scales",
       "dimensions": "Approx. 48\" x 24\"",
@@ -157,7 +157,7 @@
       "title": "Phoenix Rising",
       "price": 950,
       "shipping": "Contact for shipping quote",
-      "description": "A sculptural phoenix in full wingspan, mounted within a gilded ornate frame — the bird breaking free of the canvas itself.",
+      "description": "A sculptural phoenix in full wingspan, mounted within a gilded ornate frame \u2014 the bird breaking free of the canvas itself.",
       "medium": "Sculpted paper mache, acrylic paint, antique gilded frame",
       "dimensions": "Approx. 18\" x 20\" framed",
       "image": "images/kg/phoenix.jpg",
@@ -176,8 +176,8 @@
       "id": "kg010",
       "title": "Turtle Journey",
       "price": null,
-      "shipping": "Contact for shipping quote — framed piece",
-      "description": "A green sea turtle swimming through cracked, flowing water — rendered in a panoramic framed scene with natural river stones.",
+      "shipping": "Contact for shipping quote \u2014 framed piece",
+      "description": "A green sea turtle swimming through cracked, flowing water \u2014 rendered in a panoramic framed scene with natural river stones.",
       "medium": "Sculpted paper mache, acrylic paint, antique frame, natural stones",
       "dimensions": "Approx. 24\" x 14\" framed",
       "image": "images/kg/turtle-journey.jpg",
@@ -200,12 +200,16 @@
       "price": 42,
       "depopUrl": "https://www.depop.com/meowmeowmeow617/",
       "description": "Summer festival. Your favorite vendor. The one with the handmade things you could never quite find anywhere else. This terracotta crochet bralette is the piece you would have bought that day and kept forever. Tie back. Fringe detail. Handmade with the kind of care that shows.",
-      "medium": "Handmade · Boho",
+      "medium": "Handmade \u00b7 Boho",
       "image": "images/kc/terracotta-bralette.jpg",
       "available": true,
       "featured": true,
       "date": "2025-07-01",
-      "tags": ["handmade", "boho", "bralette"]
+      "tags": [
+        "handmade",
+        "boho",
+        "bralette"
+      ]
     }
   ],
   "scenes": [
@@ -256,6 +260,56 @@
           "y": 38
         }
       ]
+    }
+  ],
+  "workshops": [
+    {
+      "id": "ws001",
+      "title": "Paper mache creatures \u2014 intro",
+      "description": "Learn the basics of paper mache sculpting. Build and paint your own creature from scratch. All materials provided. Suitable for all skill levels.",
+      "date": "2025-08-09",
+      "time": "10:00am \u2013 1:00pm",
+      "location": "Bay Area, CA (full address sent on booking)",
+      "price": 45,
+      "spots": 8,
+      "spotsRemaining": 4,
+      "ageGroup": "all",
+      "ageMin": 0,
+      "ageMax": 0,
+      "available": true,
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
+    },
+    {
+      "id": "ws002",
+      "title": "Sea creatures \u2014 intermediate",
+      "description": "More complex forms, texture, and colour layering. Some craft experience helpful but not required.",
+      "date": "2025-08-17",
+      "time": "11:00am \u2013 3:00pm",
+      "location": "Bay Area, CA (full address sent on booking)",
+      "price": 65,
+      "spots": 8,
+      "spotsRemaining": 6,
+      "ageGroup": "adults",
+      "ageMin": 15,
+      "ageMax": 0,
+      "available": true,
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
+    },
+    {
+      "id": "ws003",
+      "title": "Dino busts \u2014 kids special",
+      "description": "Build your own Dilophosaurus or T-Rex head and take it home painted and ready to hang. Parent or guardian must attend.",
+      "date": "2025-08-23",
+      "time": "10:00am \u2013 12:00pm",
+      "location": "Bay Area, CA (full address sent on booking)",
+      "price": 30,
+      "spots": 10,
+      "spotsRemaining": 8,
+      "ageGroup": "kids",
+      "ageMin": 5,
+      "ageMax": 13,
+      "available": true,
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
     }
   ]
 }
