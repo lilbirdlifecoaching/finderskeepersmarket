@@ -352,6 +352,265 @@
     font-size:0.85rem;
   }
 
+  /* ---------- view tabs ---------- */
+  .view-tabs{
+    display:flex;
+    gap:0.5rem;
+    margin-bottom:1.4rem;
+  }
+  .view-tab{
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:0.5rem 1rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--card);
+    color:rgba(30,42,36,0.55);
+    cursor:pointer;
+  }
+  .view-tab.active{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+
+  /* ---------- timeline ---------- */
+  .timeline-substyle{
+    display:flex;
+    gap:0.5rem;
+    margin-bottom:1.2rem;
+  }
+  .timeline-substyle button{
+    font-family:'Space Mono',monospace;
+    font-size:0.66rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:0.32rem 0.7rem;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--paper);
+    color:rgba(30,42,36,0.55);
+    cursor:pointer;
+  }
+  .timeline-substyle button.active{
+    background:var(--ochre);
+    color:var(--paper);
+    border-color:var(--ochre);
+  }
+  .timeline-strip{
+    display:flex;
+    gap:0.8rem;
+    overflow-x:auto;
+    padding-bottom:0.6rem;
+  }
+  .month-tile{
+    min-width:130px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:0.8rem 0.9rem;
+    flex-shrink:0;
+  }
+  .month-tile.has-cost{ border-color:var(--ochre); }
+  .month-tile .m-label{
+    font-family:'Space Mono',monospace;
+    font-size:0.66rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:rgba(30,42,36,0.5);
+  }
+  .month-tile .m-total{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1.3rem;
+    margin:0.3rem 0 0.35rem;
+  }
+  .month-tile .m-items{
+    font-size:0.72rem;
+    color:rgba(30,42,36,0.6);
+    line-height:1.4;
+  }
+  .timeline-list-group{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    margin-bottom:0.9rem;
+    overflow:hidden;
+  }
+  .timeline-list-head{
+    display:flex;
+    justify-content:space-between;
+    padding:0.7rem 1rem;
+    background:var(--paper2);
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:1rem;
+  }
+  .timeline-list-row{
+    display:flex;
+    justify-content:space-between;
+    padding:0.55rem 1rem 0.55rem 1.6rem;
+    font-size:0.85rem;
+    border-top:1px solid var(--line-soft);
+  }
+  .timeline-list-row .tl-title{ color:var(--ink); }
+  .timeline-list-row .tl-amount{ font-family:'Space Mono',monospace; }
+  .timeline-empty{
+    text-align:center;
+    font-family:'Space Mono',monospace;
+    font-size:0.8rem;
+    color:rgba(30,42,36,0.4);
+    padding:2rem 0;
+  }
+
+  /* ---------- cost item rows (add/edit form) ---------- */
+  .cost-items-list{ margin-top:0.4rem; }
+  .cost-item-row{
+    display:grid;
+    grid-template-columns:1fr 1fr auto auto;
+    gap:0.5rem;
+    align-items:center;
+    margin-bottom:0.5rem;
+  }
+  @media (max-width:520px){
+    .cost-item-row{ grid-template-columns:1fr 1fr; }
+  }
+  .cost-item-row input[type=number], .cost-item-row input[type=month]{
+    margin-top:0;
+    padding:0.5rem 0.6rem;
+    font-size:0.88rem;
+  }
+  .cost-item-type-btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    text-transform:uppercase;
+    padding:0.4rem 0.5rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .cost-item-type-btn.firm{ background:var(--eucalyptus); color:var(--paper); border-color:var(--eucalyptus); }
+  .cost-item-remove-btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    background:none;
+    border:1px solid var(--coral);
+    color:var(--coral);
+    border-radius:3px;
+    padding:0.4rem 0.5rem;
+    cursor:pointer;
+  }
+  .add-cost-item-btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    background:none;
+    border:1px dashed var(--line);
+    border-radius:3px;
+    padding:0.4rem 0.7rem;
+    color:rgba(30,42,36,0.55);
+    cursor:pointer;
+    margin-top:0.2rem;
+  }
+  .timed-cost-chip{
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    padding:0.15rem 0.5rem;
+    border-radius:3px;
+    display:inline-block;
+  }
+  .timed-cost-chip.estimate{ background:var(--paper2); color:rgba(30,42,36,0.65); }
+  .timed-cost-chip.firm{ background:var(--eucalyptus); color:var(--paper); font-weight:700; }
+
+  /* ---------- subtasks / checklist ---------- */
+  .subtasks-panel{ margin-top:0.7rem; }
+  .subtask-progress{
+    height:5px;
+    background:var(--paper2);
+    border-radius:3px;
+    margin:0.4rem 0 0.6rem;
+    overflow:hidden;
+  }
+  .subtask-progress-fill{
+    height:100%;
+    background:var(--eucalyptus);
+    border-radius:3px;
+  }
+  .subtask-row{
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+    font-size:0.85rem;
+    margin-bottom:0.4rem;
+  }
+  .subtask-row input[type=checkbox]{ flex-shrink:0; cursor:pointer; }
+  .subtask-row .subtask-text.done{
+    text-decoration:line-through;
+    color:rgba(30,42,36,0.4);
+  }
+  .subtask-remove{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    color:var(--coral);
+    background:none;
+    border:none;
+    cursor:pointer;
+    margin-left:auto;
+  }
+  .subtask-add-row{
+    display:flex;
+    gap:0.4rem;
+    margin-top:0.4rem;
+  }
+  .subtask-add-row input{
+    flex:1;
+    font-family:'Inter';
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:3px;
+    padding:0.4rem 0.6rem;
+    font-size:0.82rem;
+  }
+  .subtask-add-row button{
+    font-family:'Space Mono',monospace;
+    font-size:0.66rem;
+    text-transform:uppercase;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:3px;
+    padding:0.4rem 0.7rem;
+    cursor:pointer;
+  }
+
+  /* ---------- completion ---------- */
+  .complete-toggle-btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:0.28rem 0.55rem;
+    border-radius:3px;
+    cursor:pointer;
+  }
+  .complete-toggle-btn.not-done{
+    border:1px solid var(--eucalyptus);
+    color:var(--eucalyptus);
+    background:none;
+  }
+  .complete-toggle-btn.done{
+    border:1px solid var(--eucalyptus);
+    background:var(--eucalyptus);
+    color:var(--paper);
+  }
+  .card.is-complete{ opacity:0.55; }
+  .card.is-complete .card-title{ text-decoration:line-through; }
+
   /* ---------- backup controls ---------- */
   .backup-row{
     display:flex;
@@ -691,6 +950,7 @@
   .card.collapsed .reactions-row,
   .card.collapsed .reactions-label,
   .card.collapsed .comments-panel,
+  .card.collapsed .subtasks-panel,
   .card.collapsed .card-footer{ display:none; }
   .card.collapsed .card-title{
     padding-right:2rem;
@@ -775,22 +1035,9 @@
       </div>
     </div>
 
-    <div class="cost-fields-row">
-      <div>
-        <label class="field-label">Estimated cost (optional)</label>
-        <div class="cost-input-row">
-          <span>$</span>
-          <input type="number" id="f-cost-estimate" min="0" step="1" placeholder="e.g. 3200">
-        </div>
-      </div>
-      <div>
-        <label class="field-label">Firm cost, once known (optional)</label>
-        <div class="cost-input-row">
-          <span>$</span>
-          <input type="number" id="f-cost-actual" min="0" step="1" placeholder="e.g. 2950">
-        </div>
-      </div>
-    </div>
+    <label class="field-label">Costs, if known (optional) — each can have its own due month</label>
+    <div class="cost-items-list" id="f-cost-items"></div>
+    <button type="button" class="add-cost-item-btn" id="f-add-cost-item">+ Add another cost</button>
 
     <button type="submit" id="submit-btn">Add to board</button>
   </form>
@@ -814,7 +1061,12 @@
     </div>
   </div>
 
-  <div class="filter-row">
+  <div class="view-tabs">
+    <button type="button" class="view-tab active" data-view-tab="board">Board</button>
+    <button type="button" class="view-tab" data-view-tab="timeline">Timeline</button>
+  </div>
+
+  <div class="filter-row" id="filter-row">
     <label for="topic-filter">Show category</label>
     <select id="topic-filter">
       <option value="all">All categories</option>
@@ -825,7 +1077,7 @@
     </select>
   </div>
 
-  <div class="board">
+  <div class="board" id="board-view">
     <div class="lane lane-idea">
       <div class="lane-head">
         <span class="marker"></span>
@@ -861,6 +1113,14 @@
     </div>
   </div>
 
+  <div id="timeline-view" style="display:none;">
+    <div class="timeline-substyle">
+      <button type="button" class="active" data-timeline-style="strip">Strip</button>
+      <button type="button" data-timeline-style="list">List</button>
+    </div>
+    <div id="timeline-content"></div>
+  </div>
+
   <div id="status-line">Loading board…</div>
 </main>
 
@@ -872,10 +1132,14 @@
   let ratings = { effort: 2, help: 2 };
   let selectedCat = 'plan';
   let topicFilter = 'all';
+  let addFormCostItems = [{ amount: '', month: '', type: 'estimate' }];
+  let boardView = 'board'; // 'board' | 'timeline'
+  let timelineStyle = 'strip'; // 'strip' | 'list'
   let editingId = null;
   let editState = null; // { title, notes, category, effort, cost, help }
   let collapsedIds = new Set();
   let openComments = new Set();
+  let openSubtasks = new Set();
   let commentTagChoice = {}; // ideaId -> 'note' | 'question' | 'concern'
   const REACTION_EMOJIS = ['👍','❤️','😂','🎉','❓','⚠️'];
 
@@ -908,6 +1172,32 @@
   document.getElementById('topic-filter').addEventListener('change', (e) => {
     topicFilter = e.target.value;
     render();
+  });
+
+  document.getElementById('f-add-cost-item').addEventListener('click', () => {
+    addFormCostItems.push({ amount: '', month: '', type: 'estimate' });
+    renderCostItemsInto(document.getElementById('f-cost-items'), addFormCostItems);
+  });
+  renderCostItemsInto(document.getElementById('f-cost-items'), addFormCostItems);
+
+  document.querySelectorAll('[data-view-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      boardView = btn.dataset.viewTab;
+      document.querySelectorAll('[data-view-tab]').forEach(b => b.classList.toggle('active', b === btn));
+      document.getElementById('board-view').style.display = boardView === 'board' ? '' : 'none';
+      document.getElementById('filter-row').style.display = boardView === 'board' ? '' : 'none';
+      document.getElementById('timeline-view').style.display = boardView === 'timeline' ? '' : 'none';
+      document.querySelectorAll('.lane-controls').forEach(el => { el.style.display = boardView === 'board' ? '' : 'none'; });
+      if(boardView === 'timeline') renderTimelineView();
+    });
+  });
+
+  document.querySelectorAll('[data-timeline-style]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      timelineStyle = btn.dataset.timelineStyle;
+      document.querySelectorAll('[data-timeline-style]').forEach(b => b.classList.toggle('active', b === btn));
+      renderTimelineView();
+    });
   });
 
   function requireName(){
@@ -1205,6 +1495,56 @@
     return '$' + Math.round(n).toLocaleString();
   }
 
+  function monthLabel(ym){
+    if(!ym) return 'No date';
+    const [y, m] = ym.split('-').map(Number);
+    const d = new Date(y, m - 1, 1);
+    return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+  }
+
+  function migrateLegacyCostItems(item){
+    if(item.costItems && item.costItems.length) return item.costItems.map(ci => ({ ...ci }));
+    const rows = [];
+    if(item.costEstimate != null) rows.push({ amount: item.costEstimate, month: null, type: 'estimate' });
+    if(item.costActual != null) rows.push({ amount: item.costActual, month: null, type: 'firm' });
+    return rows.length ? rows : [{ amount: '', month: '', type: 'estimate' }];
+  }
+
+  function renderCostItemsInto(container, items){
+    if(!container) return;
+    container.innerHTML = items.length
+      ? items.map((item, idx) => `
+          <div class="cost-item-row" data-idx="${idx}">
+            <input type="number" min="0" step="1" placeholder="Amount $" class="ci-amount" data-idx="${idx}" value="${item.amount !== '' && item.amount != null ? item.amount : ''}">
+            <input type="month" class="ci-month" data-idx="${idx}" value="${item.month || ''}">
+            <button type="button" class="cost-item-type-btn ${item.type === 'firm' ? 'firm' : ''}" data-idx="${idx}">${item.type === 'firm' ? 'Firm' : 'Estimate'}</button>
+            <button type="button" class="cost-item-remove-btn" data-idx="${idx}">✕</button>
+          </div>
+        `).join('')
+      : `<div class="no-comments-yet">No costs added yet</div>`;
+
+    container.querySelectorAll('.ci-amount').forEach(el => {
+      el.addEventListener('input', () => { items[parseInt(el.dataset.idx, 10)].amount = el.value; });
+    });
+    container.querySelectorAll('.ci-month').forEach(el => {
+      el.addEventListener('input', () => { items[parseInt(el.dataset.idx, 10)].month = el.value; });
+    });
+    container.querySelectorAll('.cost-item-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        items[idx].type = items[idx].type === 'firm' ? 'estimate' : 'firm';
+        renderCostItemsInto(container, items);
+      });
+    });
+    container.querySelectorAll('.cost-item-remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        items.splice(idx, 1);
+        renderCostItemsInto(container, items);
+      });
+    });
+  }
+
   function miniDots(field, value){
     let html = '<div class="mini-dots">';
     for(let i=1;i<=3;i++){
@@ -1267,6 +1607,37 @@
     return { toggleBtn, panel };
   }
 
+  function subtasksPanelHTML(idea){
+    const isOpen = openSubtasks.has(idea.id);
+    const subtasks = idea.subtasks || [];
+    const doneCount = subtasks.filter(s => s.done).length;
+    const label = subtasks.length ? `☑ ${doneCount}/${subtasks.length} tasks` : '☑ Add tasks';
+    const toggleBtn = `<button data-toggle-subtasks="1">${label}</button>`;
+
+    if(!isOpen) return { toggleBtn, panel: '' };
+
+    const pct = subtasks.length ? Math.round((doneCount / subtasks.length) * 100) : 0;
+    const rows = subtasks.map(t => `
+      <div class="subtask-row" data-subtask-id="${t.id}">
+        <input type="checkbox" data-subtask-toggle="${t.id}" ${t.done ? 'checked' : ''}>
+        <span class="subtask-text ${t.done ? 'done' : ''}">${escapeHTML(t.text)}</span>
+        <button class="subtask-remove" data-subtask-remove="${t.id}">Remove</button>
+      </div>
+    `).join('');
+
+    const panel = `
+      <div class="subtasks-panel" data-id="${idea.id}">
+        ${subtasks.length ? `<div class="subtask-progress"><div class="subtask-progress-fill" style="width:${pct}%;"></div></div>` : ''}
+        ${rows || `<div class="no-comments-yet">No tasks yet — break this down into steps?</div>`}
+        <div class="subtask-add-row">
+          <input type="text" id="subtask-input-${idea.id}" placeholder="Add a step, e.g. Book flights">
+          <button data-subtask-add="1">Add</button>
+        </div>
+      </div>
+    `;
+    return { toggleBtn, panel };
+  }
+
   function cardHTML(idea){
     if(idea.id === editingId){
       return editCardHTML(idea);
@@ -1280,19 +1651,28 @@
     if(idea.category === 'promise') nextActions.push(['plan','← Plan']);
     const topic = idea.topic || 'other';
 
-    const costChips = [];
-    if(idea.costActual != null) costChips.push(`<span class="cost-chip firm">Firm ${fmtMoney(idea.costActual)}</span>`);
-    if(idea.costEstimate != null) costChips.push(`<span class="cost-chip estimate">Est. ${fmtMoney(idea.costEstimate)}</span>`);
+    const costChips = (idea.costItems && idea.costItems.length)
+      ? idea.costItems
+          .slice()
+          .sort((a,b) => (a.month || '9999').localeCompare(b.month || '9999'))
+          .map(ci => `<span class="timed-cost-chip ${ci.type}">${monthLabel(ci.month)} · ${ci.type === 'firm' ? 'Firm' : 'Est.'} ${fmtMoney(ci.amount)}</span>`)
+      : [
+          idea.costActual != null ? `<span class="timed-cost-chip firm">Firm ${fmtMoney(idea.costActual)}</span>` : '',
+          idea.costEstimate != null ? `<span class="timed-cost-chip estimate">Est. ${fmtMoney(idea.costEstimate)}</span>` : ''
+        ].filter(Boolean);
 
     const { toggleBtn: commentsToggleBtn, panel: commentsPanel } = commentsPanelHTML(idea);
+    const { toggleBtn: subtasksToggleBtn, panel: subtasksPanel } = subtasksPanelHTML(idea);
+    const isComplete = !!idea.completed;
 
     return `
-      <div class="card ${idea.category} ${isCollapsed ? 'collapsed' : ''}" data-id="${idea.id}">
+      <div class="card ${idea.category} ${isCollapsed ? 'collapsed' : ''} ${isComplete ? 'is-complete' : ''}" data-id="${idea.id}">
         <button class="collapse-toggle" data-toggle-collapse="1" title="${isCollapsed ? 'Expand' : 'Collapse'}">${isCollapsed ? '▸' : '▾'}</button>
         ${stamp}
         <div class="badge-row">
           <span class="status-badge ${idea.category}">${STATUS_LABELS[idea.category] || idea.category}</span>
           <span class="topic-tag ${topic}">${TOPIC_LABELS[topic] || topic}</span>
+          <button class="complete-toggle-btn ${isComplete ? 'done' : 'not-done'}" data-toggle-complete="1">${isComplete ? '✓ Complete' : 'Mark complete'}</button>
         </div>
         <div class="card-title">${escapeHTML(idea.title)}</div>
         ${idea.notes ? `<div class="card-notes">${escapeHTML(idea.notes)}</div>` : ''}
@@ -1309,11 +1689,13 @@
           <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
           <div class="actions">
             ${nextActions.map(a => `<button data-move="${a[0]}">${a[1]}</button>`).join('')}
+            ${subtasksToggleBtn}
             ${commentsToggleBtn}
             <button data-edit="1">Edit</button>
             <button class="danger" data-del="1">✕</button>
           </div>
         </div>
+        ${subtasksPanel}
         ${commentsPanel}
       </div>
     `;
@@ -1363,22 +1745,9 @@
           </div>
         </div>
 
-        <div class="cost-fields-row">
-          <div>
-            <label class="field-label">Estimated cost</label>
-            <div class="cost-input-row">
-              <span>$</span>
-              <input type="number" id="edit-cost-estimate" min="0" step="1" value="${s.costEstimate != null ? s.costEstimate : ''}">
-            </div>
-          </div>
-          <div>
-            <label class="field-label">Firm cost, once known</label>
-            <div class="cost-input-row">
-              <span>$</span>
-              <input type="number" id="edit-cost-actual" min="0" step="1" value="${s.costActual != null ? s.costActual : ''}">
-            </div>
-          </div>
-        </div>
+        <label class="field-label">Costs, if known — each can have its own due month</label>
+        <div class="cost-items-list" id="edit-cost-items"></div>
+        <button type="button" class="add-cost-item-btn" id="edit-add-cost-item">+ Add another cost</button>
 
         <div class="card-footer" style="border-top:none;margin-top:1rem;padding-top:0;">
           <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
@@ -1397,11 +1766,97 @@
     return d.innerHTML;
   }
 
+  function ideaEffectiveTotal(idea){
+    if(idea.costItems && idea.costItems.length){
+      return idea.costItems.reduce((sum, ci) => sum + (ci.amount || 0), 0);
+    }
+    if(idea.costActual != null) return idea.costActual;
+    if(idea.costEstimate != null) return idea.costEstimate;
+    return 0;
+  }
+
+  function getAllCostEntries(){
+    const entries = [];
+    ideas.forEach(idea => {
+      if(idea.costItems && idea.costItems.length){
+        idea.costItems.forEach(ci => entries.push({
+          ideaTitle: idea.title, month: ci.month || null, amount: ci.amount || 0, type: ci.type
+        }));
+      } else {
+        if(idea.costActual != null) entries.push({ ideaTitle: idea.title, month: null, amount: idea.costActual, type: 'firm' });
+        if(idea.costEstimate != null) entries.push({ ideaTitle: idea.title, month: null, amount: idea.costEstimate, type: 'estimate' });
+      }
+    });
+    return entries;
+  }
+
+  function groupEntriesByMonth(entries){
+    const groups = {};
+    entries.forEach(e => {
+      const key = e.month || 'nodate';
+      if(!groups[key]) groups[key] = [];
+      groups[key].push(e);
+    });
+    return groups;
+  }
+
+  function sortedMonthKeys(groups){
+    return Object.keys(groups)
+      .filter(k => k !== 'nodate')
+      .sort()
+      .concat(groups.nodate ? ['nodate'] : []);
+  }
+
+  function renderTimelineView(){
+    const container = document.getElementById('timeline-content');
+    const entries = getAllCostEntries();
+    if(entries.length === 0){
+      container.innerHTML = `<div class="timeline-empty">No costs added yet — add a dollar amount and month to any entry to see it here.</div>`;
+      return;
+    }
+    const groups = groupEntriesByMonth(entries);
+    const keys = sortedMonthKeys(groups);
+
+    if(timelineStyle === 'strip'){
+      container.innerHTML = `<div class="timeline-strip">${keys.map(key => {
+        const items = groups[key];
+        const total = items.reduce((s, i) => s + i.amount, 0);
+        const label = key === 'nodate' ? 'No date' : monthLabel(key);
+        const titles = items.map(i => i.ideaTitle).slice(0, 3).join(', ') + (items.length > 3 ? '…' : '');
+        return `
+          <div class="month-tile ${total > 0 ? 'has-cost' : ''}">
+            <div class="m-label">${escapeHTML(label)}</div>
+            <div class="m-total">${fmtMoney(total)}</div>
+            <div class="m-items">${escapeHTML(titles)}</div>
+          </div>
+        `;
+      }).join('')}</div>`;
+    } else {
+      container.innerHTML = keys.map(key => {
+        const items = groups[key];
+        const total = items.reduce((s, i) => s + i.amount, 0);
+        const label = key === 'nodate' ? 'No date set' : monthLabel(key);
+        const rows = items.map(i => `
+          <div class="timeline-list-row">
+            <span class="tl-title">${escapeHTML(i.ideaTitle)} <span class="timed-cost-chip ${i.type}" style="margin-left:0.4rem;">${i.type === 'firm' ? 'Firm' : 'Est.'}</span></span>
+            <span class="tl-amount">${fmtMoney(i.amount)}</span>
+          </div>
+        `).join('');
+        return `
+          <div class="timeline-list-group">
+            <div class="timeline-list-head"><span>${escapeHTML(label)}</span><span>${fmtMoney(total)}</span></div>
+            ${rows}
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
   function updateBudget(){
     const totals = { idea: 0, plan: 0, promise: 0 };
     ideas.forEach(i => {
-      const effective = i.costActual != null ? i.costActual : i.costEstimate;
-      if(effective != null && totals.hasOwnProperty(i.category)){
+      const effective = ideaEffectiveTotal(i);
+      if(effective > 0 && totals.hasOwnProperty(i.category)){
         totals[i.category] += effective;
       }
     });
@@ -1440,6 +1895,7 @@
     });
 
     updateBudget();
+    if(boardView === 'timeline') renderTimelineView();
 
     document.querySelectorAll('[data-toggle-collapse]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1508,6 +1964,75 @@
       });
     });
 
+    document.querySelectorAll('[data-toggle-complete]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = e_id(btn);
+        const item = ideas.find(i => i.id === id);
+        if(!item) return;
+        item.completed = !item.completed;
+        render();
+        await saveBoard();
+      });
+    });
+
+    document.querySelectorAll('[data-toggle-subtasks]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = e_id(btn);
+        if(openSubtasks.has(id)) openSubtasks.delete(id);
+        else openSubtasks.add(id);
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-subtask-toggle]').forEach(cb => {
+      cb.addEventListener('change', async () => {
+        const id = e_id(cb);
+        const subId = cb.dataset.subtaskToggle;
+        const item = ideas.find(i => i.id === id);
+        if(!item || !item.subtasks) return;
+        const task = item.subtasks.find(t => t.id === subId);
+        if(!task) return;
+        task.done = !task.done;
+        openSubtasks.add(id);
+        render();
+        await saveBoard();
+      });
+    });
+
+    document.querySelectorAll('[data-subtask-remove]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = e_id(btn);
+        const subId = btn.dataset.subtaskRemove;
+        const item = ideas.find(i => i.id === id);
+        if(!item || !item.subtasks) return;
+        item.subtasks = item.subtasks.filter(t => t.id !== subId);
+        openSubtasks.add(id);
+        render();
+        await saveBoard();
+      });
+    });
+
+    document.querySelectorAll('[data-subtask-add]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = e_id(btn);
+        const input = document.getElementById('subtask-input-' + id);
+        if(!input) return;
+        const text = input.value.trim();
+        if(!text) return;
+        const item = ideas.find(i => i.id === id);
+        if(!item) return;
+        if(!item.subtasks) item.subtasks = [];
+        item.subtasks.push({
+          id: 'st_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+          text,
+          done: false
+        });
+        openSubtasks.add(id);
+        render();
+        await saveBoard();
+      });
+    });
+
     document.querySelectorAll('[data-lane-toggle]').forEach(btn => {
       btn.addEventListener('click', () => {
         const cat = btn.dataset.laneToggle;
@@ -1556,8 +2081,7 @@
           linkUrl: item.linkUrl || '', topic: item.topic || 'other',
           category: item.category,
           effort: item.effort, help: item.help,
-          costEstimate: item.costEstimate != null ? item.costEstimate : null,
-          costActual: item.costActual != null ? item.costActual : null
+          costItems: migrateLegacyCostItems(item)
         };
         render();
       });
@@ -1568,13 +2092,9 @@
       const t = document.getElementById('edit-title');
       const n = document.getElementById('edit-notes');
       const l = document.getElementById('edit-link');
-      const ce = document.getElementById('edit-cost-estimate');
-      const ca = document.getElementById('edit-cost-actual');
       if(t) editState.title = t.value;
       if(n) editState.notes = n.value;
       if(l) editState.linkUrl = l.value;
-      if(ce) editState.costEstimate = ce.value;
-      if(ca) editState.costActual = ca.value;
     }
 
     document.querySelectorAll('[data-cancel-edit]').forEach(btn => {
@@ -1619,8 +2139,6 @@
         const notesVal = document.getElementById('edit-notes').value.trim();
         const linkVal = normalizeUrl(document.getElementById('edit-link').value);
         const topicVal = document.getElementById('edit-topic').value;
-        const estRaw = document.getElementById('edit-cost-estimate').value;
-        const actRaw = document.getElementById('edit-cost-actual').value;
         if(!titleVal) return;
         item.title = titleVal;
         item.notes = notesVal;
@@ -1629,14 +2147,34 @@
         item.category = editState.category;
         item.effort = editState.effort;
         item.help = editState.help;
-        item.costEstimate = estRaw !== '' ? Math.max(0, parseFloat(estRaw)) : null;
-        item.costActual = actRaw !== '' ? Math.max(0, parseFloat(actRaw)) : null;
+        item.costItems = (editState.costItems || [])
+          .filter(ci => ci.amount !== '' && ci.amount != null && !isNaN(parseFloat(ci.amount)))
+          .map(ci => ({
+            id: ci.id || ('ci_' + Date.now() + '_' + Math.random().toString(36).slice(2,6)),
+            amount: Math.max(0, parseFloat(ci.amount)),
+            month: ci.month || null,
+            type: ci.type === 'firm' ? 'firm' : 'estimate'
+          }));
+        delete item.costEstimate;
+        delete item.costActual;
         editingId = null;
         editState = null;
         render();
         await saveBoard();
       });
     });
+
+    if(editingId !== null && editState){
+      const costContainer = document.getElementById('edit-cost-items');
+      renderCostItemsInto(costContainer, editState.costItems);
+      const addCostBtn = document.getElementById('edit-add-cost-item');
+      if(addCostBtn){
+        addCostBtn.addEventListener('click', () => {
+          editState.costItems.push({ amount: '', month: '', type: 'estimate' });
+          renderCostItemsInto(costContainer, editState.costItems);
+        });
+      }
+    }
 
     window.scrollTo(scrollX, scrollY);
   }
@@ -1664,17 +2202,23 @@
     const notes = document.getElementById('f-notes').value.trim();
     const linkUrl = normalizeUrl(document.getElementById('f-link').value);
     const topic = document.getElementById('f-topic').value;
-    const estRaw = document.getElementById('f-cost-estimate').value;
-    const actRaw = document.getElementById('f-cost-actual').value;
-    const costEstimate = estRaw !== '' ? Math.max(0, parseFloat(estRaw)) : null;
-    const costActual = actRaw !== '' ? Math.max(0, parseFloat(actRaw)) : null;
+    const costItems = addFormCostItems
+      .filter(item => item.amount !== '' && item.amount != null && !isNaN(parseFloat(item.amount)))
+      .map(item => ({
+        id: 'ci_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        amount: Math.max(0, parseFloat(item.amount)),
+        month: item.month || null,
+        type: item.type === 'firm' ? 'firm' : 'estimate'
+      }));
     const newIdea = {
       id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
       title, notes, linkUrl, topic,
       category: selectedCat,
       effort: ratings.effort,
       help: ratings.help,
-      costEstimate, costActual,
+      costItems,
+      completed: false,
+      subtasks: [],
       addedBy: userName,
       createdAt: Date.now()
     };
@@ -1683,8 +2227,8 @@
     document.getElementById('f-title').value = '';
     document.getElementById('f-notes').value = '';
     document.getElementById('f-link').value = '';
-    document.getElementById('f-cost-estimate').value = '';
-    document.getElementById('f-cost-actual').value = '';
+    addFormCostItems = [{ amount: '', month: '', type: 'estimate' }];
+    renderCostItemsInto(document.getElementById('f-cost-items'), addFormCostItems);
     await saveBoard();
   });
 
