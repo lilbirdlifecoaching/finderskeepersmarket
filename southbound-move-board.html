@@ -217,6 +217,42 @@
   }
   .cost-item-running-total strong{ color:var(--ochre); }
 
+  .schedule-fields-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    margin-top:0.9rem;
+  }
+  @media (max-width:480px){
+    .schedule-fields-row{ grid-template-columns:1fr; }
+  }
+  .schedule-date-group{
+    display:flex;
+    gap:0.35rem;
+    margin-top:0.35rem;
+  }
+  .schedule-date-group select{
+    flex:1;
+    margin-top:0;
+    padding:0.5rem 0.4rem;
+    font-size:0.82rem;
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:3px;
+    font-family:'Inter';
+    color:var(--ink);
+  }
+  .duration-badge{
+    display:inline-block;
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    color:var(--ocean);
+    background:#e4edf1;
+    padding:0.2rem 0.55rem;
+    border-radius:3px;
+    margin-bottom:0.6rem;
+  }
+
   /* ---------- reactions ---------- */
   .reactions-label{
     font-family:'Space Mono',monospace;
@@ -472,6 +508,7 @@
     border-top:1px solid var(--line-soft);
   }
   .timeline-list-row .tl-title{ color:var(--ink); }
+  .timeline-list-row .tl-title.done-schedule{ text-decoration:line-through; color:rgba(30,42,36,0.4); }
   .timeline-list-row .tl-amount{ font-family:'Space Mono',monospace; }
   .timeline-empty{
     text-align:center;
@@ -992,6 +1029,7 @@
   .card.collapsed .card-meta,
   .card.collapsed .badge-row,
   .card.collapsed .card-link,
+  .card.collapsed .duration-badge,
   .card.collapsed .reactions-row,
   .card.collapsed .reactions-label,
   .card.collapsed .comments-panel,
@@ -1084,6 +1122,24 @@
     <div class="cost-items-list" id="f-cost-items"></div>
     <button type="button" class="add-cost-item-btn" id="f-add-cost-item">+ Add another cost</button>
 
+    <label class="field-label">Timing (optional) — helps track projects even without a cost</label>
+    <div class="schedule-fields-row">
+      <div>
+        <span class="field-label">Starts</span>
+        <div class="schedule-date-group">
+          <select id="f-start-month"></select>
+          <select id="f-start-year"></select>
+        </div>
+      </div>
+      <div>
+        <span class="field-label">Target finish</span>
+        <div class="schedule-date-group">
+          <select id="f-end-month"></select>
+          <select id="f-end-year"></select>
+        </div>
+      </div>
+    </div>
+
     <button type="submit" id="submit-btn">Add to board</button>
   </form>
 
@@ -1162,6 +1218,7 @@
     <div class="timeline-substyle">
       <button type="button" class="active" data-timeline-style="strip">Strip</button>
       <button type="button" data-timeline-style="list">List</button>
+      <button type="button" data-timeline-style="schedule">Schedule</button>
     </div>
     <div id="timeline-content"></div>
   </div>
@@ -1225,6 +1282,16 @@
     renderCostItemsInto(document.getElementById('f-cost-items'), addFormCostItems);
   });
   renderCostItemsInto(document.getElementById('f-cost-items'), addFormCostItems);
+
+  function fillMonthYearSelect(monthSelId, yearSelId, value){
+    const { monthOptions, yearOptions } = monthYearOptionsHTML({ month: value });
+    const mEl = document.getElementById(monthSelId);
+    const yEl = document.getElementById(yearSelId);
+    if(mEl) mEl.innerHTML = monthOptions;
+    if(yEl) yEl.innerHTML = yearOptions;
+  }
+  fillMonthYearSelect('f-start-month', 'f-start-year', null);
+  fillMonthYearSelect('f-end-month', 'f-end-year', null);
 
   document.querySelectorAll('[data-view-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1548,6 +1615,25 @@
     return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
   }
 
+  function monthsBetween(startYM, endYM){
+    if(!startYM || !endYM) return null;
+    const [sy, sm] = startYM.split('-').map(Number);
+    const [ey, em] = endYM.split('-').map(Number);
+    return (ey - sy) * 12 + (em - sm) + 1;
+  }
+
+  function durationLabel(idea){
+    const start = idea.startMonth, end = idea.endMonth;
+    if(!start && !end) return null;
+    if(start && end){
+      const n = monthsBetween(start, end);
+      if(start === end) return `📅 ${monthLabel(start)}`;
+      return `📅 ${monthLabel(start)} → ${monthLabel(end)}${n ? ` (${n} mo)` : ''}`;
+    }
+    if(start) return `📅 Starts ${monthLabel(start)}`;
+    return `📅 Target finish ${monthLabel(end)}`;
+  }
+
   function migrateLegacyCostItems(item){
     if(item.costItems && item.costItems.length) return item.costItems.map(ci => ({ ...ci }));
     const rows = [];
@@ -1781,6 +1867,7 @@
         </div>
         <div class="card-title">${escapeHTML(idea.title)}</div>
         ${idea.notes ? `<div class="card-notes">${escapeHTML(idea.notes)}</div>` : ''}
+        ${durationLabel(idea) ? `<div class="duration-badge">${durationLabel(idea)}</div>` : ''}
         ${idea.linkUrl ? `<a class="card-link" href="${escapeHTML(idea.linkUrl)}" target="_blank" rel="noopener noreferrer">🔗 ${escapeHTML(idea.linkUrl)}</a>` : ''}
         <div class="card-meta">
           <div class="mini-ratings">
@@ -1855,6 +1942,24 @@
         <div class="cost-items-list" id="edit-cost-items"></div>
         <button type="button" class="add-cost-item-btn" id="edit-add-cost-item">+ Add another cost</button>
 
+        <label class="field-label">Timing (optional) — helps track projects even without a cost</label>
+        <div class="schedule-fields-row">
+          <div>
+            <span class="field-label">Starts</span>
+            <div class="schedule-date-group">
+              <select id="edit-start-month">${monthYearOptionsHTML({ month: s.startMonth }).monthOptions}</select>
+              <select id="edit-start-year">${monthYearOptionsHTML({ month: s.startMonth }).yearOptions}</select>
+            </div>
+          </div>
+          <div>
+            <span class="field-label">Target finish</span>
+            <div class="schedule-date-group">
+              <select id="edit-end-month">${monthYearOptionsHTML({ month: s.endMonth }).monthOptions}</select>
+              <select id="edit-end-year">${monthYearOptionsHTML({ month: s.endMonth }).yearOptions}</select>
+            </div>
+          </div>
+        </div>
+
         <div class="card-footer" style="border-top:none;margin-top:1rem;padding-top:0;">
           <span class="by-line">${escapeHTML(idea.addedBy || 'someone')} · ${timeAgo(idea.createdAt)}</span>
           <div class="actions">
@@ -1915,6 +2020,10 @@
 
   function renderTimelineView(){
     const container = document.getElementById('timeline-content');
+    if(timelineStyle === 'schedule'){
+      renderScheduleView(container);
+      return;
+    }
     const entries = getAllCostEntries();
     if(entries.length === 0){
       container.innerHTML = `<div class="timeline-empty">No costs added yet — add a dollar amount and month to any entry to see it here.</div>`;
@@ -1956,6 +2065,47 @@
         `;
       }).join('');
     }
+  }
+
+  function renderScheduleView(container){
+    const scheduled = ideas.filter(i => i.startMonth || i.endMonth);
+    if(scheduled.length === 0){
+      container.innerHTML = `<div class="timeline-empty">No timing added yet — set a start or target finish month on any entry to see it here.</div>`;
+      return;
+    }
+    const entries = scheduled.map(i => ({
+      title: i.title,
+      start: i.startMonth || i.endMonth,
+      end: i.endMonth || i.startMonth,
+      completed: !!i.completed
+    }));
+    const allMonths = entries.flatMap(e => [e.start, e.end]).sort();
+    const first = allMonths[0], last = allMonths[allMonths.length - 1];
+    let [y, m] = first.split('-').map(Number);
+    const [ey, em] = last.split('-').map(Number);
+    const keys = [];
+    while(y < ey || (y === ey && m <= em)){
+      keys.push(`${y}-${String(m).padStart(2, '0')}`);
+      m++;
+      if(m > 12){ m = 1; y++; }
+    }
+    container.innerHTML = keys.map(key => {
+      const active = entries.filter(e => key >= e.start && key <= e.end);
+      const rows = active.length
+        ? active.map(e => `
+            <div class="timeline-list-row">
+              <span class="tl-title ${e.completed ? 'done-schedule' : ''}">${escapeHTML(e.title)}</span>
+              <span class="tl-amount"></span>
+            </div>
+          `).join('')
+        : `<div class="timeline-list-row"><span class="tl-title" style="color:rgba(30,42,36,0.35);">Nothing scheduled</span></div>`;
+      return `
+        <div class="timeline-list-group">
+          <div class="timeline-list-head"><span>${escapeHTML(monthLabel(key))}</span><span>${active.length ? active.length + ' active' : ''}</span></div>
+          ${rows}
+        </div>
+      `;
+    }).join('');
   }
 
   function updateBudget(){
@@ -2187,7 +2337,9 @@
           linkUrl: item.linkUrl || '', topic: item.topic || 'other',
           category: item.category,
           effort: item.effort, help: item.help,
-          costItems: migrateLegacyCostItems(item)
+          costItems: migrateLegacyCostItems(item),
+          startMonth: item.startMonth || null,
+          endMonth: item.endMonth || null
         };
         render();
       });
@@ -2263,6 +2415,12 @@
           }));
         delete item.costEstimate;
         delete item.costActual;
+        const eStartM = document.getElementById('edit-start-month').value;
+        const eStartY = document.getElementById('edit-start-year').value;
+        const eEndM = document.getElementById('edit-end-month').value;
+        const eEndY = document.getElementById('edit-end-year').value;
+        item.startMonth = (eStartM && eStartY) ? `${eStartY}-${eStartM}` : null;
+        item.endMonth = (eEndM && eEndY) ? `${eEndY}-${eEndM}` : null;
         editingId = null;
         editState = null;
         render();
@@ -2316,6 +2474,12 @@
         month: item.month || null,
         type: item.type === 'firm' ? 'firm' : 'estimate'
       }));
+    const startM = document.getElementById('f-start-month').value;
+    const startY = document.getElementById('f-start-year').value;
+    const endM = document.getElementById('f-end-month').value;
+    const endY = document.getElementById('f-end-year').value;
+    const startMonth = (startM && startY) ? `${startY}-${startM}` : null;
+    const endMonth = (endM && endY) ? `${endY}-${endM}` : null;
     const newIdea = {
       id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
       title, notes, linkUrl, topic,
@@ -2323,6 +2487,7 @@
       effort: ratings.effort,
       help: ratings.help,
       costItems,
+      startMonth, endMonth,
       completed: false,
       subtasks: [],
       addedBy: userName,
@@ -2335,6 +2500,8 @@
     document.getElementById('f-link').value = '';
     addFormCostItems = [{ amount: '', month: '', type: 'estimate' }];
     renderCostItemsInto(document.getElementById('f-cost-items'), addFormCostItems);
+    fillMonthYearSelect('f-start-month', 'f-start-year', null);
+    fillMonthYearSelect('f-end-month', 'f-end-year', null);
     await saveBoard();
   });
 
