@@ -351,6 +351,35 @@
     padding:0.4rem 0.6rem;
     font-size:0.85rem;
   }
+
+  /* ---------- backup controls ---------- */
+  .backup-row{
+    display:flex;
+    justify-content:center;
+    gap:0.6rem;
+    flex-wrap:wrap;
+    margin-top:0.8rem;
+  }
+  .backup-row button{
+    font-family:'Space Mono',monospace;
+    font-size:0.66rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    background:none;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:0.35rem 0.7rem;
+    color:rgba(30,42,36,0.6);
+    cursor:pointer;
+  }
+  .backup-row button:hover{ background:var(--paper2); color:var(--ink); }
+  .backup-note{
+    text-align:center;
+    font-family:'Space Mono',monospace;
+    font-size:0.6rem;
+    color:rgba(30,42,36,0.32);
+    margin-top:0.4rem;
+  }
   #add-form textarea{resize:vertical;min-height:2.4rem;}
   .field-label{
     font-family:'Space Mono',monospace;
@@ -1022,6 +1051,102 @@
     el.style.cssText = 'text-align:center;font-family:"Space Mono",monospace;font-size:0.62rem;color:rgba(30,42,36,0.3);margin-top:0.5rem;';
     el.textContent = 'Board ID: ' + id;
     statusLine.insertAdjacentElement('afterend', el);
+
+    const row = document.createElement('div');
+    row.className = 'backup-row';
+    row.innerHTML = `
+      <button id="download-backup-btn">⬇ Download backup</button>
+      <button id="restore-file-btn">⬆ Restore from file</button>
+      <button id="restore-local-btn">↺ Recover last local backup</button>
+      <input type="file" id="restore-file-input" accept="application/json" style="display:none;">
+    `;
+    el.insertAdjacentElement('afterend', row);
+
+    const note = document.createElement('div');
+    note.className = 'backup-note';
+    note.textContent = 'This browser also keeps an automatic local copy after every change, as a safety net.';
+    row.insertAdjacentElement('afterend', note);
+
+    document.getElementById('download-backup-btn').addEventListener('click', downloadBackup);
+    document.getElementById('restore-file-btn').addEventListener('click', () => {
+      document.getElementById('restore-file-input').click();
+    });
+    document.getElementById('restore-file-input').addEventListener('change', handleRestoreFile);
+    document.getElementById('restore-local-btn').addEventListener('click', restoreFromAutoBackup);
+  }
+
+  function downloadBackup(){
+    const payload = JSON.stringify({ boardId, ideas, exportedAt: Date.now() }, null, 2);
+    const blob = new Blob([payload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const dateStr = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `southbound-backup-${dateStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function handleRestoreFile(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      let data;
+      try{
+        data = JSON.parse(reader.result);
+      }catch(err){
+        alert('That file does not look like a valid backup.');
+        return;
+      }
+      if(!data || !Array.isArray(data.ideas)){
+        alert('That file does not look like a valid backup.');
+        return;
+      }
+      const when = data.exportedAt ? new Date(data.exportedAt).toLocaleString() : 'an unknown time';
+      const typed = window.prompt(`Restore backup from ${when} (${data.ideas.length} entries)? This replaces everything currently on the board. Type RESTORE to confirm.`);
+      if(typed !== 'RESTORE') return;
+      ideas = data.ideas;
+      render();
+      await saveBoard();
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  async function restoreFromAutoBackup(){
+    let raw;
+    try{
+      raw = localStorage.getItem(AUTO_BACKUP_KEY);
+    }catch(e){
+      alert('Could not access local storage on this device.');
+      return;
+    }
+    if(!raw){
+      alert('No local backup found on this device yet.');
+      return;
+    }
+    let data;
+    try{ data = JSON.parse(raw); }catch(e){ alert('Local backup is corrupted.'); return; }
+    const when = data.savedAt ? new Date(data.savedAt).toLocaleString() : 'an unknown time';
+    const count = (data.ideas || []).length;
+    const typed = window.prompt(`Restore this device's local backup from ${when} (${count} entries)? This replaces everything currently on the board. Type RESTORE to confirm.`);
+    if(typed !== 'RESTORE') return;
+    ideas = data.ideas || [];
+    render();
+    await saveBoard();
+  }
+
+  const AUTO_BACKUP_KEY = 'southbound:auto-backup';
+
+  function autoBackup(){
+    try{
+      localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify({
+        boardId, ideas, savedAt: Date.now()
+      }));
+    }catch(e){ /* not critical */ }
   }
 
   async function loadBoard(silent){
@@ -1032,6 +1157,7 @@
       render();
       statusLine.style.color = '';
       statusLine.textContent = 'Shared board — everyone with this link sees the same data.';
+      autoBackup();
     }catch(e){
       if(!silent){
         showFatalError('Could not load this board. Double-check you used the full shared link.');
@@ -1050,6 +1176,7 @@
       } else {
         statusLine.style.color = '';
         statusLine.textContent = 'Shared board — everyone with this link sees the same data.';
+        autoBackup();
       }
     }catch(e){
       console.error('save failed', e);
