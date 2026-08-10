@@ -916,6 +916,8 @@
   const API_BASE = 'https://jsonblob.com/api/jsonBlob';
   let boardId = null;
   let pollTimer = null;
+  let isSaving = false;
+  let pendingSave = false;
 
   async function createRemoteBoard(initialData){
     const res = await fetch(API_BASE, {
@@ -993,7 +995,7 @@
     pollTimer = setInterval(() => {
       const active = document.activeElement;
       const isTypingComment = active && active.id && active.id.startsWith('comment-input-');
-      if(editingId === null && !isTypingComment) loadBoard(true);
+      if(editingId === null && !isTypingComment && !isSaving) loadBoard(true);
     }, 20000);
   }
 
@@ -1013,14 +1015,27 @@
   }
 
   async function saveBoard(){
+    if(isSaving){ pendingSave = true; return; }
+    isSaving = true;
     try{
       const ok = await putRemoteBoard(boardId, { ideas });
-      if(!ok){ statusLine.textContent = 'Could not save — try again.'; statusLine.style.color = 'var(--coral)'; }
-      else { statusLine.style.color=''; statusLine.textContent = 'Shared board — everyone with this link sees the same data.'; }
+      if(!ok){
+        statusLine.textContent = '⚠ Could not save your change — check your connection and try again.';
+        statusLine.style.color = 'var(--coral)';
+      } else {
+        statusLine.style.color = '';
+        statusLine.textContent = 'Shared board — everyone with this link sees the same data.';
+      }
     }catch(e){
       console.error('save failed', e);
-      statusLine.textContent = 'Could not save — check your connection and try again.';
+      statusLine.textContent = '⚠ Could not save your change — check your connection and try again.';
       statusLine.style.color = 'var(--coral)';
+    }finally{
+      isSaving = false;
+      if(pendingSave){
+        pendingSave = false;
+        await saveBoard();
+      }
     }
   }
 
