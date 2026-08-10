@@ -182,6 +182,7 @@
     <button class="tab-btn" onclick="showTab('add')">Add New Piece</button>
     <button class="tab-btn" onclick="showTab('scene')">🛋️ Scene Builder</button>
     <button class="tab-btn" onclick="showTab('scenes')">📋 Manage Scenes</button>
+    <button class="tab-btn" onclick="showTab('workshops')">🎨 Workshops</button>
   </div>
 
   <!-- ── MANAGE PANEL ── -->
@@ -426,6 +427,114 @@
       <div class="delete-confirm-btns">
         <button class="btn-cancel" onclick="document.getElementById('delete-scene-confirm').style.display='none'">Cancel</button>
         <button class="btn-delete-go" onclick="executeDeleteScene()">Yes, Delete It</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- ── WORKSHOPS PANEL ── -->
+  <div class="panel" id="panel-workshops">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;">Workshops</h2>
+      <button onclick="openAddWorkshop()" style="background:var(--clay);color:#fff;border:none;padding:0.6rem 1.25rem;font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">+ Add Workshop</button>
+    </div>
+    <div style="font-size:0.82rem;color:#7A6E64;margin-bottom:1.25rem;padding:0.75rem 1rem;background:#FAF7F2;border-left:3px solid #A8C4B4;">
+      Each workshop needs a Formspree URL to receive booking emails. <a href="https://formspree.io" target="_blank" style="color:#3D7A5A;">Set one up free at formspree.io</a> — create a form, copy the URL (e.g. https://formspree.io/f/xyzabc), and paste it into each workshop.
+    </div>
+    <div id="workshops-list"><div style="text-align:center;padding:2rem;font-family:'Playfair Display',serif;font-style:italic;color:#7A6E64;">Loading workshops…</div></div>
+  </div>
+
+  <!-- ── ADD / EDIT WORKSHOP PANEL ── -->
+  <div class="panel" id="panel-edit-workshop">
+    <button class="btn-back" onclick="showTab('workshops')">← Back to Workshops</button>
+    <div style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1.25rem;" id="ws-form-heading">Add Workshop</div>
+
+    <div class="form-card">
+      <div style="font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:#C9943A;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(100,80,60,0.15);">Workshop details</div>
+      <div style="display:grid;grid-template-columns:1fr;gap:0.85rem;margin-bottom:0.85rem;">
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Title</label>
+          <input type="text" id="ws-title" placeholder="e.g. Paper mache creatures — intro" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Description</label>
+          <textarea id="ws-desc" placeholder="What will participants make? What's included? What's the skill level?" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;min-height:90px;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:0.85rem;">
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Date</label>
+          <input type="date" id="ws-date" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Time</label>
+          <input type="text" id="ws-time" placeholder="e.g. 10:00am – 1:00pm" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.85rem;">
+        <label style="font-size:0.76rem;font-weight:500;">Location</label>
+        <input type="text" id="ws-location" placeholder="Bay Area, CA (full address sent on booking)" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.85rem;margin-bottom:0.85rem;">
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Price ($)</label>
+          <input type="number" id="ws-price" placeholder="45" min="0" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Total spots</label>
+          <input type="number" id="ws-spots" placeholder="8" min="1" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Spots remaining</label>
+          <input type="number" id="ws-spots-rem" placeholder="8" min="0" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.85rem;margin-bottom:0.85rem;">
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Age group</label>
+          <select id="ws-agegroup" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;">
+            <option value="all">All ages</option>
+            <option value="kids">Kids</option>
+            <option value="adults">Adults & teens</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Min age <span style="font-weight:300;color:#7A6E64;">(0 = no min)</span></label>
+          <input type="number" id="ws-agemin" placeholder="0" min="0" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <label style="font-size:0.76rem;font-weight:500;">Max age <span style="font-weight:300;color:#7A6E64;">(0 = no max)</span></label>
+          <input type="number" id="ws-agemax" placeholder="0" min="0" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.85rem;">
+        <label style="font-size:0.76rem;font-weight:500;">Formspree URL <span style="font-weight:300;color:#7A6E64;">(booking emails sent here)</span></label>
+        <input type="text" id="ws-formspree" placeholder="https://formspree.io/f/xyzabc" style="padding:0.7rem 0.9rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.92rem;width:100%;outline:none;" />
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+        <input type="checkbox" id="ws-available" checked style="width:18px;height:18px;accent-color:#C9943A;" />
+        <label for="ws-available" style="font-size:0.88rem;cursor:pointer;">Workshop is active and visible on the site</label>
+      </div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <button class="btn-submit" id="ws-save-btn" onclick="saveWorkshop()" style="flex:1;">Save Workshop ✦</button>
+        <button id="ws-delete-btn" style="display:none;background:none;border:1px solid #c0392b;color:#c0392b;padding:1rem 1.25rem;font-family:Jost,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" onclick="confirmDeleteWorkshop()">Delete</button>
+      </div>
+      <div class="progress-bar" id="ws-progress-bar"><div class="progress-fill" id="ws-progress-fill"></div></div>
+      <div class="status-msg" id="ws-status-msg"></div>
+      <div class="error-box" id="ws-error-box"><p id="ws-error-msg"></p></div>
+      <div class="success-box" id="ws-success-box">
+        <h3>✓ Workshop saved!</h3>
+        <p>Changes are live on the website within 60 seconds.<br><br>
+          <a href="https://finderskeepers.market/workshops/" target="_blank">View workshops page →</a>
+        </p>
+        <button class="btn-another" onclick="showTab('workshops')">Back to Workshops</button>
+      </div>
+      <div class="delete-confirm" id="ws-delete-confirm" style="display:none;">
+        <h3>Delete this workshop?</h3>
+        <p id="ws-delete-msg">This will permanently remove the workshop from the website.</p>
+        <div class="delete-confirm-btns">
+          <button class="btn-cancel" onclick="document.getElementById('ws-delete-confirm').style.display='none'">Cancel</button>
+          <button class="btn-delete-go" onclick="executeDeleteWorkshop()">Yes, delete it</button>
+        </div>
       </div>
     </div>
   </div>
@@ -704,7 +813,9 @@ function positionTooltip(tooltip, hs, container) {
     else if (tab === 'add') { tabBtns[1].classList.add('active'); renderAddForm(); }
     else if (tab === 'scene') { tabBtns[2].classList.add('active'); initSceneBuilder(); }
     else if (tab === 'scenes') { tabBtns[3].classList.add('active'); if(GITHUB_TOKEN) loadScenesList(); else checkToken(); }
+    else if (tab === 'workshops') { tabBtns[4].classList.add('active'); if(GITHUB_TOKEN) loadWorkshopsList(); else checkToken(); }
     else if (tab === 'edit-scene') { /* handled by openEditScene */ }
+    else if (tab === 'edit-workshop') { /* handled by openAddWorkshop / openEditWorkshop */ }
   }
 
   // ── FORM HTML ──
@@ -1611,7 +1722,208 @@ function positionTooltip(tooltip, hs, container) {
     }
   }
 
-    // Init
+    // ── WORKSHOPS ──
+  let editingWorkshopId = null;
+
+  async function loadWorkshopsList() {
+    const list = document.getElementById('workshops-list');
+    list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">Loading…</div>';
+    try {
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      const workshops = allData.workshops || [];
+      if (!workshops.length) {
+        list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">No workshops yet — add one!</div>';
+        return;
+      }
+      list.innerHTML = '';
+      workshops.forEach(ws => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#fff;border:1px solid rgba(100,80,60,0.2);border-left:4px solid #A8C4B4;display:flex;align-items:stretch;overflow:hidden;margin-bottom:0.75rem;';
+        const spotsLeft = ws.spotsRemaining || 0;
+        const ageLabel = ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages';
+        card.innerHTML = `
+          <div style="flex:1;padding:1rem;display:flex;flex-direction:column;gap:0.25rem;min-width:0;">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <div style="font-family:'Playfair Display',serif;font-size:1rem;">${ws.title}</div>
+              ${!ws.available ? '<span style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:#EBE4D5;color:#7A6E64;padding:0.15rem 0.5rem;">Hidden</span>' : ''}
+              ${spotsLeft === 0 ? '<span style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:#f0ebe4;color:#A8694A;padding:0.15rem 0.5rem;">Sold out</span>' : ''}
+            </div>
+            <div style="font-size:0.76rem;color:#7A6E64;">${ws.date ? ws.date : 'No date'} · ${ws.time || ''} · $${ws.price} · ${ageLabel} · ${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left</div>
+            ${ws.formspreeUrl ? `<div style="font-size:0.72rem;color:#3D7A5A;">✓ Formspree connected</div>` : `<div style="font-size:0.72rem;color:#c0392b;">⚠ No Formspree URL — bookings won't send emails</div>`}
+          </div>
+          <div style="display:flex;flex-direction:column;border-left:1px solid rgba(100,80,60,0.15);">
+            <button onclick="openEditWorkshop('${ws.id}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#7A6E64;border-bottom:1px solid rgba(100,80,60,0.15);" onmouseover="this.style.background='#EBE4D5'" onmouseout="this.style.background='none'">Edit</button>
+            <button onclick="quickToggleWorkshop('${ws.id}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#7A6E64;" onmouseover="this.style.background='#EBE4D5'" onmouseout="this.style.background='none'">${ws.available ? 'Hide' : 'Show'}</button>
+          </div>`;
+        list.appendChild(card);
+      });
+    } catch(e) {
+      list.innerHTML = `<div style="color:#c0392b;padding:1rem;">Could not load: ${e.message}<br><br><button onclick="loadWorkshopsList()" style="background:#C9943A;color:#fff;border:none;padding:0.5rem 1rem;cursor:pointer;font-family:Jost,sans-serif;font-size:0.78rem;">Try again</button></div>`;
+    }
+  }
+
+  function openAddWorkshop() {
+    editingWorkshopId = null;
+    document.getElementById('ws-form-heading').textContent = 'Add Workshop';
+    document.getElementById('ws-delete-btn').style.display = 'none';
+    ['ws-title','ws-desc','ws-time','ws-location','ws-formspree'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('ws-date').value = '';
+    document.getElementById('ws-price').value = '';
+    document.getElementById('ws-spots').value = '';
+    document.getElementById('ws-spots-rem').value = '';
+    document.getElementById('ws-agemin').value = '0';
+    document.getElementById('ws-agemax').value = '0';
+    document.getElementById('ws-agegroup').value = 'all';
+    document.getElementById('ws-available').checked = true;
+    document.getElementById('ws-save-btn').style.display = 'block';
+    document.getElementById('ws-save-btn').disabled = false;
+    document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
+    document.getElementById('ws-progress-bar').style.display = 'none';
+    document.getElementById('ws-status-msg').textContent = '';
+    document.getElementById('ws-error-box').style.display = 'none';
+    document.getElementById('ws-success-box').style.display = 'none';
+    document.getElementById('ws-delete-confirm').style.display = 'none';
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-edit-workshop').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function openEditWorkshop(id) {
+    if (!allData || !allData.workshops) return;
+    const ws = allData.workshops.find(w => w.id === id);
+    if (!ws) return;
+    editingWorkshopId = id;
+    document.getElementById('ws-form-heading').textContent = 'Edit Workshop';
+    document.getElementById('ws-delete-btn').style.display = 'block';
+    document.getElementById('ws-title').value = ws.title || '';
+    document.getElementById('ws-desc').value = ws.description || '';
+    document.getElementById('ws-date').value = ws.date || '';
+    document.getElementById('ws-time').value = ws.time || '';
+    document.getElementById('ws-location').value = ws.location || '';
+    document.getElementById('ws-price').value = ws.price || '';
+    document.getElementById('ws-spots').value = ws.spots || '';
+    document.getElementById('ws-spots-rem').value = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || '');
+    document.getElementById('ws-agegroup').value = ws.ageGroup || 'all';
+    document.getElementById('ws-agemin').value = ws.ageMin || 0;
+    document.getElementById('ws-agemax').value = ws.ageMax || 0;
+    document.getElementById('ws-formspree').value = ws.formspreeUrl || '';
+    document.getElementById('ws-available').checked = ws.available !== false;
+    document.getElementById('ws-save-btn').style.display = 'block';
+    document.getElementById('ws-save-btn').disabled = false;
+    document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
+    document.getElementById('ws-progress-bar').style.display = 'none';
+    document.getElementById('ws-status-msg').textContent = '';
+    document.getElementById('ws-error-box').style.display = 'none';
+    document.getElementById('ws-success-box').style.display = 'none';
+    document.getElementById('ws-delete-confirm').style.display = 'none';
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-edit-workshop').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function saveWorkshop() {
+    const title = document.getElementById('ws-title').value.trim();
+    if (!title) { alert('Please enter a workshop title.'); return; }
+    const price = parseInt(document.getElementById('ws-price').value) || 0;
+    const spots = parseInt(document.getElementById('ws-spots').value) || 0;
+    const spotsRem = parseInt(document.getElementById('ws-spots-rem').value);
+    document.getElementById('ws-save-btn').disabled = true;
+    document.getElementById('ws-save-btn').textContent = 'Saving…';
+    document.getElementById('ws-error-box').style.display = 'none';
+    try {
+      setProgress('ws', 30, 'Reading data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      if (!allData.workshops) allData.workshops = [];
+      const wsData = {
+        id: editingWorkshopId || ('ws' + Date.now().toString().slice(-6)),
+        title,
+        description: document.getElementById('ws-desc').value.trim(),
+        date: document.getElementById('ws-date').value,
+        time: document.getElementById('ws-time').value.trim(),
+        location: document.getElementById('ws-location').value.trim(),
+        price,
+        spots,
+        spotsRemaining: isNaN(spotsRem) ? spots : spotsRem,
+        ageGroup: document.getElementById('ws-agegroup').value,
+        ageMin: parseInt(document.getElementById('ws-agemin').value) || 0,
+        ageMax: parseInt(document.getElementById('ws-agemax').value) || 0,
+        available: document.getElementById('ws-available').checked,
+        formspreeUrl: document.getElementById('ws-formspree').value.trim()
+      };
+      setProgress('ws', 60, 'Saving…');
+      if (editingWorkshopId) {
+        const idx = allData.workshops.findIndex(w => w.id === editingWorkshopId);
+        if (idx >= 0) allData.workshops[idx] = wsData;
+        else allData.workshops.push(wsData);
+      } else {
+        allData.workshops.push(wsData);
+      }
+      setProgress('ws', 85, 'Writing to website…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `${editingWorkshopId ? 'Update' : 'Add'} workshop: ${title}`);
+      setProgress('ws', 100, 'Done!');
+      setTimeout(() => {
+        document.getElementById('ws-progress-bar').style.display = 'none';
+        document.getElementById('ws-status-msg').textContent = '';
+        document.getElementById('ws-save-btn').style.display = 'none';
+        document.getElementById('ws-success-box').style.display = 'block';
+      }, 500);
+    } catch(err) {
+      document.getElementById('ws-error-box').style.display = 'block';
+      document.getElementById('ws-error-msg').textContent = 'Something went wrong: ' + err.message;
+      document.getElementById('ws-save-btn').disabled = false;
+      document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
+      document.getElementById('ws-status-msg').textContent = '';
+    }
+  }
+
+  function confirmDeleteWorkshop() {
+    if (!editingWorkshopId) return;
+    document.getElementById('ws-delete-msg').textContent = `This will permanently remove "${document.getElementById('ws-title').value}" from the workshops page.`;
+    document.getElementById('ws-delete-confirm').style.display = 'block';
+    document.getElementById('ws-delete-confirm').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  async function executeDeleteWorkshop() {
+    document.getElementById('ws-delete-confirm').innerHTML = '<p style="color:#7A6E64;font-size:0.88rem;padding:0.5rem 0;">Deleting…</p>';
+    try {
+      setProgress('ws', 40, 'Reading data…');
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      allData.workshops = (allData.workshops || []).filter(w => w.id !== editingWorkshopId);
+      setProgress('ws', 80, 'Removing…');
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Delete workshop: ${editingWorkshopId}`);
+      setProgress('ws', 100, 'Deleted!');
+      setTimeout(() => showTab('workshops'), 800);
+    } catch(err) {
+      document.getElementById('ws-error-box').style.display = 'block';
+      document.getElementById('ws-error-msg').textContent = 'Delete failed: ' + err.message;
+    }
+  }
+
+  async function quickToggleWorkshop(id) {
+    try {
+      const dataFile = await githubGet('art-data.json');
+      dataFileSha = dataFile.sha;
+      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+      allData = JSON.parse(raw);
+      const ws = allData.workshops.find(w => w.id === id);
+      if (ws) ws.available = !ws.available;
+      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Toggle workshop visibility: ${id}`);
+      loadWorkshopsList();
+    } catch(e) { alert('Could not toggle: ' + e.message); }
+  }
+
+  // Init
   checkToken();
   if (GITHUB_TOKEN) loadData();
   renderAddForm();
