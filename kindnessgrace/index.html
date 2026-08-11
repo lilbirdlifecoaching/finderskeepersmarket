@@ -98,12 +98,38 @@
     .gallery-empty { grid-column: 1/-1; display: flex; align-items: center; justify-content: center; min-height: 200px; font-family: 'Instrument Serif', serif; font-style: italic; color: #9a9288; font-size: 1.1rem; }
     .gallery-placeholder { width: 100%; height: 100%; min-height: 260px; display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', serif; font-style: italic; color: rgba(10,26,28,0.2); font-size: 0.88rem; }
 
-    /* ── BENTO ── */
-    .bento { display: grid; grid-template-columns: 2.2fr 1fr 1fr; grid-template-rows: 160px 110px; gap: 2px; border-top: 1.5px solid var(--sand-mid); border-bottom: 1.5px solid var(--sand-mid); }
-    .bento-cell { display: flex; align-items: flex-end; padding: 0.85rem; position: relative; overflow: hidden; }
-    .bento-cell.large { grid-row: 1/3; }
-    .bento-label { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 12px; color: rgba(255,255,255,0.55); }
-    .bento-tag { position: absolute; top: 0.6rem; right: 0.6rem; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); padding: 0.2rem 0.5rem; font-family: 'Space Grotesk', sans-serif; }
+    /* ── BENTO COLLECTION ── */
+    .bento-header { display: flex; align-items: flex-end; justify-content: space-between; padding: 2rem 2.5rem 1.25rem; border-bottom: 1px solid var(--sand-mid); flex-wrap: wrap; gap: 1rem; }
+    .bento-eyebrow { font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--teal); display: block; margin-bottom: 0.3rem; }
+    .bento-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 26px; color: var(--ink); }
+    .toggle-btn { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; background: none; border: 1.5px solid var(--ink); color: var(--ink); padding: 0.55rem 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+    .toggle-btn:hover { background: var(--ink); color: var(--white); }
+    .toggle-arrow { font-size: 12px; }
+    .bento-loading { padding: 3rem; text-align: center; font-family: 'Instrument Serif', serif; font-style: italic; color: #9a9288; }
+    .bento-grid { display: grid; gap: 2px; }
+    .bento-grid.layout-1 { grid-template-columns: 2fr 1fr; grid-template-rows: 320px; }
+    .bento-grid.layout-2 { grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 280px 190px; }
+    .bento-grid.layout-3 { grid-template-columns: 1fr 1fr 2fr; grid-template-rows: 260px 180px; }
+    .bento-grid.layout-4plus { grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 260px 180px 180px; }
+    .bento-cell { position: relative; overflow: hidden; cursor: pointer; background: var(--sand-mid); }
+    .bento-cell.span-col { grid-column: 1/3; }
+    .bento-cell.span-row { grid-row: 1/3; }
+    .bento-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s; }
+    .bento-cell:hover img { transform: scale(1.04); }
+    .bento-cell-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,26,28,0.88) 0%, rgba(10,26,28,0.2) 55%, transparent 80%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem; opacity: 0; transition: opacity 0.3s; }
+    .bento-cell:hover .bento-cell-overlay { opacity: 1; }
+    .bento-cell-num { position: absolute; top: 0.85rem; left: 0.85rem; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; }
+    .bento-cell-medium { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; }
+    .bento-cell-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.05rem; color: var(--white); margin-bottom: 3px; }
+    .bento-cell-price { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--white); }
+    .bento-cell-price.inquire { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+    .bento-cell-sold { position: absolute; top: 0.75rem; right: 0.75rem; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; background: rgba(10,26,28,0.75); color: rgba(255,255,255,0.5); padding: 0.2rem 0.5rem; }
+    .bento-placeholder { width: 100%; height: 100%; min-height: 180px; display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', serif; font-style: italic; color: rgba(10,26,28,0.2); font-size: 0.88rem; background: var(--sand-mid); }
+
+    /* ── COLLECTION TRANSITION ── */
+    #bento-view, #grid-view { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
 
     /* ── MANIFESTO ── */
     .manifesto { padding: 3.5rem 2.5rem; display: grid; grid-template-columns: 1fr 1px 1fr; gap: 3rem; border-bottom: 1.5px solid var(--sand-mid); background: var(--white); }
@@ -162,8 +188,6 @@
       .workshops { grid-template-columns: 1fr; padding: 2.5rem 1.5rem; }
       .filter-bar { padding: 1rem 1.5rem; }
       .gallery { padding: 2px 0; }
-      .bento { grid-template-columns: 1fr 1fr; }
-      .bento-cell.large { grid-row: auto; grid-column: 1/3; }
       .manifesto { grid-template-columns: 1fr; gap: 2rem; padding: 2.5rem 1.5rem; }
       .manifesto-divider { display: none; }
       .media-row { flex-wrap: wrap; }
@@ -177,7 +201,6 @@
       .hero-h1 { font-size: 44px; }
       .hero-h1 em { font-size: 50px; }
       .nav-links { display: none; }
-      .bento { grid-template-columns: 1fr 1fr; grid-template-rows: 130px 90px 90px; }
     }
   </style>
 </head>
@@ -200,12 +223,12 @@
       <h1 class="hero-h1">Made by<br>hand.<em>Held by<br>wonder.</em></h1>
     </div>
     <div class="hero-right">
-      <p class="hero-sub">Sculpture. Painting. Paper mache. Wire. Textile. <strong>Whatever the idea demands.</strong></p>
+      <p class="hero-sub">Sculpture. Painting. Drawing. Textile. <strong>Whatever the idea demands.</strong></p>
       <div class="hero-media-stack">
-        <span class="hero-medium">Sculpture</span>
+        <span class="hero-medium">Sculpture &amp; paper mache</span>
         <span class="hero-medium">Acrylic painting</span>
-        <span class="hero-medium">Paper mache</span>
         <span class="hero-medium">Wire &amp; textile</span>
+        <span class="hero-medium">Drawing &amp; illustration</span>
         <span class="hero-medium">Mixed media</span>
       </div>
       <div class="hero-scroll">Explore the collection</div>
@@ -218,9 +241,9 @@
 <!-- ── WORKSHOPS ── -->
 <section class="workshops">
   <div>
-    <div class="ws-badge">Upcoming workshops</div>
-    <div class="ws-title">Learn paper mache sculpting from Kindness Grace herself</div>
-    <p class="ws-body">Small groups. All materials provided. No experience needed &mdash; just curiosity and a couple of hours. You take your creation home on the day.</p>
+    <div class="ws-badge">Learn from the maker</div>
+    <div class="ws-title">Workshops with Kindness Grace</div>
+    <p class="ws-body">Small groups. All materials provided. Each workshop is different &mdash; sculpture, painting, mixed media, and more. No experience needed. You take your creation home on the day.</p>
     <a class="ws-cta" href="../workshops/">View all workshops &amp; book a spot</a>
   </div>
   <div class="ws-cards" id="ws-cards">
@@ -228,29 +251,52 @@
   </div>
 </section>
 
-<!-- ── GALLERY ── -->
-<div class="filter-bar">
-  <span class="filter-label">Filter:</span>
-  <button class="filter-btn active" data-filter="all">All works</button>
-  <button class="filter-btn" data-filter="ocean">Ocean</button>
-  <button class="filter-btn" data-filter="nature">Nature</button>
-  <button class="filter-btn" data-filter="fantasy">Fantasy</button>
-  <button class="filter-btn" data-filter="large">Large pieces</button>
-  <button class="filter-btn" data-filter="framed">Framed</button>
-</div>
+<!-- ── COLLECTION ── -->
+<section id="collection">
 
-<div class="gallery" id="gallery-grid">
-  <div class="gallery-empty">Loading collection&hellip;</div>
-</div>
+  <!-- BENTO VIEW — default -->
+  <div id="bento-view">
+    <div class="bento-header">
+      <div class="bento-header-left">
+        <span class="bento-eyebrow">The collection</span>
+        <h2 class="bento-title">Original works</h2>
+      </div>
+      <button class="toggle-btn" id="toggle-btn" onclick="toggleView()">
+        View full collection
+        <span class="toggle-arrow">→</span>
+      </button>
+    </div>
+    <div class="bento-grid" id="bento-grid">
+      <div class="bento-loading">Loading&hellip;</div>
+    </div>
+  </div>
 
-<!-- ── BENTO ── -->
-<div class="bento">
-  <div class="bento-cell large" style="background:#b8cec8;"><span class="bento-label">Sculpture</span></div>
-  <div class="bento-cell" style="background:#1c8698;align-items:flex-start;padding-top:0.85rem;"><span class="bento-label" style="color:rgba(255,255,255,0.7);">Painting</span><div class="bento-tag">New works</div></div>
-  <div class="bento-cell" style="background:#d8a680;"><span class="bento-label" style="color:rgba(255,255,255,0.8);">Paper mache</span></div>
-  <div class="bento-cell" style="background:#097a85;"><span class="bento-label" style="color:rgba(255,255,255,0.7);">Wire forms</span></div>
-  <div class="bento-cell" style="background:#c8dcd8;"><span class="bento-label">Mixed media</span></div>
-</div>
+  <!-- GRID VIEW — toggled -->
+  <div id="grid-view" style="display:none;">
+    <div class="bento-header">
+      <div class="bento-header-left">
+        <span class="bento-eyebrow">The collection</span>
+        <h2 class="bento-title">All works</h2>
+      </div>
+      <button class="toggle-btn" onclick="toggleView()">
+        ← Back to highlights
+      </button>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" data-filter="all">All works</button>
+      <button class="filter-btn" data-filter="ocean">Ocean</button>
+      <button class="filter-btn" data-filter="nature">Nature</button>
+      <button class="filter-btn" data-filter="fantasy">Fantasy</button>
+      <button class="filter-btn" data-filter="painting">Painting</button>
+      <button class="filter-btn" data-filter="large">Large pieces</button>
+    </div>
+    <div class="gallery" id="gallery-grid">
+      <div class="gallery-empty">Loading collection&hellip;</div>
+    </div>
+  </div>
+
+</section>
 
 <!-- ── MANIFESTO ── -->
 <div class="manifesto">
@@ -269,9 +315,9 @@
 
 <!-- ── MEDIA ROW ── -->
 <div class="media-row">
-  <div class="media-cell"><div class="media-num">01</div><div class="media-title">Sculpture</div><div class="media-desc">Paper mache, wire armature, dimensional forms</div></div>
+  <div class="media-cell"><div class="media-num">01</div><div class="media-title">Sculpture</div><div class="media-desc">Paper mache, wire armature, 3D dimensional forms</div></div>
   <div class="media-cell"><div class="media-num">02</div><div class="media-title">Painting</div><div class="media-desc">Acrylic on canvas, layered colour, illustration</div></div>
-  <div class="media-cell"><div class="media-num">03</div><div class="media-title">Textile</div><div class="media-desc">Fibre, crochet, wearable and wall art</div></div>
+  <div class="media-cell"><div class="media-num">03</div><div class="media-title">Textile &amp; fibre</div><div class="media-desc">Crochet, wearable art, wall hangings</div></div>
   <div class="media-cell"><div class="media-num">04</div><div class="media-title">Mixed media</div><div class="media-desc">Found materials, collage, experimental forms</div></div>
 </div>
 
@@ -310,7 +356,7 @@
       const data = await r.json();
       artworks = data.daughter || [];
       renderWorkshops(data.workshops || []);
-      renderGallery('all');
+      renderBento();
     } catch(e) {
       document.getElementById('gallery-grid').innerHTML = '<div class="gallery-empty">Could not load collection.</div>';
     }
@@ -344,6 +390,51 @@
     });
   }
 
+  let bentoRendered = false;
+
+  function renderBento() {
+    const grid = document.getElementById('bento-grid');
+    if (!artworks.length) {
+      grid.innerHTML = '<div class="bento-loading">No works yet &mdash; check back soon.</div>';
+      return;
+    }
+    // Pick layout based on count
+    const count = Math.min(artworks.length, 6);
+    let layoutClass = 'layout-4plus';
+    if (count === 1) layoutClass = 'layout-1';
+    else if (count === 2 || count === 3) layoutClass = 'layout-2';
+    else if (count === 4 || count === 5) layoutClass = 'layout-3';
+    grid.className = 'bento-grid ' + layoutClass;
+    grid.innerHTML = '';
+    // Use pieces marked featured:true, fall back to first available if none set
+    let featured = artworks.filter(a => a.featured && a.available !== false);
+    if (!featured.length) featured = artworks.filter(a => a.available !== false);
+    featured = featured.slice(0, count);
+    featured.forEach((art, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'bento-cell';
+      // Make first cell span rows for drama
+      if (i === 0 && count >= 3) cell.classList.add('span-row');
+      const src = art.image ? `https://finderskeepers.market/${art.image}` : null;
+      const price = art.price ? `$${art.price.toLocaleString()}` : 'Price on request';
+      const num = String(i + 1).padStart(2, '0');
+      cell.innerHTML = `
+        ${src
+          ? `<img src="${src}" alt="${art.title}" loading="lazy" onerror="this.parentElement.style.background='var(--sand-mid)'" />`
+          : `<div class="bento-placeholder">${art.title}</div>`}
+        ${!art.available ? '<div class="bento-cell-sold">Sold</div>' : ''}
+        <div class="bento-cell-num">${num}</div>
+        <div class="bento-cell-overlay">
+          <div class="bento-cell-medium">${art.medium || ''}</div>
+          <div class="bento-cell-title">${art.title}</div>
+          <div class="bento-cell-price${art.price ? '' : ' inquire'}">${price}</div>
+        </div>`;
+      cell.addEventListener('click', () => openModal(art));
+      grid.appendChild(cell);
+    });
+    bentoRendered = true;
+  }
+
   function renderGallery(filter) {
     const grid = document.getElementById('gallery-grid');
     const list = filter === 'all' ? artworks : artworks.filter(a => a.tags && a.tags.includes(filter));
@@ -368,6 +459,18 @@
       card.addEventListener('click', () => openModal(art));
       grid.appendChild(card);
     });
+  }
+
+  function toggleView() {
+    const bento = document.getElementById('bento-view');
+    const grid = document.getElementById('grid-view');
+    const isGrid = grid.style.display !== 'none';
+    bento.style.display = isGrid ? '' : 'none';
+    grid.style.display = isGrid ? 'none' : '';
+    if (!isGrid) {
+      renderGallery('all');
+      document.getElementById('collection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   function openModal(art) {
@@ -410,6 +513,7 @@
       renderGallery(btn.dataset.filter);
     });
   });
+  // filter-bar is inside grid-view so filter buttons only show when toggled
 
   loadAll();
 </script>
