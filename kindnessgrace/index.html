@@ -400,7 +400,7 @@
       return;
     }
     // Use pieces marked featured:true, fall back to first available if none set
-    let featured = artworks.filter(a => a.featured && a.available !== false);
+    let featured = artworks.filter(a => a.featured);
     if (!featured.length) featured = artworks.filter(a => a.available !== false);
     featured = featured.slice(0, 6);
     // Pick layout based on actual number of featured pieces
