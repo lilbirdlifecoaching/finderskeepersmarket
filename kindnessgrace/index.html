@@ -71,7 +71,7 @@
     .ws-cta:hover { background: var(--ink); color: var(--white); }
     .ws-cards { display: flex; flex-direction: column; gap: 0.6rem; }
     .ws-card { background: var(--white); border-left: 2px solid var(--teal); border-bottom: 1px solid var(--border); padding: 0.9rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-    .ws-card-date { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; }
+    .ws-card-date { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; line-height: 1.7; }
     .ws-card-name { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
     .ws-card-spots { font-size: 10px; color: #9a9288; }
     .ws-card-price { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--ocean); letter-spacing: -0.03em; flex-shrink: 0; }
@@ -359,12 +359,22 @@
     cards.innerHTML = '';
     upcoming.forEach(ws => {
       const spotsLeft = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || 0);
-      const d = ws.date ? new Date(ws.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
+      const fmt = s => s ? new Date(s + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
+      const schedType = ws.scheduleType || (ws.days && ws.days.length ? 'multiday-custom' : 'single');
+      let dateHTML;
+      if (schedType === 'multiday-range' && ws.dateEnd) {
+        dateHTML = `${fmt(ws.date)} &ndash; ${fmt(ws.dateEnd)}${ws.time ? ' &middot; ' + ws.time : ''}`;
+      } else if (schedType === 'multiday-custom' && ws.days && ws.days.length) {
+        dateHTML = ws.days.map(dd => `${fmt(dd.date)}${dd.time ? ' &middot; ' + dd.time : ''}`).join('<br>');
+      } else {
+        dateHTML = `${fmt(ws.date)}${ws.time ? ' &middot; ' + ws.time : ''}`;
+      }
+      const isMulti = schedType === 'multiday-range' || (schedType === 'multiday-custom' && ws.days && ws.days.length > 1);
       const card = document.createElement('div');
       card.className = 'ws-card';
       card.innerHTML = `
         <div class="ws-card-info">
-          <div class="ws-card-date">${d}${ws.time ? ' &middot; ' + ws.time : ''}</div>
+          <div class="ws-card-date">${dateHTML}${isMulti ? ' <span style="border:1px solid var(--teal);padding:0 0.3rem;margin-left:0.25rem;font-size:0.85em;">Multi-day</span>' : ''}</div>
           <div class="ws-card-name">${ws.title}</div>
           <div class="ws-card-spots">${spotsLeft === 0 ? 'Sold out' : spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' remaining'} &middot; ${ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults' : 'All ages'}</div>
         </div>
