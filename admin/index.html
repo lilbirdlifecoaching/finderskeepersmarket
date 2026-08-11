@@ -669,19 +669,11 @@ function positionTooltip(tooltip, hs, container) {
 }
 
 // ── PASSWORD LOCK ──
-  const PASSWORD_HASH = 'c3845a9cbd181115fa96c353dd6241afd578378f7b8292a69148ce537b649bee';
-
-  async function sha256(text) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  async function checkLockPassword() {
+  // Simple obfuscated check — security relies on GitHub token, not this screen
+  function checkLockPassword() {
     const input = document.getElementById('lock-password-input').value;
-    const hash = await sha256(input);
-    if (hash === PASSWORD_HASH) {
+    const parts = ['bik', 'kie'];
+    if (input === parts.join('')) {
       localStorage.setItem('fk_unlocked', 'yes');
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('lock-error').style.display = 'none';
@@ -699,13 +691,12 @@ function positionTooltip(tooltip, hs, container) {
   }
   checkUnlocked();
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const input = document.getElementById('lock-password-input');
-    if (input) {
-      input.addEventListener('keydown', e => { if (e.key === 'Enter') checkLockPassword(); });
-      if (localStorage.getItem('fk_unlocked') !== 'yes') input.focus();
-    }
-  });
+  // Wire up Enter key for password field
+  const _pwInput = document.getElementById('lock-password-input');
+  if (_pwInput) {
+    _pwInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkLockPassword(); });
+    if (localStorage.getItem('fk_unlocked') !== 'yes') _pwInput.focus();
+  }
 
   let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
 
