@@ -146,28 +146,32 @@
     }
   </style>
 <script>
+  // Password check — defined in head so it's available before body renders
   function checkLockPassword() {
     var input = document.getElementById('lock-password-input').value;
-    var parts = ['bik', 'kie'];
-    if (input === parts.join('')) {
+    if (input === ['bik','kie'].join('')) {
       localStorage.setItem('fk_unlocked', 'yes');
       document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('lock-error').style.display = 'none';
+      var err = document.getElementById('lock-error');
+      if (err) err.style.display = 'none';
     } else {
-      document.getElementById('lock-error').style.display = 'block';
+      var err = document.getElementById('lock-error');
+      if (err) err.style.display = 'block';
       document.getElementById('lock-password-input').value = '';
-      document.getElementById('lock-password-input').focus();
+      setTimeout(function(){ document.getElementById('lock-password-input').focus(); }, 50);
     }
   }
-  // Also wire up Enter key once DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
-    var pw = document.getElementById('lock-password-input');
-    if (!pw) return;
-    pw.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkLockPassword(); });
+    // Check if already unlocked
     if (localStorage.getItem('fk_unlocked') === 'yes') {
-      document.getElementById('lock-screen').style.display = 'none';
-    } else {
-      pw.focus();
+      var ls = document.getElementById('lock-screen');
+      if (ls) ls.style.display = 'none';
+    }
+    // Wire Enter key
+    var pw = document.getElementById('lock-password-input');
+    if (pw) {
+      pw.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkLockPassword(); });
+      if (localStorage.getItem('fk_unlocked') !== 'yes') pw.focus();
     }
   });
 </script>
@@ -694,8 +698,17 @@ function positionTooltip(tooltip, hs, container) {
   tooltip.classList.add('visible');
 }
 
-// ── PASSWORD LOCK ──
-  // checkLockPassword is defined in <head> script for early availability
+// ── PASSWORD LOCK ── (handled in head script)
+
+
+  function checkUnlocked() {
+    if (localStorage.getItem('fk_unlocked') === 'yes') {
+      document.getElementById('lock-screen').style.display = 'none';
+    }
+  }
+  checkUnlocked();
+
+  // Enter key + auto-focus handled via DOMContentLoaded in head script
 
   let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
 
@@ -809,7 +822,15 @@ function positionTooltip(tooltip, hs, container) {
       allData = JSON.parse(raw);
       renderListings();
     } catch(e) {
-      document.getElementById('listings-grid').innerHTML = `<div class="empty-state"><p>Could not load artwork. Check connection and refresh.</p></div>`;
+      const msg = e.message || '';
+      const isAuth = msg.includes('401') || msg.includes('Bad credentials') || msg.includes('credentials');
+      document.getElementById('listings-grid').innerHTML = isAuth
+        ? `<div class="empty-state" style="padding:2rem;text-align:center;">
+            <p style="font-family:'Playfair Display',serif;font-style:italic;color:#c0392b;margin-bottom:1rem;">GitHub token has expired or been revoked.</p>
+            <p style="font-size:0.85rem;color:#7A6E64;margin-bottom:1.25rem;">Generate a new token on GitHub (Settings → Developer settings → Tokens classic → New token, select repo scope) then tap Reset Token below.</p>
+            <button onclick="clearToken()" style="background:#C9943A;color:#fff;border:none;padding:0.75rem 1.5rem;font-family:'Jost',sans-serif;font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Reset Token</button>
+           </div>`
+        : `<div class="empty-state"><p>Could not load artwork: ${msg}. Check connection and refresh.</p></div>`;
     }
   }
 
