@@ -542,7 +542,7 @@
   .cost-items-list{ margin-top:0.4rem; }
   .cost-item-header{
     display:grid;
-    grid-template-columns:minmax(110px,1fr) minmax(190px,1.8fr) auto auto;
+    grid-template-columns:minmax(110px,1fr) minmax(190px,1.8fr) auto auto auto;
     gap:0.6rem;
     margin-bottom:0.3rem;
   }
@@ -555,7 +555,7 @@
   }
   .cost-item-row{
     display:grid;
-    grid-template-columns:minmax(110px,1fr) minmax(190px,1.8fr) auto auto;
+    grid-template-columns:minmax(110px,1fr) minmax(190px,1.8fr) auto auto auto;
     gap:0.6rem;
     align-items:center;
     margin-bottom:0.7rem;
@@ -603,6 +603,19 @@
     white-space:nowrap;
   }
   .cost-item-type-btn.firm{ background:var(--eucalyptus); color:var(--paper); border-color:var(--eucalyptus); }
+  .cost-item-paid-btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.66rem;
+    text-transform:uppercase;
+    padding:0.55rem 0.55rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    cursor:pointer;
+    white-space:nowrap;
+    color:rgba(30,42,36,0.6);
+  }
+  .cost-item-paid-btn.paid{ background:#e0ece0; color:var(--eucalyptus); border-color:var(--eucalyptus); }
   .cost-item-remove-btn{
     font-family:'Space Mono',monospace;
     font-size:0.7rem;
@@ -665,9 +678,19 @@
     padding:0.15rem 0.5rem;
     border-radius:3px;
     display:inline-block;
+    border:none;
+    cursor:pointer;
   }
+  button.timed-cost-chip{ font-family:'Space Mono',monospace; }
   .timed-cost-chip.estimate{ background:var(--paper2); color:rgba(30,42,36,0.65); }
   .timed-cost-chip.firm{ background:var(--eucalyptus); color:var(--paper); font-weight:700; }
+  .timed-cost-chip:hover{ filter:brightness(0.95); }
+  .timed-cost-chip.paid{
+    text-decoration:line-through;
+    opacity:0.65;
+    background:#e0ece0;
+    color:var(--eucalyptus);
+  }
 
   /* ---------- subtasks / checklist ---------- */
   .subtasks-panel{ margin-top:0.7rem; }
@@ -1069,6 +1092,31 @@
   .budget-tile.promise .btvalue{ color:var(--coral); }
   .budget-tile.plan .btvalue{ color:var(--ocean); }
   .budget-tile.idea .btvalue{ color:var(--eucalyptus); }
+  .budget-tile .btpaid{
+    display:block;
+    font-family:'Space Mono',monospace;
+    font-size:0.66rem;
+    color:var(--eucalyptus);
+    margin-top:0.2rem;
+  }
+
+  #category-summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0.9rem;
+    margin-bottom:2rem;
+  }
+  @media (max-width:640px){
+    #category-summary{grid-template-columns:repeat(2,1fr);}
+  }
+  .budget-tile.category.kids{ border-color:#8B6F9E; }
+  .budget-tile.category.kids .btvalue{ color:#8B6F9E; }
+  .budget-tile.category.australia{ border-color:var(--ochre); }
+  .budget-tile.category.australia .btvalue{ color:var(--ochre); }
+  .budget-tile.category.wrapup{ border-color:#556B7A; }
+  .budget-tile.category.wrapup .btvalue{ color:#556B7A; }
+  .budget-tile.category.other{ border-color:#8A8574; }
+  .budget-tile.category.other .btvalue{ color:#8A8574; }
 
   .cost-input-row{ display:flex; align-items:center; gap:0.3rem; margin-top:0.35rem; }
   .cost-input-row span{
@@ -1254,6 +1302,30 @@
     <div class="budget-tile total">
       <span class="btlabel">Running total</span>
       <div class="btvalue" id="bt-total">$0</div>
+      <span class="btpaid" id="bt-total-paid"></span>
+    </div>
+  </div>
+
+  <div id="category-summary">
+    <div class="budget-tile category kids">
+      <span class="btlabel">Kids &amp; Family</span>
+      <div class="btvalue" id="bt-cat-kids">$0</div>
+      <span class="btpaid" id="bt-cat-kids-paid"></span>
+    </div>
+    <div class="budget-tile category australia">
+      <span class="btlabel">Australia Setup</span>
+      <div class="btvalue" id="bt-cat-australia">$0</div>
+      <span class="btpaid" id="bt-cat-australia-paid"></span>
+    </div>
+    <div class="budget-tile category wrapup">
+      <span class="btlabel">Wrapping Up America</span>
+      <div class="btvalue" id="bt-cat-wrapup">$0</div>
+      <span class="btpaid" id="bt-cat-wrapup-paid"></span>
+    </div>
+    <div class="budget-tile category other">
+      <span class="btlabel">Other</span>
+      <div class="btvalue" id="bt-cat-other">$0</div>
+      <span class="btpaid" id="bt-cat-other-paid"></span>
     </div>
   </div>
 
@@ -1809,7 +1881,7 @@
   function renderCostItemsInto(container, items){
     if(!container) return;
     const header = items.length
-      ? `<div class="cost-item-header"><span>Amount ($)</span><span>Due date (optional)</span><span></span><span></span></div>`
+      ? `<div class="cost-item-header"><span>Amount ($)</span><span>Due date (optional)</span><span></span><span></span><span></span></div>`
       : '';
     const runningTotal = items.length > 1
       ? `<div class="cost-item-running-total">Running total: <strong>${fmtMoney(computeItemsTotal(items))}</strong></div>`
@@ -1825,6 +1897,7 @@
               <select class="ci-year-select" data-idx="${idx}">${yearOptions}</select>
             </div>
             <button type="button" class="cost-item-type-btn ${item.type === 'firm' ? 'firm' : ''}" data-idx="${idx}">${item.type === 'firm' ? 'Firm' : 'Estimate'}</button>
+            <button type="button" class="cost-item-paid-btn ${item.completed ? 'paid' : ''}" data-idx="${idx}">${item.completed ? '✓ Paid' : 'Mark paid'}</button>
             <button type="button" class="cost-item-remove-btn" data-idx="${idx}">✕</button>
           </div>
         `;
@@ -1848,6 +1921,13 @@
       btn.addEventListener('click', () => {
         const idx = parseInt(btn.dataset.idx, 10);
         items[idx].type = items[idx].type === 'firm' ? 'estimate' : 'firm';
+        renderCostItemsInto(container, items);
+      });
+    });
+    container.querySelectorAll('.cost-item-paid-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.idx, 10);
+        items[idx].completed = !items[idx].completed;
         renderCostItemsInto(container, items);
       });
     });
@@ -2015,15 +2095,18 @@
       ? idea.costItems
           .slice()
           .sort((a,b) => (a.month || '9999').localeCompare(b.month || '9999'))
-          .map(ci => `<span class="timed-cost-chip ${ci.type}">${monthLabel(ci.month)} · ${ci.type === 'firm' ? 'Firm' : 'Est.'} ${fmtMoney(ci.amount)}</span>`)
+          .map(ci => `<button type="button" class="timed-cost-chip ${ci.type} ${ci.completed ? 'paid' : ''}" data-cost-toggle="${ci.id}" title="Tap to mark ${ci.completed ? 'unpaid' : 'paid'}">${ci.completed ? '✓ ' : ''}${monthLabel(ci.month)} · ${ci.type === 'firm' ? 'Firm' : 'Est.'} ${fmtMoney(ci.amount)}</button>`)
       : [
           idea.costActual != null ? `<span class="timed-cost-chip firm">Firm ${fmtMoney(idea.costActual)}</span>` : '',
           idea.costEstimate != null ? `<span class="timed-cost-chip estimate">Est. ${fmtMoney(idea.costEstimate)}</span>` : ''
         ].filter(Boolean);
     const itemCount = (idea.costItems && idea.costItems.length) || 0;
+    const paidTotal = itemCount > 0 ? idea.costItems.filter(ci => ci.completed).reduce((s, ci) => s + (ci.amount || 0), 0) : 0;
     const costTotalLine = itemCount > 1
-      ? `<div class="cost-total-line">Total across ${itemCount} payments: <strong>${fmtMoney(ideaEffectiveTotal(idea))}</strong></div>`
-      : '';
+      ? `<div class="cost-total-line">Total across ${itemCount} payments: <strong>${fmtMoney(ideaEffectiveTotal(idea))}</strong>${paidTotal > 0 ? ` · <span style="color:var(--eucalyptus);">✓ ${fmtMoney(paidTotal)} paid</span>` : ''}</div>`
+      : (itemCount === 1 && idea.costItems[0].completed
+          ? `<div class="cost-total-line" style="color:var(--eucalyptus);">✓ Paid</div>`
+          : '');
 
     const { toggleBtn: commentsToggleBtn, panel: commentsPanel } = commentsPanelHTML(idea);
     const { toggleBtn: subtasksToggleBtn, panel: subtasksPanel } = subtasksPanelHTML(idea);
@@ -2150,6 +2233,23 @@
     return d.innerHTML;
   }
 
+  function allCostItemsFlat(){
+    const flat = [];
+    ideas.forEach(idea => {
+      const topic = idea.topic || 'other';
+      if(idea.costItems && idea.costItems.length){
+        idea.costItems.forEach(ci => flat.push({
+          ideaTitle: idea.title, month: ci.month || null, amount: ci.amount || 0,
+          type: ci.type, completed: !!ci.completed, topic, status: idea.category, itemId: ci.id
+        }));
+      } else {
+        if(idea.costActual != null) flat.push({ ideaTitle: idea.title, month: null, amount: idea.costActual, type: 'firm', completed: false, topic, status: idea.category, itemId: null });
+        if(idea.costEstimate != null) flat.push({ ideaTitle: idea.title, month: null, amount: idea.costEstimate, type: 'estimate', completed: false, topic, status: idea.category, itemId: null });
+      }
+    });
+    return flat;
+  }
+
   function ideaEffectiveTotal(idea){
     if(idea.costItems && idea.costItems.length){
       return idea.costItems.reduce((sum, ci) => sum + (ci.amount || 0), 0);
@@ -2160,18 +2260,7 @@
   }
 
   function getAllCostEntries(){
-    const entries = [];
-    ideas.forEach(idea => {
-      if(idea.costItems && idea.costItems.length){
-        idea.costItems.forEach(ci => entries.push({
-          ideaTitle: idea.title, month: ci.month || null, amount: ci.amount || 0, type: ci.type
-        }));
-      } else {
-        if(idea.costActual != null) entries.push({ ideaTitle: idea.title, month: null, amount: idea.costActual, type: 'firm' });
-        if(idea.costEstimate != null) entries.push({ ideaTitle: idea.title, month: null, amount: idea.costEstimate, type: 'estimate' });
-      }
-    });
-    return entries;
+    return allCostItemsFlat().map(e => ({ ideaTitle: e.ideaTitle, month: e.month, amount: e.amount, type: e.type, completed: e.completed }));
   }
 
   function groupEntriesByMonth(entries){
@@ -2301,18 +2390,33 @@
   }
 
   function updateBudget(){
+    const flat = allCostItemsFlat();
     const totals = { idea: 0, plan: 0, promise: 0 };
-    ideas.forEach(i => {
-      const effective = ideaEffectiveTotal(i);
-      if(effective > 0 && totals.hasOwnProperty(i.category)){
-        totals[i.category] += effective;
-      }
+    flat.forEach(ci => {
+      if(totals.hasOwnProperty(ci.status)) totals[ci.status] += ci.amount;
     });
     const grand = totals.idea + totals.plan + totals.promise;
+    const grandPaid = flat.filter(ci => ci.completed).reduce((s, ci) => s + ci.amount, 0);
+
     document.getElementById('bt-idea').textContent = fmtMoney(totals.idea);
     document.getElementById('bt-plan').textContent = fmtMoney(totals.plan);
     document.getElementById('bt-promise').textContent = fmtMoney(totals.promise);
     document.getElementById('bt-total').textContent = fmtMoney(grand);
+    document.getElementById('bt-total-paid').textContent = grandPaid > 0 ? `✓ ${fmtMoney(grandPaid)} paid` : '';
+
+    const catTotals = { kids: 0, australia: 0, wrapup: 0, other: 0 };
+    const catPaid = { kids: 0, australia: 0, wrapup: 0, other: 0 };
+    flat.forEach(ci => {
+      const t = catTotals.hasOwnProperty(ci.topic) ? ci.topic : 'other';
+      catTotals[t] += ci.amount;
+      if(ci.completed) catPaid[t] += ci.amount;
+    });
+    ['kids','australia','wrapup','other'].forEach(t => {
+      const valEl = document.getElementById('bt-cat-' + t);
+      const paidEl = document.getElementById('bt-cat-' + t + '-paid');
+      if(valEl) valEl.textContent = fmtMoney(catTotals[t]);
+      if(paidEl) paidEl.textContent = catPaid[t] > 0 ? `✓ ${fmtMoney(catPaid[t])} paid` : '';
+    });
   }
 
   function render(){
@@ -2418,6 +2522,19 @@
         const item = ideas.find(i => i.id === id);
         if(!item) return;
         item.completed = !item.completed;
+        render();
+        await saveBoard();
+      });
+    });
+
+    document.querySelectorAll('[data-cost-toggle]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = e_id(btn);
+        const item = ideas.find(i => i.id === id);
+        if(!item || !item.costItems) return;
+        const ci = item.costItems.find(c => c.id === btn.dataset.costToggle);
+        if(!ci) return;
+        ci.completed = !ci.completed;
         render();
         await saveBoard();
       });
@@ -2607,7 +2724,8 @@
             id: ci.id || ('ci_' + Date.now() + '_' + Math.random().toString(36).slice(2,6)),
             amount: Math.max(0, parseFloat(ci.amount)),
             month: ci.month || null,
-            type: ci.type === 'firm' ? 'firm' : 'estimate'
+            type: ci.type === 'firm' ? 'firm' : 'estimate',
+            completed: !!ci.completed
           }));
         delete item.costEstimate;
         delete item.costActual;
@@ -2668,7 +2786,8 @@
         id: 'ci_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
         amount: Math.max(0, parseFloat(item.amount)),
         month: item.month || null,
-        type: item.type === 'firm' ? 'firm' : 'estimate'
+        type: item.type === 'firm' ? 'firm' : 'estimate',
+        completed: !!item.completed
       }));
     const startM = document.getElementById('f-start-month').value;
     const startY = document.getElementById('f-start-year').value;
