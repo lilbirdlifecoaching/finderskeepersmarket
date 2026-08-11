@@ -150,7 +150,7 @@
   function checkLockPassword() {
     var input = document.getElementById('lock-password-input').value;
     if (input === ['bik','kie'].join('')) {
-      localStorage.setItem('fk_unlocked', 'yes');
+      sessionStorage.setItem('fk_unlocked', 'yes');
       document.getElementById('lock-screen').style.display = 'none';
       var err = document.getElementById('lock-error');
       if (err) err.style.display = 'none';
@@ -163,7 +163,7 @@
   }
   document.addEventListener('DOMContentLoaded', function() {
     // Check if already unlocked
-    if (localStorage.getItem('fk_unlocked') === 'yes') {
+    if (sessionStorage.getItem('fk_unlocked') === 'yes') {
       var ls = document.getElementById('lock-screen');
       if (ls) ls.style.display = 'none';
     }
@@ -171,7 +171,7 @@
     var pw = document.getElementById('lock-password-input');
     if (pw) {
       pw.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkLockPassword(); });
-      if (localStorage.getItem('fk_unlocked') !== 'yes') pw.focus();
+      if (sessionStorage.getItem('fk_unlocked') !== 'yes') pw.focus();
     }
   });
 </script>
@@ -495,12 +495,14 @@
       <div style="margin-bottom:0.85rem;">
         <label style="font-size:0.76rem;font-weight:500;display:block;margin-bottom:0.5rem;">Modalities <span style="font-weight:300;color:#7A6E64;">(select all that apply)</span></label>
         <div style="display:flex;flex-wrap:wrap;gap:0.5rem;" id="ws-modality-pills">
-          ${['Paper Mache','Acrylic Painting','Sculpture (general)','Mixed Media','Wire Armature','Clay Modelling','Textile & Fibre','Drawing & Illustration'].map(m =>
-            `<label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;transition:all 0.15s;" class="mod-pill">
-              <input type="checkbox" name="ws-modality" value="${m}" style="accent-color:#C9943A;" />
-              ${m}
-            </label>`
-          ).join('')}
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Paper Mache" style="accent-color:#C9943A;" /> Paper Mache</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Acrylic Painting" style="accent-color:#C9943A;" /> Acrylic Painting</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Sculpture (general)" style="accent-color:#C9943A;" /> Sculpture (general)</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Mixed Media" style="accent-color:#C9943A;" /> Mixed Media</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Wire Armature" style="accent-color:#C9943A;" /> Wire Armature</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Clay Modelling" style="accent-color:#C9943A;" /> Clay Modelling</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Textile &amp; Fibre" style="accent-color:#C9943A;" /> Textile &amp; Fibre</label>
+          <label style="display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;cursor:pointer;font-size:0.78rem;" class="mod-pill"><input type="checkbox" name="ws-modality" value="Drawing &amp; Illustration" style="accent-color:#C9943A;" /> Drawing &amp; Illustration</label>
         </div>
       </div>
 
@@ -702,7 +704,7 @@ function positionTooltip(tooltip, hs, container) {
 
 
   function checkUnlocked() {
-    if (localStorage.getItem('fk_unlocked') === 'yes') {
+    if (sessionStorage.getItem('fk_unlocked') === 'yes') {
       document.getElementById('lock-screen').style.display = 'none';
     }
   }
@@ -747,14 +749,12 @@ function positionTooltip(tooltip, hs, container) {
   function clearToken() {
     localStorage.removeItem('fk_gh_token');
     GITHUB_TOKEN = '';
-    var ts = document.getElementById('token-setup');
-    var ti = document.getElementById('token-input');
-    var te = document.getElementById('token-error');
-    var grid = document.getElementById('listings-grid');
-    if (ts) ts.style.display = 'block';
-    if (ti) { ti.value = ''; setTimeout(function(){ ti.focus(); }, 100); }
-    if (te) te.style.display = 'none';
-    if (grid) grid.innerHTML = '<div class="loading-state">Enter a GitHub token above to load your artwork.</div>';
+    document.getElementById('token-setup').style.display = 'block';
+    document.getElementById('token-input').value = '';
+    document.getElementById('token-error').style.display = 'none';
+    // Clear listings so stale data doesn't show
+    const grid = document.getElementById('listings-grid');
+    if (grid) grid.innerHTML = '<div class="loading-state">Enter a token above to load your artwork.</div>';
   }
 
   const REPO_OWNER = 'lilbirdlifecoaching';
