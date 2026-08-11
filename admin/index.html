@@ -145,6 +145,32 @@
       .manage-header { flex-direction: column; align-items: flex-start; }
     }
   </style>
+<script>
+  function checkLockPassword() {
+    var input = document.getElementById('lock-password-input').value;
+    var parts = ['bik', 'kie'];
+    if (input === parts.join('')) {
+      localStorage.setItem('fk_unlocked', 'yes');
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('lock-error').style.display = 'none';
+    } else {
+      document.getElementById('lock-error').style.display = 'block';
+      document.getElementById('lock-password-input').value = '';
+      document.getElementById('lock-password-input').focus();
+    }
+  }
+  // Also wire up Enter key once DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    var pw = document.getElementById('lock-password-input');
+    if (!pw) return;
+    pw.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkLockPassword(); });
+    if (localStorage.getItem('fk_unlocked') === 'yes') {
+      document.getElementById('lock-screen').style.display = 'none';
+    } else {
+      pw.focus();
+    }
+  });
+</script>
 </head>
 <body>
 <!-- ── PASSWORD LOCK SCREEN ── -->
@@ -669,34 +695,7 @@ function positionTooltip(tooltip, hs, container) {
 }
 
 // ── PASSWORD LOCK ──
-  // Simple obfuscated check — security relies on GitHub token, not this screen
-  function checkLockPassword() {
-    const input = document.getElementById('lock-password-input').value;
-    const parts = ['bik', 'kie'];
-    if (input === parts.join('')) {
-      localStorage.setItem('fk_unlocked', 'yes');
-      document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('lock-error').style.display = 'none';
-    } else {
-      document.getElementById('lock-error').style.display = 'block';
-      document.getElementById('lock-password-input').value = '';
-      document.getElementById('lock-password-input').focus();
-    }
-  }
-
-  function checkUnlocked() {
-    if (localStorage.getItem('fk_unlocked') === 'yes') {
-      document.getElementById('lock-screen').style.display = 'none';
-    }
-  }
-  checkUnlocked();
-
-  // Wire up Enter key for password field
-  const _pwInput = document.getElementById('lock-password-input');
-  if (_pwInput) {
-    _pwInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') checkLockPassword(); });
-    if (localStorage.getItem('fk_unlocked') !== 'yes') _pwInput.focus();
-  }
+  // checkLockPassword is defined in <head> script for early availability
 
   let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
 
