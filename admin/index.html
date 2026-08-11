@@ -760,16 +760,8 @@ function positionTooltip(tooltip, hs, container) {
     }
   }
 
-  function clearToken() {
-    localStorage.removeItem('fk_gh_token');
-    GITHUB_TOKEN = '';
-    document.getElementById('token-setup').style.display = 'block';
-    document.getElementById('token-input').value = '';
-    document.getElementById('token-error').style.display = 'none';
-    // Clear listings so stale data doesn't show
-    const grid = document.getElementById('listings-grid');
-    if (grid) grid.innerHTML = '<div class="loading-state">Enter a token above to load your artwork.</div>';
-  }
+  // clearToken defined in <head> script
+
 
   const REPO_OWNER = 'lilbirdlifecoaching';
   const REPO_NAME = 'finderskeepersmarket';
@@ -1827,24 +1819,40 @@ function positionTooltip(tooltip, hs, container) {
 
   function wsAddCustomDay(date, time) {
     date = date || ''; time = time || '';
-    const idx = document.querySelectorAll('.ws-day-row').length;
-    wsCustomDays.push({ date, time });
     const list = document.getElementById('ws-custom-days-list');
     const row = document.createElement('div');
     row.className = 'ws-day-row';
     row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr auto;gap:0.5rem;align-items:center;';
-    row.id = 'ws-day-row-' + idx;
-    row.innerHTML = `
-      <input type="date" id="ws-day-date-${idx}" value="${date}" style="padding:0.6rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.85rem;width:100%;outline:none;" />
-      <input type="text" id="ws-day-time-${idx}" value="${time}" placeholder="10:00am – 1:00pm" style="padding:0.6rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.85rem;width:100%;outline:none;" />
-      <button type="button" onclick="wsRemoveCustomDay(${idx})" style="background:none;border:1px solid rgba(100,80,60,0.2);color:#c0392b;padding:0.5rem 0.65rem;cursor:pointer;font-size:0.85rem;">✕</button>`;
+    const inputCss = 'padding:0.6rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.85rem;width:100%;outline:none;';
+
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.className = 'ws-day-date';
+    dateInput.value = date;
+    dateInput.style.cssText = inputCss;
+
+    const timeInput = document.createElement('input');
+    timeInput.type = 'text';
+    timeInput.className = 'ws-day-time';
+    timeInput.value = time;
+    timeInput.placeholder = '10:00am – 1:00pm';
+    timeInput.style.cssText = inputCss;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.textContent = '\u2715';
+    removeBtn.style.cssText = 'background:none;border:1px solid rgba(100,80,60,0.2);color:#c0392b;padding:0.5rem 0.65rem;cursor:pointer;font-size:0.85rem;';
+    removeBtn.onclick = function() { row.remove(); };
+
+    row.appendChild(dateInput);
+    row.appendChild(timeInput);
+    row.appendChild(removeBtn);
     list.appendChild(row);
   }
 
   function wsRemoveCustomDay(idx) {
-    const row = document.getElementById('ws-day-row-' + idx);
-    if (row) row.remove();
-    wsCustomDays.splice(idx, 1);
+    const rows = document.querySelectorAll('.ws-day-row');
+    if (rows[idx]) rows[idx].remove();
   }
 
   function wsGetModalities() {
@@ -2012,15 +2020,14 @@ function positionTooltip(tooltip, hs, container) {
         schedFields.time = document.getElementById('ws-range-time').value.trim();
         schedFields.days = [];
       } else {
-        // Scan DOM directly for all day rows — most reliable approach
+        // Scan every day row by class — immune to add/remove index gaps
         const collectedDays = [];
-        let i = 0;
-        while (document.getElementById('ws-day-date-' + i)) {
-          const dateEl = document.getElementById('ws-day-date-' + i);
-          const timeEl = document.getElementById('ws-day-time-' + i);
-          collectedDays.push({ date: dateEl.value || '', time: timeEl ? timeEl.value.trim() : '' });
-          i++;
-        }
+        document.querySelectorAll('#ws-custom-days-list .ws-day-row').forEach(row => {
+          const dateEl = row.querySelector('.ws-day-date');
+          const timeEl = row.querySelector('.ws-day-time');
+          const dVal = dateEl ? dateEl.value : '';
+          if (dVal) collectedDays.push({ date: dVal, time: timeEl ? timeEl.value.trim() : '' });
+        });
         if (!collectedDays.length) {
           document.getElementById('ws-error-box').style.display = 'block';
           document.getElementById('ws-error-msg').textContent = 'Please add at least one day using the "+ Add a day" button.';
@@ -2105,5 +2112,11 @@ function positionTooltip(tooltip, hs, container) {
     } catch(e) { alert('Could not toggle: ' + e.message); }
   }
 
-
-
+  // Init
+  checkToken();
+  if (GITHUB_TOKEN) loadData();
+  renderAddForm();
+  renderSceneItemsList();
+</script>
+</body>
+</html>
