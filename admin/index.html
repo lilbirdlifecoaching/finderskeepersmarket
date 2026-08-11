@@ -2121,6 +2121,8 @@ function positionTooltip(tooltip, hs, container) {
       loadWorkshopsList();
     } catch(e) { alert('Could not toggle: ' + e.message); }
   }
+
+  async function loadWorkshopsList() {
     const list = document.getElementById('workshops-list');
     list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">Loading…</div>';
     try {
