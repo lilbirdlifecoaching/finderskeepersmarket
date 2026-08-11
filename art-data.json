@@ -270,8 +270,6 @@
       "id": "ws001",
       "title": "Halloween Mask Creating",
       "description": "Learn the basics of paper mache. Build your unique Halloween mask from scratch. All materials provided. Suitable for all skill levels.",
-      "date": "2025-08-30",
-      "time": "10:00am – 11:30am",
       "location": "Visual Philosophy Studio, 1065 The Alameda, San Jose CA 95126",
       "price": 99,
       "spots": 8,
@@ -279,8 +277,23 @@
       "ageGroup": "kids",
       "ageMin": 4,
       "ageMax": 8,
+      "modalities": [],
       "available": true,
-      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv",
+      "scheduleType": "multiday-custom",
+      "date": "2026-08-29",
+      "dateEnd": "2026-09-05",
+      "time": "",
+      "days": [
+        {
+          "date": "2026-08-29",
+          "time": "10am - 11:30am"
+        },
+        {
+          "date": "2026-09-05",
+          "time": "10am - 11:30am"
+        }
+      ]
     },
     {
       "id": "ws002",
