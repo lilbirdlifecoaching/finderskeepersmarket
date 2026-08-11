@@ -453,7 +453,10 @@
     ART BY KINDNESS GRACE
     <span>SCULPTURAL WORKS</span>
   </div>
-  <a href="mailto:hello@finderskeepers.market" class="nav-contact">INQUIRE</a>
+  <div style="display:flex;align-items:center;gap:1.25rem;">
+    <a href="../workshops/" style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ivory-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--ivory-muted)'">Workshops</a>
+    <a href="mailto:hello@finderskeepers.market" class="nav-contact">INQUIRE</a>
+  </div>
 </nav>
 
 <section class="hero">
@@ -499,6 +502,57 @@
     <p>To inquire about a piece, commission a custom work, or ask about shipping, reach out directly. Pieces sell quickly — the creatures don't wait long.</p>
   </div>
 </section>
+
+
+<!-- ── WORKSHOPS TEASER ── -->
+<section id="workshops-teaser" style="background:#1A1610;border-top:1px solid rgba(255,255,255,0.06);padding:4rem 3rem;">
+  <div style="max-width:900px;margin:0 auto;">
+    <p style="font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;">Learn from the maker</p>
+    <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);color:var(--ivory);margin-bottom:0.75rem;line-height:1.15;">Workshops with <em style="font-style:italic;">Kindness Grace</em></h2>
+    <p style="color:var(--ivory-muted);font-size:0.92rem;line-height:1.8;max-width:540px;margin-bottom:2.5rem;">Learn paper mache sculpting directly from Kindness Grace. Small groups, all materials included, and you take your creation home on the day.</p>
+
+    <!-- Workshop cards loaded dynamically -->
+    <div id="kg-workshops-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;margin-bottom:2.5rem;">
+      <div style="color:var(--ivory-muted);font-style:italic;font-size:0.88rem;padding:1rem 0;">Loading upcoming workshops…</div>
+    </div>
+
+    <a href="../workshops/" style="display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:0.85rem 2rem;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='var(--gold)';this.style.color='#1A1610'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">View all workshops & book a spot →</a>
+  </div>
+</section>
+
+<script>
+(async function loadKGWorkshops() {
+  const grid = document.getElementById('kg-workshops-grid');
+  try {
+    const r = await fetch('https://finderskeepers.market/art-data.json');
+    const data = await r.json();
+    const workshops = (data.workshops || []).filter(w => w.available !== false).slice(0, 3);
+    if (!workshops.length) {
+      grid.innerHTML = '<div style="color:var(--ivory-muted);font-style:italic;font-size:0.88rem;padding:1rem 0;">No upcoming workshops right now — check back soon.</div>';
+      return;
+    }
+    grid.innerHTML = '';
+    workshops.forEach(ws => {
+      const spotsLeft = ws.spotsRemaining || 0;
+      const card = document.createElement('div');
+      card.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1.25rem;display:flex;flex-direction:column;gap:0.5rem;';
+      const d = ws.date ? new Date(ws.date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short',day:'numeric',month:'long'}) : '';
+      card.innerHTML = `
+        <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">${ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages'}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--ivory);line-height:1.3;">${ws.title}</div>
+        <div style="font-size:0.78rem;color:var(--ivory-muted);">${d}${ws.time ? ' · ' + ws.time : ''}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem;padding-top:0.75rem;border-top:1px solid rgba(255,255,255,0.06);">
+          <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ivory);">$${ws.price}</span>
+          <span style="font-size:0.72rem;color:${spotsLeft <= 3 && spotsLeft > 0 ? '#C9943A' : 'var(--ivory-muted)'};">${spotsLeft === 0 ? 'Sold out' : spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' left'}</span>
+        </div>
+        <a href="../workshops/" style="display:block;text-align:center;background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--ivory-muted);padding:0.55rem;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;margin-top:0.25rem;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--ivory-muted)'">${spotsLeft === 0 ? 'View details' : 'Book a spot →'}</a>`;
+      grid.appendChild(card);
+    });
+  } catch(e) {
+    grid.innerHTML = '<div style="color:var(--ivory-muted);font-style:italic;font-size:0.88rem;">Could not load workshops.</div>';
+  }
+})();
+</script>
 
 <footer>
   <span>© Kindness Grace. All rights reserved.</span>
