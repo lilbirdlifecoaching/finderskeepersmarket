@@ -775,6 +775,17 @@ function positionTooltip(tooltip, hs, container) {
   const REPO_NAME = 'finderskeepersmarket';
   const API = 'https://api.github.com';
 
+  // Always fetch a fresh copy of art-data.json immediately before any write
+  // This prevents SHA mismatch errors when the file has been updated since page load
+  async function getFreshDataFile() {
+    const dataFile = await githubGet('art-data.json');
+    dataFileSha = dataFile.sha;
+    const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
+    allData = JSON.parse(raw);
+    return dataFile;
+  }
+
+
   let allData = null;
   let dataFileSha = null;
   let currentFilter = 'all';
@@ -837,10 +848,7 @@ function positionTooltip(tooltip, hs, container) {
   // ── LOAD DATA ──
   async function loadData() {
     try {
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       renderListings();
     } catch(e) {
       const msg = e.message || '';
@@ -1121,10 +1129,7 @@ function positionTooltip(tooltip, hs, container) {
       await githubPutBinary(imagePath, b64, imgSha, `Add photo: ${vals.title}`);
 
       setProgress('add', 55, 'Reading artwork data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
 
       setProgress('add', 75, 'Adding your piece…');
       if (!allData.wife) allData.wife = [];
@@ -1204,10 +1209,7 @@ function positionTooltip(tooltip, hs, container) {
       }
 
       setProgress('edit', 55, 'Reading artwork data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
 
       setProgress('edit', 75, 'Saving changes…');
       const idx = allData[editingSection].findIndex(a => a.id === editingId);
@@ -1250,10 +1252,7 @@ function positionTooltip(tooltip, hs, container) {
 
     try {
       setProgress('edit', 30, 'Reading artwork data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
 
       setProgress('edit', 60, 'Removing listing…');
       allData[editingSection] = allData[editingSection].filter(a => a.id !== editingId);
@@ -1421,10 +1420,7 @@ function positionTooltip(tooltip, hs, container) {
 
       // 2. Read data
       setProgress('scene', 40, 'Reading site data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       if (!allData.scenes) allData.scenes = [];
 
       // 3. If current, unset other current scenes
@@ -1501,10 +1497,7 @@ function positionTooltip(tooltip, hs, container) {
     const list = document.getElementById('scenes-list');
     list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:var(--muted);">Loading…</div>';
     try {
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       const scenes = allData.scenes || [];
       if (!scenes.length) {
         list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:Playfair Display,serif;font-style:italic;color:var(--muted);">No scenes yet — build your first one!</div>';
@@ -1753,10 +1746,7 @@ function positionTooltip(tooltip, hs, container) {
         await githubPutBinary(imagePath, b64, imgSha, `Update scene photo: ${editingScene.title}`);
       }
       setProgress('edit-scene', 50, 'Reading data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       setProgress('edit-scene', 70, 'Saving changes…');
       const isCurrent = document.getElementById('edit-scene-current').checked;
       if (isCurrent) allData.scenes.forEach(s => s.current = false);
@@ -1810,10 +1800,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('delete-scene-confirm').innerHTML = '<p style="color:var(--muted);font-size:0.88rem;padding:0.5rem 0;">Deleting…</p>';
     try {
       setProgress('edit-scene', 40, 'Reading data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       allData.scenes = (allData.scenes || []).filter(s => s.slug !== editingScene.slug);
       setProgress('edit-scene', 80, 'Removing scene…');
       await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Delete scene: ${editingScene.title}`);
@@ -1886,10 +1873,7 @@ function positionTooltip(tooltip, hs, container) {
     const list = document.getElementById('workshops-list');
     list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">Loading…</div>';
     try {
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       const workshops = allData.workshops || [];
       if (!workshops.length) {
         list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">No workshops yet — add one!</div>';
@@ -2026,10 +2010,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('ws-error-box').style.display = 'none';
     try {
       setProgress('ws', 30, 'Reading data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       if (!allData.workshops) allData.workshops = [];
 
       // Build schedule fields
@@ -2109,10 +2090,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('ws-delete-confirm').innerHTML = '<p style="color:#7A6E64;font-size:0.88rem;padding:0.5rem 0;">Deleting…</p>';
     try {
       setProgress('ws', 40, 'Reading data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       allData.workshops = (allData.workshops || []).filter(w => w.id !== editingWorkshopId);
       setProgress('ws', 80, 'Removing…');
       await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Delete workshop: ${editingWorkshopId}`);
@@ -2126,10 +2104,7 @@ function positionTooltip(tooltip, hs, container) {
 
   async function quickToggleWorkshop(id) {
     try {
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       const ws = allData.workshops.find(w => w.id === id);
       if (ws) ws.available = !ws.available;
       await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Toggle workshop: ${id}`);
@@ -2141,10 +2116,7 @@ function positionTooltip(tooltip, hs, container) {
     const list = document.getElementById('workshops-list');
     list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">Loading…</div>';
     try {
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       const workshops = allData.workshops || [];
       if (!workshops.length) {
         list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">No workshops yet — add one!</div>';
@@ -2249,10 +2221,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('ws-error-box').style.display = 'none';
     try {
       setProgress('ws', 30, 'Reading data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       if (!allData.workshops) allData.workshops = [];
       const wsData = {
         id: editingWorkshopId || ('ws' + Date.now().toString().slice(-6)),
@@ -2307,10 +2276,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('ws-delete-confirm').innerHTML = '<p style="color:#7A6E64;font-size:0.88rem;padding:0.5rem 0;">Deleting…</p>';
     try {
       setProgress('ws', 40, 'Reading data…');
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       allData.workshops = (allData.workshops || []).filter(w => w.id !== editingWorkshopId);
       setProgress('ws', 80, 'Removing…');
       await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Delete workshop: ${editingWorkshopId}`);
@@ -2324,10 +2290,7 @@ function positionTooltip(tooltip, hs, container) {
 
   async function quickToggleWorkshop(id) {
     try {
-      const dataFile = await githubGet('art-data.json');
-      dataFileSha = dataFile.sha;
-      const raw = decodeURIComponent(escape(atob(dataFile.content.replace(/\n/g, ''))));
-      allData = JSON.parse(raw);
+      await getFreshDataFile();
       const ws = allData.workshops.find(w => w.id === id);
       if (ws) ws.available = !ws.available;
       await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Toggle workshop visibility: ${id}`);
