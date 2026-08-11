@@ -326,23 +326,42 @@
     }
   }
 
+  function wsScheduleDisplay(ws) {
+    if (ws.scheduleType === 'multiday-range') {
+      const start = formatDate(ws.date);
+      const end = formatDate(ws.dateEnd);
+      return `${start} – ${end}${ws.time ? ' · ' + ws.time + ' each day' : ''}`;
+    } else if (ws.scheduleType === 'multiday-custom' && ws.days && ws.days.length) {
+      return ws.days.map(d => `${formatDate(d.date)}${d.time ? ' · ' + d.time : ''}`).join('<br>');
+    }
+    return `${formatDate(ws.date)}${ws.time ? ' · ' + ws.time : ''}`;
+  }
+
   function renderWorkshops(list) {
     const grid = document.getElementById('workshops-grid');
     grid.innerHTML = '';
     list.forEach(ws => {
-      const spotsLeft = ws.spotsRemaining || 0;
+      const spotsLeft = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || 0);
       const full = spotsLeft <= 0;
       const ageLabel = ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages';
       const ageClass = ws.ageGroup === 'kids' ? 'kids' : ws.ageGroup === 'adults' ? 'adults' : '';
+      const modTags = (ws.modalities || []).map(m =>
+        `<span style="font-size:0.65rem;letter-spacing:0.06em;background:var(--sage-faint);color:var(--sage);padding:0.2rem 0.55rem;border:1px solid var(--border-sage);">${m}</span>`
+      ).join('');
+      const isMultiDay = ws.scheduleType === 'multiday-range' || ws.scheduleType === 'multiday-custom';
       const card = document.createElement('div');
       card.className = 'workshop-card' + (full ? ' full' : '');
       card.innerHTML = `
         <div class="workshop-card-body">
-          <div class="workshop-tag ${ageClass}">${ageLabel}</div>
+          <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+            <div class="workshop-tag ${ageClass}">${ageLabel}</div>
+            ${isMultiDay ? '<div style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--blush);background:var(--blush-faint);padding:0.15rem 0.5rem;">Multi-day</div>' : ''}
+          </div>
           <div class="workshop-title">${ws.title}</div>
+          ${modTags ? `<div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:-0.1rem;">${modTags}</div>` : ''}
           <div class="workshop-desc">${ws.description}</div>
           <div class="workshop-meta">
-            <span>📅 ${formatDate(ws.date)} · ${ws.time}</span>
+            <span>📅 <span style="line-height:1.6;">${wsScheduleDisplay(ws)}</span></span>
             <span>📍 ${ws.location}</span>
           </div>
         </div>
@@ -465,7 +484,7 @@
     const att = document.getElementById('f-attendee').value.trim() || (first + ' ' + last).trim();
     const age = document.getElementById('f-age').value;
     document.getElementById('sum-title').textContent = ws.title;
-    document.getElementById('sum-date').textContent = formatDate(ws.date) + ' · ' + ws.time;
+    document.getElementById('sum-date').innerHTML = wsScheduleDisplay(ws);
     document.getElementById('sum-attendee').textContent = att + (age ? ', age ' + age : '');
     document.getElementById('sum-price').textContent = '$' + ws.price;
     document.getElementById('venmo-amount').textContent = '$' + ws.price;
@@ -494,7 +513,9 @@
 
     const payload = {
       workshop: ws.title,
-      date: formatDate(ws.date) + ' · ' + ws.time,
+      date: ws.scheduleType === 'multiday-custom' && ws.days
+        ? ws.days.map(d => formatDate(d.date) + (d.time ? ' · ' + d.time : '')).join(', ')
+        : (ws.scheduleType === 'multiday-range' ? formatDate(ws.date) + ' – ' + formatDate(ws.dateEnd) + (ws.time ? ' · ' + ws.time + ' each day' : '') : formatDate(ws.date) + ' · ' + ws.time),
       contactName: first + ' ' + last,
       email,
       phone: phone || 'Not provided',
@@ -519,7 +540,7 @@
     // Show confirmation
     document.getElementById('conf-email').textContent = email;
     document.getElementById('conf-title').textContent = ws.title;
-    document.getElementById('conf-date').textContent = formatDate(ws.date) + ' · ' + ws.time;
+    document.getElementById('conf-date').innerHTML = wsScheduleDisplay(ws);
     document.getElementById('conf-payment').textContent = payMethod === 'venmo' ? 'Venmo @kindnessgrace' : 'Cash on arrival';
     document.getElementById('conf-price').textContent = '$' + ws.price;
     currentStep = 4;
