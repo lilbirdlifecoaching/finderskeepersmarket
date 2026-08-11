@@ -1814,7 +1814,7 @@ function positionTooltip(tooltip, hs, container) {
 
     // ── WORKSHOPS ──
   let editingWorkshopId = null;
-  let wsCustomDays = []; // [{date, time}]
+  let wsCustomDays = [];
 
   const WS_MODALITIES = ['Paper Mache','Acrylic Painting','Sculpture (general)','Mixed Media','Wire Armature','Clay Modelling','Textile & Fibre','Drawing & Illustration'];
 
@@ -1825,11 +1825,13 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('ws-sched-custom').style.display  = type === 'multiday-custom' ? '' : 'none';
   }
 
-  function wsAddCustomDay(date = '', time = '') {
-    const idx = wsCustomDays.length;
+  function wsAddCustomDay(date, time) {
+    date = date || ''; time = time || '';
+    const idx = document.querySelectorAll('.ws-day-row').length;
     wsCustomDays.push({ date, time });
     const list = document.getElementById('ws-custom-days-list');
     const row = document.createElement('div');
+    row.className = 'ws-day-row';
     row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr auto;gap:0.5rem;align-items:center;';
     row.id = 'ws-day-row-' + idx;
     row.innerHTML = `
@@ -1840,33 +1842,56 @@ function positionTooltip(tooltip, hs, container) {
   }
 
   function wsRemoveCustomDay(idx) {
+    const row = document.getElementById('ws-day-row-' + idx);
+    if (row) row.remove();
     wsCustomDays.splice(idx, 1);
-    renderWsCustomDays();
-  }
-
-  function renderWsCustomDays() {
-    const list = document.getElementById('ws-custom-days-list');
-    list.innerHTML = '';
-    const saved = [...wsCustomDays];
-    wsCustomDays = [];
-    saved.forEach(d => wsAddCustomDay(d.date, d.time));
   }
 
   function wsGetModalities() {
     return Array.from(document.querySelectorAll('input[name="ws-modality"]:checked')).map(cb => cb.value);
   }
 
-  function wsSetModalities(selected = []) {
-    document.querySelectorAll('input[name="ws-modality"]').forEach(cb => {
-      cb.checked = selected.includes(cb.value);
-    });
+  function wsSetModalities(selected) {
+    selected = selected || [];
+    document.querySelectorAll('input[name="ws-modality"]').forEach(cb => { cb.checked = selected.includes(cb.value); });
   }
 
-  function wsSetScheduleType(type = 'single') {
-    document.querySelectorAll('input[name="ws-schedule-type"]').forEach(r => {
-      r.checked = r.value === type;
-    });
+  function wsSetScheduleType(type) {
+    type = type || 'single';
+    document.querySelectorAll('input[name="ws-schedule-type"]').forEach(r => { r.checked = r.value === type; });
     wsScheduleTypeChange();
+  }
+
+  function wsScheduleSummary(ws) {
+    const type = ws.scheduleType || (ws.days && ws.days.length ? 'multiday-custom' : 'single');
+    if (type === 'multiday-range') {
+      return `${ws.date || '?'} – ${ws.dateEnd || '?'}${ws.time ? ', ' + ws.time + ' each day' : ''}`;
+    } else if (type === 'multiday-custom' && ws.days && ws.days.length) {
+      return `${ws.days.length} day${ws.days.length > 1 ? 's' : ''} · ${ws.days[0].date}${ws.days.length > 1 ? ' – ' + ws.days[ws.days.length-1].date : ''}`;
+    }
+    return `${ws.date || 'No date'}${ws.time ? ' · ' + ws.time : ''}`;
+  }
+
+  function wsResetForm() {
+    ['ws-title','ws-desc','ws-time','ws-range-time','ws-location','ws-formspree'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    ['ws-date','ws-date-start','ws-date-end'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    ['ws-price','ws-spots','ws-spots-rem'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('ws-agemin').value = '0';
+    document.getElementById('ws-agemax').value = '0';
+    document.getElementById('ws-agegroup').value = 'all';
+    document.getElementById('ws-available').checked = true;
+    wsSetModalities([]);
+    wsCustomDays = [];
+    document.getElementById('ws-custom-days-list').innerHTML = '';
+    wsSetScheduleType('single');
+    ['ws-save-btn','ws-progress-bar','ws-status-msg','ws-error-box','ws-success-box','ws-delete-confirm'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (id === 'ws-save-btn') { el.style.display = 'block'; el.disabled = false; el.textContent = 'Save Workshop ✦'; }
+      else if (id === 'ws-progress-bar') el.style.display = 'none';
+      else if (id === 'ws-status-msg') el.textContent = '';
+      else el.style.display = 'none';
+    });
   }
 
   async function loadWorkshopsList() {
@@ -1886,7 +1911,6 @@ function positionTooltip(tooltip, hs, container) {
         const spotsLeft = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || 0);
         const ageLabel = ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages';
         const modTags = (ws.modalities || []).map(m => `<span style="font-size:0.62rem;background:#EBE4D5;color:#7A6E64;padding:0.15rem 0.45rem;border-radius:2px;">${m}</span>`).join(' ');
-        const schedSummary = wsScheduleSummary(ws);
         card.innerHTML = `
           <div style="flex:1;padding:1rem;display:flex;flex-direction:column;gap:0.3rem;min-width:0;">
             <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
@@ -1894,7 +1918,7 @@ function positionTooltip(tooltip, hs, container) {
               ${!ws.available ? '<span style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:#EBE4D5;color:#7A6E64;padding:0.15rem 0.5rem;">Hidden</span>' : ''}
               ${spotsLeft === 0 ? '<span style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:#f0ebe4;color:#A8694A;padding:0.15rem 0.5rem;">Sold out</span>' : ''}
             </div>
-            <div style="font-size:0.76rem;color:#7A6E64;">${schedSummary} · $${ws.price} · ${ageLabel} · ${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left</div>
+            <div style="font-size:0.76rem;color:#7A6E64;">${wsScheduleSummary(ws)} · $${ws.price} · ${ageLabel} · ${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left</div>
             ${modTags ? `<div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.2rem;">${modTags}</div>` : ''}
             ${ws.formspreeUrl ? '<div style="font-size:0.72rem;color:#3D7A5A;">✓ Formspree connected</div>' : '<div style="font-size:0.72rem;color:#c0392b;">⚠ No Formspree URL</div>'}
           </div>
@@ -1907,45 +1931,6 @@ function positionTooltip(tooltip, hs, container) {
     } catch(e) {
       list.innerHTML = `<div style="color:#c0392b;padding:1rem;">Could not load: ${e.message}<br><br><button onclick="loadWorkshopsList()" style="background:#C9943A;color:#fff;border:none;padding:0.5rem 1rem;cursor:pointer;font-family:Jost,sans-serif;font-size:0.78rem;">Try again</button></div>`;
     }
-  }
-
-  function wsScheduleSummary(ws) {
-    const type = ws.scheduleType || (ws.days && ws.days.length ? 'multiday-custom' : 'single');
-    if (type === 'multiday-range') {
-      return `${ws.date || '?'} – ${ws.dateEnd || '?'}${ws.time ? ', ' + ws.time + ' each day' : ''}`;
-    } else if (type === 'multiday-custom' && ws.days && ws.days.length) {
-      const first = ws.days[0].date, last = ws.days[ws.days.length-1].date;
-      return `${ws.days.length} day${ws.days.length > 1 ? 's' : ''} · ${first}${last !== first ? ' – ' + last : ''}`;
-    }
-    return `${ws.date || 'No date'}${ws.time ? ' · ' + ws.time : ''}`;
-  }
-
-  function wsResetForm() {
-    ['ws-title','ws-desc','ws-time','ws-location','ws-formspree','ws-range-time'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.value = '';
-    });
-    ['ws-date','ws-date-start','ws-date-end'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.value = '';
-    });
-    document.getElementById('ws-price').value = '';
-    document.getElementById('ws-spots').value = '';
-    document.getElementById('ws-spots-rem').value = '';
-    document.getElementById('ws-agemin').value = '0';
-    document.getElementById('ws-agemax').value = '0';
-    document.getElementById('ws-agegroup').value = 'all';
-    document.getElementById('ws-available').checked = true;
-    wsSetModalities([]);
-    wsCustomDays = [];
-    document.getElementById('ws-custom-days-list').innerHTML = '';
-    wsSetScheduleType('single');
-    document.getElementById('ws-save-btn').style.display = 'block';
-    document.getElementById('ws-save-btn').disabled = false;
-    document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
-    document.getElementById('ws-progress-bar').style.display = 'none';
-    document.getElementById('ws-status-msg').textContent = '';
-    document.getElementById('ws-error-box').style.display = 'none';
-    document.getElementById('ws-success-box').style.display = 'none';
-    document.getElementById('ws-delete-confirm').style.display = 'none';
   }
 
   function openAddWorkshop() {
@@ -1979,6 +1964,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('ws-formspree').value = ws.formspreeUrl || '';
     document.getElementById('ws-available').checked = ws.available !== false;
     wsSetModalities(ws.modalities || []);
+    // Infer scheduleType from data if missing
     const schedType = ws.scheduleType || (ws.days && ws.days.length ? 'multiday-custom' : 'single');
     wsSetScheduleType(schedType);
     if (schedType === 'single') {
@@ -1988,7 +1974,7 @@ function positionTooltip(tooltip, hs, container) {
       document.getElementById('ws-date-start').value = ws.date || '';
       document.getElementById('ws-date-end').value = ws.dateEnd || '';
       document.getElementById('ws-range-time').value = ws.time || '';
-    } else if (schedType === 'multiday-custom') {
+    } else {
       wsCustomDays = [];
       document.getElementById('ws-custom-days-list').innerHTML = '';
       (ws.days || []).forEach(d => wsAddCustomDay(d.date, d.time));
@@ -2014,8 +2000,6 @@ function positionTooltip(tooltip, hs, container) {
       setProgress('ws', 30, 'Reading data…');
       await getFreshDataFile();
       if (!allData.workshops) allData.workshops = [];
-
-      // Build schedule fields
       let schedFields = { scheduleType: schedType };
       if (schedType === 'single') {
         schedFields.date = document.getElementById('ws-date').value;
@@ -2028,41 +2012,33 @@ function positionTooltip(tooltip, hs, container) {
         schedFields.time = document.getElementById('ws-range-time').value.trim();
         schedFields.days = [];
       } else {
-        // Read ALL day inputs from DOM directly - scan for any ws-day-date-N elements
+        // Scan DOM directly for all day rows — most reliable approach
         const collectedDays = [];
         let i = 0;
-        while (true) {
+        while (document.getElementById('ws-day-date-' + i)) {
           const dateEl = document.getElementById('ws-day-date-' + i);
-          if (!dateEl) break; // no more day rows
           const timeEl = document.getElementById('ws-day-time-' + i);
-          collectedDays.push({
-            date: dateEl.value || '',
-            time: timeEl ? timeEl.value.trim() : ''
-          });
+          collectedDays.push({ date: dateEl.value || '', time: timeEl ? timeEl.value.trim() : '' });
           i++;
         }
-        wsCustomDays = collectedDays;
-        schedFields.date = wsCustomDays[0]?.date || '';
-        schedFields.dateEnd = wsCustomDays[wsCustomDays.length - 1]?.date || '';
-        schedFields.time = '';
-        schedFields.days = [...wsCustomDays];
-        if (!wsCustomDays.length) {
+        if (!collectedDays.length) {
           document.getElementById('ws-error-box').style.display = 'block';
           document.getElementById('ws-error-msg').textContent = 'Please add at least one day using the "+ Add a day" button.';
           document.getElementById('ws-save-btn').disabled = false;
           document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
           return;
         }
+        schedFields.date = collectedDays[0].date;
+        schedFields.dateEnd = collectedDays[collectedDays.length - 1].date;
+        schedFields.time = '';
+        schedFields.days = collectedDays;
       }
-
       const wsData = {
         id: editingWorkshopId || ('ws' + Date.now().toString().slice(-6)),
         title,
         description: document.getElementById('ws-desc').value.trim(),
         location: document.getElementById('ws-location').value.trim(),
-        price,
-        spots,
-        spotsRemaining: spotsRem,
+        price, spots, spotsRemaining: spotsRem,
         ageGroup: document.getElementById('ws-agegroup').value,
         ageMin: parseInt(document.getElementById('ws-agemin').value) || 0,
         ageMax: parseInt(document.getElementById('ws-agemax').value) || 0,
@@ -2071,7 +2047,6 @@ function positionTooltip(tooltip, hs, container) {
         formspreeUrl: document.getElementById('ws-formspree').value.trim(),
         ...schedFields
       };
-
       setProgress('ws', 60, 'Saving…');
       if (editingWorkshopId) {
         const idx = allData.workshops.findIndex(w => w.id === editingWorkshopId);
@@ -2130,197 +2105,5 @@ function positionTooltip(tooltip, hs, container) {
     } catch(e) { alert('Could not toggle: ' + e.message); }
   }
 
-  async function loadWorkshopsList() {
-    const list = document.getElementById('workshops-list');
-    list.innerHTML = '<div style="text-align:center;padding:2rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">Loading…</div>';
-    try {
-      await getFreshDataFile();
-      const workshops = allData.workshops || [];
-      if (!workshops.length) {
-        list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:Playfair Display,serif;font-style:italic;color:#7A6E64;">No workshops yet — add one!</div>';
-        return;
-      }
-      list.innerHTML = '';
-      workshops.forEach(ws => {
-        const card = document.createElement('div');
-        card.style.cssText = 'background:#fff;border:1px solid rgba(100,80,60,0.2);border-left:4px solid #A8C4B4;display:flex;align-items:stretch;overflow:hidden;margin-bottom:0.75rem;';
-        const spotsLeft = ws.spotsRemaining || 0;
-        const ageLabel = ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages';
-        card.innerHTML = `
-          <div style="flex:1;padding:1rem;display:flex;flex-direction:column;gap:0.25rem;min-width:0;">
-            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-              <div style="font-family:'Playfair Display',serif;font-size:1rem;">${ws.title}</div>
-              ${!ws.available ? '<span style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:#EBE4D5;color:#7A6E64;padding:0.15rem 0.5rem;">Hidden</span>' : ''}
-              ${spotsLeft === 0 ? '<span style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:#f0ebe4;color:#A8694A;padding:0.15rem 0.5rem;">Sold out</span>' : ''}
-            </div>
-            <div style="font-size:0.76rem;color:#7A6E64;">${ws.date ? ws.date : 'No date'} · ${ws.time || ''} · $${ws.price} · ${ageLabel} · ${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left</div>
-            ${ws.formspreeUrl ? `<div style="font-size:0.72rem;color:#3D7A5A;">✓ Formspree connected</div>` : `<div style="font-size:0.72rem;color:#c0392b;">⚠ No Formspree URL — bookings won't send emails</div>`}
-          </div>
-          <div style="display:flex;flex-direction:column;border-left:1px solid rgba(100,80,60,0.15);">
-            <button onclick="openEditWorkshop('${ws.id}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#7A6E64;border-bottom:1px solid rgba(100,80,60,0.15);" onmouseover="this.style.background='#EBE4D5'" onmouseout="this.style.background='none'">Edit</button>
-            <button onclick="quickToggleWorkshop('${ws.id}')" style="padding:0 1.25rem;flex:1;border:none;background:none;cursor:pointer;font-family:Jost,sans-serif;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:#7A6E64;" onmouseover="this.style.background='#EBE4D5'" onmouseout="this.style.background='none'">${ws.available ? 'Hide' : 'Show'}</button>
-          </div>`;
-        list.appendChild(card);
-      });
-    } catch(e) {
-      list.innerHTML = `<div style="color:#c0392b;padding:1rem;">Could not load: ${e.message}<br><br><button onclick="loadWorkshopsList()" style="background:#C9943A;color:#fff;border:none;padding:0.5rem 1rem;cursor:pointer;font-family:Jost,sans-serif;font-size:0.78rem;">Try again</button></div>`;
-    }
-  }
 
-  function openAddWorkshop() {
-    editingWorkshopId = null;
-    document.getElementById('ws-form-heading').textContent = 'Add Workshop';
-    document.getElementById('ws-delete-btn').style.display = 'none';
-    ['ws-title','ws-desc','ws-time','ws-location','ws-formspree'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('ws-date').value = '';
-    document.getElementById('ws-price').value = '';
-    document.getElementById('ws-spots').value = '';
-    document.getElementById('ws-spots-rem').value = '';
-    document.getElementById('ws-agemin').value = '0';
-    document.getElementById('ws-agemax').value = '0';
-    document.getElementById('ws-agegroup').value = 'all';
-    document.getElementById('ws-available').checked = true;
-    document.getElementById('ws-save-btn').style.display = 'block';
-    document.getElementById('ws-save-btn').disabled = false;
-    document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
-    document.getElementById('ws-progress-bar').style.display = 'none';
-    document.getElementById('ws-status-msg').textContent = '';
-    document.getElementById('ws-error-box').style.display = 'none';
-    document.getElementById('ws-success-box').style.display = 'none';
-    document.getElementById('ws-delete-confirm').style.display = 'none';
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('panel-edit-workshop').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
 
-  function openEditWorkshop(id) {
-    if (!allData || !allData.workshops) return;
-    const ws = allData.workshops.find(w => w.id === id);
-    if (!ws) return;
-    editingWorkshopId = id;
-    document.getElementById('ws-form-heading').textContent = 'Edit Workshop';
-    document.getElementById('ws-delete-btn').style.display = 'block';
-    document.getElementById('ws-title').value = ws.title || '';
-    document.getElementById('ws-desc').value = ws.description || '';
-    document.getElementById('ws-date').value = ws.date || '';
-    document.getElementById('ws-time').value = ws.time || '';
-    document.getElementById('ws-location').value = ws.location || '';
-    document.getElementById('ws-price').value = ws.price || '';
-    document.getElementById('ws-spots').value = ws.spots || '';
-    document.getElementById('ws-spots-rem').value = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || '');
-    document.getElementById('ws-agegroup').value = ws.ageGroup || 'all';
-    document.getElementById('ws-agemin').value = ws.ageMin || 0;
-    document.getElementById('ws-agemax').value = ws.ageMax || 0;
-    document.getElementById('ws-formspree').value = ws.formspreeUrl || '';
-    document.getElementById('ws-available').checked = ws.available !== false;
-    document.getElementById('ws-save-btn').style.display = 'block';
-    document.getElementById('ws-save-btn').disabled = false;
-    document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
-    document.getElementById('ws-progress-bar').style.display = 'none';
-    document.getElementById('ws-status-msg').textContent = '';
-    document.getElementById('ws-error-box').style.display = 'none';
-    document.getElementById('ws-success-box').style.display = 'none';
-    document.getElementById('ws-delete-confirm').style.display = 'none';
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('panel-edit-workshop').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async function saveWorkshop() {
-    const title = document.getElementById('ws-title').value.trim();
-    if (!title) { alert('Please enter a workshop title.'); return; }
-    const price = parseInt(document.getElementById('ws-price').value) || 0;
-    const spots = parseInt(document.getElementById('ws-spots').value) || 0;
-    const spotsRem = parseInt(document.getElementById('ws-spots-rem').value);
-    document.getElementById('ws-save-btn').disabled = true;
-    document.getElementById('ws-save-btn').textContent = 'Saving…';
-    document.getElementById('ws-error-box').style.display = 'none';
-    try {
-      setProgress('ws', 30, 'Reading data…');
-      await getFreshDataFile();
-      if (!allData.workshops) allData.workshops = [];
-      const wsData = {
-        id: editingWorkshopId || ('ws' + Date.now().toString().slice(-6)),
-        title,
-        description: document.getElementById('ws-desc').value.trim(),
-        date: document.getElementById('ws-date').value,
-        time: document.getElementById('ws-time').value.trim(),
-        location: document.getElementById('ws-location').value.trim(),
-        price,
-        spots,
-        spotsRemaining: isNaN(spotsRem) ? spots : spotsRem,
-        ageGroup: document.getElementById('ws-agegroup').value,
-        ageMin: parseInt(document.getElementById('ws-agemin').value) || 0,
-        ageMax: parseInt(document.getElementById('ws-agemax').value) || 0,
-        available: document.getElementById('ws-available').checked,
-        formspreeUrl: document.getElementById('ws-formspree').value.trim()
-      };
-      setProgress('ws', 60, 'Saving…');
-      if (editingWorkshopId) {
-        const idx = allData.workshops.findIndex(w => w.id === editingWorkshopId);
-        if (idx >= 0) allData.workshops[idx] = wsData;
-        else allData.workshops.push(wsData);
-      } else {
-        allData.workshops.push(wsData);
-      }
-      setProgress('ws', 85, 'Writing to website…');
-      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `${editingWorkshopId ? 'Update' : 'Add'} workshop: ${title}`);
-      setProgress('ws', 100, 'Done!');
-      setTimeout(() => {
-        document.getElementById('ws-progress-bar').style.display = 'none';
-        document.getElementById('ws-status-msg').textContent = '';
-        document.getElementById('ws-save-btn').style.display = 'none';
-        document.getElementById('ws-success-box').style.display = 'block';
-      }, 500);
-    } catch(err) {
-      document.getElementById('ws-error-box').style.display = 'block';
-      document.getElementById('ws-error-msg').textContent = 'Something went wrong: ' + err.message;
-      document.getElementById('ws-save-btn').disabled = false;
-      document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
-      document.getElementById('ws-status-msg').textContent = '';
-    }
-  }
-
-  function confirmDeleteWorkshop() {
-    if (!editingWorkshopId) return;
-    document.getElementById('ws-delete-msg').textContent = `This will permanently remove "${document.getElementById('ws-title').value}" from the workshops page.`;
-    document.getElementById('ws-delete-confirm').style.display = 'block';
-    document.getElementById('ws-delete-confirm').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  async function executeDeleteWorkshop() {
-    document.getElementById('ws-delete-confirm').innerHTML = '<p style="color:#7A6E64;font-size:0.88rem;padding:0.5rem 0;">Deleting…</p>';
-    try {
-      setProgress('ws', 40, 'Reading data…');
-      await getFreshDataFile();
-      allData.workshops = (allData.workshops || []).filter(w => w.id !== editingWorkshopId);
-      setProgress('ws', 80, 'Removing…');
-      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Delete workshop: ${editingWorkshopId}`);
-      setProgress('ws', 100, 'Deleted!');
-      setTimeout(() => showTab('workshops'), 800);
-    } catch(err) {
-      document.getElementById('ws-error-box').style.display = 'block';
-      document.getElementById('ws-error-msg').textContent = 'Delete failed: ' + err.message;
-    }
-  }
-
-  async function quickToggleWorkshop(id) {
-    try {
-      await getFreshDataFile();
-      const ws = allData.workshops.find(w => w.id === id);
-      if (ws) ws.available = !ws.available;
-      await githubPut('art-data.json', JSON.stringify(allData, null, 2), dataFileSha, `Toggle workshop visibility: ${id}`);
-      loadWorkshopsList();
-    } catch(e) { alert('Could not toggle: ' + e.message); }
-  }
-
-  // Init
-  checkToken();
-  if (GITHUB_TOKEN) loadData();
-  renderAddForm();
-  renderSceneItemsList();
-</script>
-</body>
-</html>
