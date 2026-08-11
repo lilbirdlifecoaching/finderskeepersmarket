@@ -3,721 +3,394 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Art by Kindness Grace — Sculptural Works</title>
-  <meta name="description" content="Hand-sculpted paper mache creatures, wall pieces, and wonders by Kindness Grace. Each piece is one-of-a-kind." />
+  <title>Art by Kindness Grace — Original Works &amp; Workshops</title>
+  <meta name="description" content="Kindness Grace creates original sculpture, paper mache, painting, wire, and textile art. Bay Area, CA. Workshops available. One of a kind." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Crimson+Pro:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Serif:ital,wght@0,400;1,400&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --void: #0a0806;
-      --deep: #120f0a;
-      --surface: #1a1510;
-      --panel: #221c14;
-      --gold: #c9a84c;
-      --gold-light: #e8c97a;
-      --gold-dim: rgba(201,168,76,0.25);
-      --gold-faint: rgba(201,168,76,0.08);
-      --ivory: #f5eedf;
-      --ivory-dim: rgba(245,238,223,0.7);
-      --ivory-muted: rgba(245,238,223,0.4);
-      --ivory-ghost: rgba(245,238,223,0.15);
-      --teal: #3a8a7a;
-      --border: rgba(201,168,76,0.2);
-      --border-bright: rgba(201,168,76,0.5);
+      --ocean: #097a85;
+      --teal: #1c8698;
+      --teal-light: #e8f4f5;
+      --sand: #d8a680;
+      --sand-pale: #f5ede1;
+      --sand-mid: #e8d4be;
+      --ink: #0a1a1c;
+      --ink-mid: #1a2e30;
+      --white: #ffffff;
+      --mist: #f0f7f8;
+      --muted: #5a5048;
+      --ghost: rgba(255,255,255,0.08);
     }
-
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--void);
-      color: var(--ivory);
-      font-family: 'Crimson Pro', serif;
-      font-weight: 300;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* ── STARFIELD CANVAS ── */
-    #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.6; }
+    body { background: var(--white); color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-weight: 300; overflow-x: hidden; }
 
     /* ── NAV ── */
     nav {
       position: sticky; top: 0; z-index: 200;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 3rem;
-      background: rgba(10,8,6,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      padding: 1rem 2.5rem;
+      background: var(--ink);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .nav-back {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      color: var(--ivory-muted);
-      text-decoration: none;
-      display: flex; align-items: center; gap: 0.5rem;
-      transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--gold); }
+    .nav-logo { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-back { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.3); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; }
     .nav-back::before { content: '←'; }
-    .nav-logo {
-      font-family: 'Cinzel', serif;
-      font-size: 0.85rem;
-      letter-spacing: 0.18em;
-      color: var(--gold);
-      text-align: center;
-    }
-    .nav-logo span { display: block; font-size: 0.65rem; letter-spacing: 0.25em; color: var(--ivory-muted); margin-top: 0.2rem; }
-    .nav-contact {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      color: var(--ivory-muted);
-      text-decoration: none;
-      border: 1px solid var(--border);
-      padding: 0.5rem 1rem;
-      transition: all 0.3s;
-    }
-    .nav-contact:hover { color: var(--gold); border-color: var(--gold-dim); }
+    .nav-back:hover { color: rgba(255,255,255,0.6); }
+    .nav-cta { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; background: var(--teal); color: var(--white); padding: 0.45rem 1.1rem; text-decoration: none; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--ocean); }
 
     /* ── HERO ── */
-    .hero {
-      position: relative; z-index: 1;
-      min-height: 92vh;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center;
-      padding: 4rem 2rem;
-      overflow: hidden;
-    }
-    .hero-ornament {
-      width: 1px; height: 80px;
-      background: linear-gradient(to bottom, transparent, var(--gold));
-      margin-bottom: 2.5rem;
-    }
-    .hero-eyebrow {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.35em;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-    .hero-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3.5rem, 8vw, 7rem);
-      font-weight: 300;
-      line-height: 0.95;
-      letter-spacing: -0.01em;
-      margin-bottom: 0.5rem;
-    }
-    .hero-title em {
-      font-style: italic;
-      color: var(--gold-light);
-      display: block;
-    }
-    .hero-sub {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(1rem, 2.5vw, 1.4rem);
-      color: var(--ivory-dim);
-      margin-top: 1.5rem;
-      max-width: 560px;
-      line-height: 1.7;
-    }
-    .hero-divider {
-      display: flex; align-items: center; gap: 1.5rem;
-      margin: 2.5rem auto; width: 320px; max-width: 80vw;
-    }
-    .hero-divider-line { flex: 1; height: 1px; background: var(--border); }
-    .hero-divider-gem { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
-    .hero-scroll-cue {
-      position: absolute; bottom: 2.5rem;
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: var(--ivory-ghost);
-      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
-    }
-    .hero-scroll-cue::after {
-      content: '';
-      width: 1px; height: 40px;
-      background: linear-gradient(to bottom, var(--gold-dim), transparent);
-      animation: pulse-line 2s ease-in-out infinite;
-    }
-    @keyframes pulse-line { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .hero { background: var(--ink); padding: 3.5rem 2.5rem 0; position: relative; border-bottom: 3px solid var(--teal); }
+    .hero-inner { display: grid; grid-template-columns: 1fr 230px; gap: 2rem; align-items: end; }
+    .hero-overline { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.6rem; }
+    .hero-overline::before { content: ''; width: 20px; height: 1px; background: var(--teal); }
+    .hero-h1 { font-family: 'Syne', sans-serif; font-size: 80px; font-weight: 800; line-height: 0.86; letter-spacing: -0.05em; text-transform: uppercase; color: var(--white); }
+    .hero-h1 em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; font-size: 90px; line-height: 0.82; letter-spacing: -0.03em; color: var(--teal); display: block; margin-top: 0.08em; }
+    .hero-right { padding-bottom: 1.5rem; display: flex; flex-direction: column; align-items: flex-end; gap: 1.25rem; }
+    .hero-sub { font-size: 12px; line-height: 1.85; color: rgba(255,255,255,0.5); text-align: right; }
+    .hero-sub strong { color: var(--white); font-weight: 500; }
+    .hero-media-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .hero-medium { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 11px; color: rgba(255,255,255,0.28); letter-spacing: 0.04em; }
+    .hero-scroll { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.25); display: flex; align-items: center; gap: 0.5rem; }
+    .hero-scroll::before { content: ''; width: 24px; height: 1px; background: rgba(255,255,255,0.2); }
 
-    /* ── FILTER BAR ── */
-    .filter-section {
-      position: relative; z-index: 1;
-      padding: 0 3rem 2rem;
-      display: flex; align-items: center; justify-content: center;
-      gap: 0.75rem; flex-wrap: wrap;
-    }
-    .filter-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: var(--ivory-muted);
-      margin-right: 0.5rem;
-    }
-    .filter-btn {
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      color: var(--ivory-muted);
-      background: none;
-      border: 1px solid var(--border);
-      padding: 0.4rem 1rem;
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .filter-btn:hover, .filter-btn.active {
-      color: var(--gold);
-      border-color: var(--border-bright);
-      background: var(--gold-faint);
-    }
+    /* ── WAVE BAR ── */
+    .wave-bar { height: 6px; background: repeating-linear-gradient(90deg, var(--teal) 0, var(--teal) 40px, var(--ocean) 40px, var(--ocean) 80px, #0a6e78 80px, #0a6e78 120px); }
 
-    /* ── GALLERY ── */
-    .gallery-section { position: relative; z-index: 1; padding: 1rem 3rem 6rem; }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 2px;
-    }
+    /* ── WORKSHOPS ── */
+    .workshops { background: var(--sand-pale); padding: 3rem 2.5rem; border-bottom: 1.5px solid var(--sand-mid); display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; align-items: start; }
+    .ws-badge { display: inline-block; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; background: var(--teal); color: var(--white); padding: 0.3rem 0.75rem; margin-bottom: 1.1rem; }
+    .ws-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 34px; line-height: 1.08; color: var(--ink); margin-bottom: 0.85rem; }
+    .ws-body { font-size: 13px; line-height: 1.85; color: var(--muted); margin-bottom: 1.5rem; max-width: 340px; }
+    .ws-cta { display: inline-block; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; background: var(--ink); color: var(--white); padding: 0.7rem 1.5rem; text-decoration: none; transition: background 0.2s; }
+    .ws-cta:hover { background: var(--ocean); }
+    .ws-cards { display: flex; flex-direction: column; gap: 0.6rem; }
+    .ws-card { background: var(--white); border-left: 3px solid var(--teal); padding: 0.9rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .ws-card-date { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; }
+    .ws-card-name { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
+    .ws-card-spots { font-size: 10px; color: #9a9288; }
+    .ws-card-price { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--ocean); letter-spacing: -0.03em; flex-shrink: 0; }
+    .ws-card-sold { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #9a9288; }
+    .ws-empty { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 14px; color: #9a9288; padding: 1rem 0; }
 
-    /* ART CARD */
-    .art-card {
-      position: relative; overflow: hidden;
-      background: var(--surface);
-      cursor: pointer;
-      aspect-ratio: 4/5;
-      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .art-card:hover { z-index: 10; transform: scale(1.02); }
-    .art-card-img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      filter: brightness(0.85) saturate(1.1);
-    }
-    .art-card:hover .art-card-img { transform: scale(1.05); filter: brightness(0.95) saturate(1.2); }
-    .art-card-placeholder {
-      width: 100%; height: 100%;
-      background: var(--panel);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      color: var(--ivory-ghost);
-      font-size: 0.9rem;
-    }
-    .art-card-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(10,8,6,0.95) 0%, rgba(10,8,6,0.4) 45%, transparent 70%);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 1.75rem;
-      transition: opacity 0.3s;
-    }
-    .art-card-corner {
-      position: absolute; top: 1rem; right: 1rem;
-      width: 28px; height: 28px;
-      border-top: 1px solid var(--border-bright);
-      border-right: 1px solid var(--border-bright);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .art-card-corner-bl {
-      position: absolute; bottom: 1rem; left: 1rem;
-      width: 28px; height: 28px;
-      border-bottom: 1px solid var(--border-bright);
-      border-left: 1px solid var(--border-bright);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .art-card:hover .art-card-corner,
-    .art-card:hover .art-card-corner-bl { opacity: 1; }
-    .art-card-sold-badge {
-      position: absolute; top: 1rem; left: 1rem;
-      font-family: 'Cinzel', serif;
-      font-size: 0.55rem;
-      letter-spacing: 0.2em;
-      color: var(--ivory);
-      background: rgba(10,8,6,0.8);
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.3rem 0.75rem;
-    }
-    .art-card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem;
-      font-weight: 300;
-      line-height: 1.1;
-      margin-bottom: 0.35rem;
-      transform: translateY(4px);
-      transition: transform 0.3s;
-    }
-    .art-card:hover .art-card-title { transform: translateY(0); }
-    .art-card-meta {
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      color: var(--ivory-muted);
-      margin-bottom: 0.75rem;
-    }
-    .art-card-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.2rem;
-      color: var(--gold-light);
-    }
-    .art-card-price.inquire { font-style: italic; font-size: 0.85rem; color: var(--ivory-muted); letter-spacing: 0.05em; }
-    .art-card-view {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: var(--gold);
-      background: rgba(10,8,6,0.7);
-      border: 1px solid var(--border-bright);
-      padding: 0.6rem 1.5rem;
-      opacity: 0;
-      transition: opacity 0.3s;
-      white-space: nowrap;
-    }
-    .art-card:hover .art-card-view { opacity: 1; }
+    /* ── FILTER + GALLERY ── */
+    .filter-bar { padding: 1.25rem 2.5rem; border-bottom: 1px solid var(--sand-mid); display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; background: var(--mist); }
+    .filter-label { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #9a9288; margin-right: 0.5rem; }
+    .filter-btn { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--sand-mid); background: var(--white); color: var(--muted); padding: 0.35rem 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .filter-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+    .gallery { padding: 2px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px; min-height: 300px; }
+    .art-card { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 3/4; background: var(--sand-mid); }
+    .art-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
+    .art-card:hover img { transform: scale(1.04); }
+    .art-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,26,28,0.92) 0%, rgba(10,26,28,0.3) 50%, transparent 75%); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.25rem; opacity: 0; transition: opacity 0.3s; }
+    .art-card:hover .art-card-overlay { opacity: 1; }
+    .art-card-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.1rem; color: var(--white); margin-bottom: 0.2rem; }
+    .art-card-medium { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.4rem; }
+    .art-card-price { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--white); }
+    .art-card-price.inquire { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; font-size: 0.85rem; color: rgba(255,255,255,0.55); }
+    .art-card-sold-badge { position: absolute; top: 0.75rem; right: 0.75rem; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; background: rgba(10,26,28,0.8); color: rgba(255,255,255,0.5); padding: 0.2rem 0.5rem; }
+    .gallery-empty { grid-column: 1/-1; display: flex; align-items: center; justify-content: center; min-height: 200px; font-family: 'Instrument Serif', serif; font-style: italic; color: #9a9288; font-size: 1.1rem; }
+    .gallery-placeholder { width: 100%; height: 100%; min-height: 260px; display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', serif; font-style: italic; color: rgba(10,26,28,0.2); font-size: 0.88rem; }
+
+    /* ── BENTO ── */
+    .bento { display: grid; grid-template-columns: 2.2fr 1fr 1fr; grid-template-rows: 160px 110px; gap: 2px; border-top: 1.5px solid var(--sand-mid); border-bottom: 1.5px solid var(--sand-mid); }
+    .bento-cell { display: flex; align-items: flex-end; padding: 0.85rem; position: relative; overflow: hidden; }
+    .bento-cell.large { grid-row: 1/3; }
+    .bento-label { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 12px; color: rgba(255,255,255,0.55); }
+    .bento-tag { position: absolute; top: 0.6rem; right: 0.6rem; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); padding: 0.2rem 0.5rem; font-family: 'Space Grotesk', sans-serif; }
+
+    /* ── MANIFESTO ── */
+    .manifesto { padding: 3.5rem 2.5rem; display: grid; grid-template-columns: 1fr 1px 1fr; gap: 3rem; border-bottom: 1.5px solid var(--sand-mid); background: var(--white); }
+    .manifesto-divider { background: var(--sand-mid); }
+    .manifesto-block-label { font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.85rem; }
+    .manifesto-pull { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 22px; line-height: 1.25; color: var(--ink); margin-bottom: 0.85rem; }
+    .manifesto-body { font-size: 13px; line-height: 1.9; color: var(--muted); }
+
+    /* ── MEDIA ROW ── */
+    .media-row { background: var(--ink); display: flex; border-top: 3px solid var(--teal); }
+    .media-cell { flex: 1; padding: 1.5rem 1.25rem; border-right: 1px solid var(--ghost); display: flex; flex-direction: column; gap: 0.35rem; }
+    .media-cell:last-child { border-right: none; }
+    .media-num { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--teal); letter-spacing: -0.05em; line-height: 1; opacity: 0.3; }
+    .media-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 15px; color: var(--white); }
+    .media-desc { font-size: 10px; color: rgba(255,255,255,0.3); line-height: 1.5; letter-spacing: 0.03em; }
 
     /* ── MODAL ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(5,4,3,0.92);
-      backdrop-filter: blur(8px);
-      z-index: 500;
-      align-items: center; justify-content: center;
-      padding: 2rem;
-    }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,26,28,0.75); z-index: 500; align-items: center; justify-content: center; padding: 2rem 1rem; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--deep);
-      border: 1px solid var(--border);
-      max-width: 900px; width: 100%;
-      max-height: 90vh; overflow-y: auto;
-      display: grid; grid-template-columns: 1.1fr 1fr;
-      position: relative;
-    }
-    .modal::before {
-      content: '';
-      position: absolute; inset: 0;
-      border: 1px solid var(--border);
-      pointer-events: none;
-    }
-    .modal-img-wrap {
-      background: var(--surface);
-      min-height: 480px;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; position: relative;
-    }
-    .modal-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    .modal-body { padding: 3rem 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
-    .modal-eyebrow {
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: var(--gold);
-    }
-    .modal-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem;
-      font-weight: 300;
-      line-height: 1.1;
-    }
-    .modal-price-row { display: flex; align-items: baseline; gap: 1rem; }
-    .modal-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.8rem;
-      color: var(--gold-light);
-    }
-    .modal-price.inquire { font-style: italic; font-size: 1.1rem; color: var(--ivory-muted); }
-    .modal-sold { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--ivory-muted); }
-    .modal-desc {
-      font-size: 1.05rem;
-      color: var(--ivory-dim);
-      line-height: 1.8;
-      border-top: 1px solid var(--border);
-      padding-top: 1.25rem;
-    }
-    .modal-details { display: flex; flex-direction: column; gap: 0.5rem; }
-    .modal-detail-row {
-      display: flex; justify-content: space-between; align-items: baseline;
-      font-size: 0.85rem; padding: 0.4rem 0;
-      border-bottom: 1px solid rgba(201,168,76,0.08);
-    }
-    .modal-detail-label { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.15em; color: var(--ivory-muted); }
-    .modal-detail-val { color: var(--ivory-dim); text-align: right; max-width: 60%; }
-    .modal-cta {
-      margin-top: auto;
-      display: flex; flex-direction: column; gap: 0.75rem;
-    }
-    .btn-inquire {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--void);
-      background: var(--gold);
-      border: none;
-      padding: 1rem;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.25s;
-      text-decoration: none;
-      display: block;
-      text-align: center;
-    }
-    .btn-inquire:hover { background: var(--gold-light); }
-    .btn-inquire.ghost {
-      background: none;
-      color: var(--gold);
-      border: 1px solid var(--border-bright);
-    }
-    .btn-inquire.ghost:hover { background: var(--gold-faint); }
-    .modal-close {
-      position: absolute; top: 1.25rem; right: 1.5rem;
-      background: none; border: none;
-      color: var(--ivory-muted); font-size: 1.25rem;
-      cursor: pointer; z-index: 10;
-      transition: color 0.2s;
-      font-family: serif;
-    }
-    .modal-close:hover { color: var(--gold); }
-
-    /* ── ABOUT STRIP ── */
-    .about-strip {
-      position: relative; z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 5rem 3rem;
-      display: grid; grid-template-columns: 1fr 2fr;
-      gap: 4rem; align-items: center;
-      background: var(--deep);
-    }
-    .about-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      color: var(--gold);
-      margin-bottom: 1rem;
-    }
-    .about-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.5rem;
-      font-weight: 300;
-      line-height: 1.1;
-    }
-    .about-title em { font-style: italic; color: var(--gold-light); }
-    .about-body { font-size: 1.1rem; line-height: 1.9; color: var(--ivory-dim); }
-    .about-body p + p { margin-top: 1.2rem; }
+    .modal { background: var(--sand-pale); max-width: 800px; width: 100%; max-height: 88vh; overflow-y: auto; display: grid; grid-template-columns: 1.1fr 1fr; position: relative; border-top: 3px solid var(--teal); }
+    .modal-img-wrap { background: var(--sand-mid); min-height: 420px; overflow: hidden; }
+    .modal-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .modal-img-placeholder { width: 100%; height: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', serif; font-style: italic; color: rgba(10,26,28,0.25); }
+    .modal-body { padding: 2.5rem; display: flex; flex-direction: column; gap: 0.85rem; }
+    .modal-eyebrow { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--teal); }
+    .modal-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 2rem; line-height: 1.1; color: var(--ink); }
+    .modal-price { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--ocean); letter-spacing: -0.03em; }
+    .modal-price.inquire { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1rem; font-weight: 400; color: var(--muted); }
+    .modal-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.85; border-top: 1px solid var(--sand-mid); padding-top: 0.85rem; }
+    .modal-detail-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 0.4rem 0; border-bottom: 1px solid var(--sand-mid); }
+    .modal-detail-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #9a9288; }
+    .modal-detail-val { color: var(--ink); text-align: right; max-width: 60%; }
+    .modal-cta { margin-top: auto; display: flex; flex-direction: column; gap: 0.6rem; }
+    .btn-primary { display: block; width: 100%; text-align: center; background: var(--ink); color: var(--white); padding: 0.9rem; font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; border: none; cursor: pointer; }
+    .btn-primary:hover { background: var(--ocean); }
+    .btn-sold { display: block; width: 100%; text-align: center; background: var(--sand-mid); color: #9a9288; padding: 0.9rem; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; border: none; }
+    .modal-close { position: absolute; top: 1rem; right: 1.25rem; background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--muted); z-index: 10; }
+    .modal-close:hover { color: var(--ink); }
 
     /* ── FOOTER ── */
-    footer {
-      position: relative; z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 2rem 3rem;
-      display: flex; justify-content: space-between; align-items: center;
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      color: var(--ivory-ghost);
-    }
-    footer a { color: var(--ivory-ghost); text-decoration: none; transition: color 0.2s; }
-    footer a:hover { color: var(--gold); }
+    footer { background: var(--ink); padding: 1.1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--ghost); }
+    footer .foot-logo { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+    footer .foot-links { display: flex; gap: 1.5rem; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+    footer a { color: rgba(255,255,255,0.25); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--teal); }
 
-    /* ── HIDDEN CARDS ── */
-    .art-card.hidden { display: none; }
-
-    @media (max-width: 768px) {
-      nav { padding: 1rem 1.5rem; }
-      .gallery-section { padding: 1rem 0.5rem 4rem; }
-      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 2px; }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0.85rem 1.5rem; }
+      .hero { padding: 2.5rem 1.5rem 0; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-h1 { font-size: 56px; }
+      .hero-h1 em { font-size: 64px; }
+      .hero-right { align-items: flex-start; padding-bottom: 1.5rem; }
+      .hero-sub { text-align: left; }
+      .workshops { grid-template-columns: 1fr; padding: 2.5rem 1.5rem; }
+      .filter-bar { padding: 1rem 1.5rem; }
+      .gallery { padding: 2px 0; }
+      .bento { grid-template-columns: 1fr 1fr; }
+      .bento-cell.large { grid-row: auto; grid-column: 1/3; }
+      .manifesto { grid-template-columns: 1fr; gap: 2rem; padding: 2.5rem 1.5rem; }
+      .manifesto-divider { display: none; }
+      .media-row { flex-wrap: wrap; }
+      .media-cell { flex: 1 1 45%; border-bottom: 1px solid var(--ghost); }
       .modal { grid-template-columns: 1fr; }
-      .modal-img-wrap { min-height: 280px; }
-      .modal-body { padding: 1.75rem; }
-      .about-strip { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1.5rem; }
-      footer { flex-direction: column; gap: 0.75rem; text-align: center; }
-      .filter-section { padding: 0 1rem 1.5rem; }
+      .modal-img-wrap { min-height: 240px; }
+      .modal-body { padding: 1.5rem; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.25rem 1.5rem; }
+    }
+    @media (max-width: 540px) {
+      .hero-h1 { font-size: 44px; }
+      .hero-h1 em { font-size: 50px; }
+      .nav-links { display: none; }
+      .bento { grid-template-columns: 1fr 1fr; grid-template-rows: 130px 90px 90px; }
     }
   </style>
 </head>
 <body>
 
-<canvas id="stars"></canvas>
-
 <nav>
-  <a href="../index.html" class="nav-back">Finders Keepers Market</a>
-  <div class="nav-logo">
-    ART BY KINDNESS GRACE
-    <span>SCULPTURAL WORKS</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:1.25rem;">
-    <a href="../workshops/" style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ivory-muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--ivory-muted)'">Workshops</a>
-    <a href="mailto:hello@finderskeepers.market" class="nav-contact">INQUIRE</a>
+  <a href="../" class="nav-back">Finders Keepers</a>
+  <div class="nav-links">
+    <a href="../workshops/">Workshops</a>
+    <a href="../keepers-closet/">Keepers Closet</a>
+    <a href="mailto:hello@finderskeepers.market" class="nav-cta">Inquire</a>
   </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-ornament"></div>
-  <p class="hero-eyebrow">Original Sculptural Art · One of a Kind</p>
-  <h1 class="hero-title">
-    Art by<br>
-    <em>Kindness Grace</em>
-  </h1>
-  <p class="hero-sub">Hand-sculpted creatures born from paper, paint, and wonder. Each piece is a living thing — made to claim a wall and hold a room.</p>
-  <div class="hero-divider">
-    <span class="hero-divider-line"></span>
-    <span class="hero-divider-gem"></span>
-    <span class="hero-divider-line"></span>
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-overline">Bay Area, CA &mdash; Original works</div>
+      <h1 class="hero-h1">Made by<br>hand.<em>Held by<br>wonder.</em></h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-sub">Sculpture. Painting. Paper mache. Wire. Textile. <strong>Whatever the idea demands.</strong></p>
+      <div class="hero-media-stack">
+        <span class="hero-medium">Sculpture</span>
+        <span class="hero-medium">Acrylic painting</span>
+        <span class="hero-medium">Paper mache</span>
+        <span class="hero-medium">Wire &amp; textile</span>
+        <span class="hero-medium">Mixed media</span>
+      </div>
+      <div class="hero-scroll">Explore the collection</div>
+    </div>
   </div>
-  <div class="hero-scroll-cue">EXPLORE THE COLLECTION</div>
+</div>
+
+<div class="wave-bar"></div>
+
+<!-- ── WORKSHOPS ── -->
+<section class="workshops">
+  <div>
+    <div class="ws-badge">Upcoming workshops</div>
+    <div class="ws-title">Learn paper mache sculpting from Kindness Grace herself</div>
+    <p class="ws-body">Small groups. All materials provided. No experience needed &mdash; just curiosity and a couple of hours. You take your creation home on the day.</p>
+    <a class="ws-cta" href="../workshops/">View all workshops &amp; book a spot</a>
+  </div>
+  <div class="ws-cards" id="ws-cards">
+    <div class="ws-empty">Loading workshops&hellip;</div>
+  </div>
 </section>
 
-<div class="filter-section">
-  <span class="filter-label">FILTER:</span>
-  <button class="filter-btn active" data-filter="all">All Works</button>
+<!-- ── GALLERY ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" data-filter="all">All works</button>
   <button class="filter-btn" data-filter="ocean">Ocean</button>
   <button class="filter-btn" data-filter="nature">Nature</button>
   <button class="filter-btn" data-filter="fantasy">Fantasy</button>
-  <button class="filter-btn" data-filter="large">Large Pieces</button>
+  <button class="filter-btn" data-filter="large">Large pieces</button>
   <button class="filter-btn" data-filter="framed">Framed</button>
 </div>
 
-<section class="gallery-section">
-  <div class="gallery-grid" id="gallery-grid">
-    <!-- Cards injected by JS -->
-  </div>
-</section>
+<div class="gallery" id="gallery-grid">
+  <div class="gallery-empty">Loading collection&hellip;</div>
+</div>
 
-<!-- ── WORKSHOPS — prominent section ── -->
-<section id="workshops-teaser" style="background:#1C1814;padding:4rem 3rem;">
-  <div style="max-width:960px;margin:0 auto;">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;margin-bottom:2.5rem;">
-      <div>
-        <p style="font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Learn from the maker</p>
-        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.75rem,3vw,2.5rem);color:var(--ivory);line-height:1.1;margin-bottom:0.75rem;">Workshops with <em style="font-style:italic;">Kindness Grace</em></h2>
-        <p style="color:var(--ivory-muted);font-size:0.92rem;line-height:1.8;max-width:480px;">Small groups, all materials provided, and you take your creation home on the day. No experience needed — just curiosity.</p>
-      </div>
-      <a href="../workshops/" style="flex-shrink:0;display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:0.9rem 2rem;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;white-space:nowrap;align-self:flex-end;" onmouseover="this.style.background='var(--gold)';this.style.color='#1A1610'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">View all &amp; book a spot →</a>
-    </div>
-    <div id="kg-workshops-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;">
-      <div style="color:var(--ivory-muted);font-style:italic;font-size:0.88rem;padding:1rem 0;">Loading upcoming workshops…</div>
-    </div>
-  </div>
-</section>
+<!-- ── BENTO ── -->
+<div class="bento">
+  <div class="bento-cell large" style="background:#b8cec8;"><span class="bento-label">Sculpture</span></div>
+  <div class="bento-cell" style="background:#1c8698;align-items:flex-start;padding-top:0.85rem;"><span class="bento-label" style="color:rgba(255,255,255,0.7);">Painting</span><div class="bento-tag">New works</div></div>
+  <div class="bento-cell" style="background:#d8a680;"><span class="bento-label" style="color:rgba(255,255,255,0.8);">Paper mache</span></div>
+  <div class="bento-cell" style="background:#097a85;"><span class="bento-label" style="color:rgba(255,255,255,0.7);">Wire forms</span></div>
+  <div class="bento-cell" style="background:#c8dcd8;"><span class="bento-label">Mixed media</span></div>
+</div>
 
-<section class="about-strip">
+<!-- ── MANIFESTO ── -->
+<div class="manifesto">
   <div>
-    <p class="about-label">THE ARTIST</p>
-    <h2 class="about-title">Made by <em>hand,</em> held by wonder</h2>
+    <div class="manifesto-block-label">The artist</div>
+    <div class="manifesto-pull">&ldquo;Self-taught and completely her own. No two pieces are alike.&rdquo;</div>
+    <p class="manifesto-body">Kindness Grace builds dimension, texture, and life from the most humble of materials &mdash; paper, paint, wire, cloth. She moves between media as naturally as most artists move between moods. Each piece is signed, original, and made to hold a room. Pieces sell quickly. Commissions are open.</p>
   </div>
-  <div class="about-body">
-    <p>Kindness Grace is a self-taught sculptor whose work spans the world of living things — from the ocean floor to ancient forests, from real creatures to mythic beasts. Every piece begins with paper and a vision, and ends as something that insists on being noticed.</p>
-    <p>Working primarily in paper mache and acrylic paint, Kindness Grace builds dimension, texture, and life from the most humble of materials. No two pieces are alike. Each one is signed, one-of-a-kind, and made to last.</p>
-    <p>To inquire about a piece, commission a custom work, or ask about shipping, reach out directly. Pieces sell quickly — the creatures don't wait long.</p>
+  <div class="manifesto-divider"></div>
+  <div>
+    <div class="manifesto-block-label">The work</div>
+    <div class="manifesto-pull">&ldquo;The creatures are the most famous thing she makes. They are not the only thing.&rdquo;</div>
+    <p class="manifesto-body">From mythic sea creatures to layered canvases to wire armature forms &mdash; the range is the point. Every piece is one of a kind, made to be noticed. Custom commissions welcome. Reach out directly if something catches your eye.</p>
   </div>
-</section>
+</div>
 
+<!-- ── MEDIA ROW ── -->
+<div class="media-row">
+  <div class="media-cell"><div class="media-num">01</div><div class="media-title">Sculpture</div><div class="media-desc">Paper mache, wire armature, dimensional forms</div></div>
+  <div class="media-cell"><div class="media-num">02</div><div class="media-title">Painting</div><div class="media-desc">Acrylic on canvas, layered colour, illustration</div></div>
+  <div class="media-cell"><div class="media-num">03</div><div class="media-title">Textile</div><div class="media-desc">Fibre, crochet, wearable and wall art</div></div>
+  <div class="media-cell"><div class="media-num">04</div><div class="media-title">Mixed media</div><div class="media-desc">Found materials, collage, experimental forms</div></div>
+</div>
 
-<!-- ── WORKSHOPS TEASER ── -->
-<script>
-(async function loadKGWorkshops() {
-  const grid = document.getElementById('kg-workshops-grid');
-  try {
-    const r = await fetch('https://finderskeepers.market/art-data.json');
-    const data = await r.json();
-    const workshops = (data.workshops || []).filter(w => w.available !== false).slice(0, 3);
-    if (!workshops.length) {
-      grid.innerHTML = '<div style="color:var(--ivory-muted);font-style:italic;font-size:0.88rem;padding:1rem 0;">No upcoming workshops right now — check back soon.</div>';
-      return;
-    }
-    grid.innerHTML = '';
-    workshops.forEach(ws => {
-      const spotsLeft = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || 0);
-      const card = document.createElement('div');
-      card.style.cssText = 'background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:1.25rem;display:flex;flex-direction:column;gap:0.5rem;';
-      const d = ws.date ? new Date(ws.date + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short',day:'numeric',month:'long'}) : '';
-      const isMultiDay = ws.scheduleType === 'multiday-range' || ws.scheduleType === 'multiday-custom';
-      const modalities = (ws.modalities || []).map(m =>
-        `<span style="font-size:0.62rem;background:rgba(255,255,255,0.08);color:var(--ivory-muted);padding:0.15rem 0.45rem;">${m}</span>`
-      ).join('');
-      card.innerHTML = `
-        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-          <span style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">${ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages'}</span>
-          ${isMultiDay ? '<span style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:rgba(201,148,58,0.15);color:var(--gold);padding:0.15rem 0.45rem;">Multi-day</span>' : ''}
-        </div>
-        <div style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--ivory);line-height:1.3;">${ws.title}</div>
-        ${modalities ? `<div style="display:flex;flex-wrap:wrap;gap:0.3rem;">${modalities}</div>` : ''}
-        <div style="font-size:0.78rem;color:var(--ivory-muted);">${d}${ws.time ? ' · ' + ws.time : ''}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem;padding-top:0.75rem;border-top:1px solid rgba(255,255,255,0.08);">
-          <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ivory);">$${ws.price}</span>
-          <span style="font-size:0.72rem;color:${spotsLeft <= 3 && spotsLeft > 0 ? '#C9943A' : 'var(--ivory-muted)'};">${spotsLeft === 0 ? 'Sold out' : spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' left'}</span>
-        </div>
-        <a href="../workshops/" style="display:block;text-align:center;border:1px solid rgba(255,255,255,0.2);color:var(--ivory-muted);padding:0.55rem;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;margin-top:0.25rem;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--ivory-muted)'">${spotsLeft === 0 ? 'View details' : 'Book a spot →'}</a>`;
-      grid.appendChild(card);
-    });
-  } catch(e) {
-    grid.innerHTML = '<div style="color:var(--ivory-muted);font-style:italic;font-size:0.88rem;">Could not load workshops.</div>';
-  }
-})();
-</script>
-
-<footer>
-  <span>© Kindness Grace. All rights reserved.</span>
-  <a href="../index.html">Finders Keepers Market</a>
-  <a href="mailto:hello@finderskeepers.market">Contact</a>
-</footer>
-
-<!-- MODAL -->
+<!-- ── MODAL ── -->
 <div class="modal-overlay" id="modal-overlay">
-  <div class="modal" id="modal">
+  <div class="modal">
     <button class="modal-close" id="modal-close">✕</button>
-    <div class="modal-img-wrap" id="modal-img-wrap"></div>
+    <div class="modal-img-wrap" id="modal-img"></div>
     <div class="modal-body">
-      <p class="modal-eyebrow" id="modal-eyebrow">ORIGINAL SCULPTURE</p>
+      <p class="modal-eyebrow">Art by Kindness Grace &mdash; Original work</p>
       <h2 class="modal-title" id="modal-title"></h2>
-      <div class="modal-price-row">
-        <div class="modal-price" id="modal-price"></div>
-        <div class="modal-sold" id="modal-sold"></div>
-      </div>
+      <div class="modal-price" id="modal-price"></div>
       <p class="modal-desc" id="modal-desc"></p>
-      <div class="modal-details" id="modal-details"></div>
+      <div id="modal-details"></div>
       <div class="modal-cta" id="modal-cta"></div>
     </div>
   </div>
 </div>
 
-<script>
-  // ── STARFIELD ──
-  const canvas = document.getElementById('stars');
-  const ctx = canvas.getContext('2d');
-  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-  const stars = Array.from({length: 180}, () => ({
-    x: Math.random(), y: Math.random(),
-    size: Math.random() * 1.2 + 0.2,
-    opacity: Math.random() * 0.6 + 0.1,
-    twinkle: Math.random() * Math.PI * 2
-  }));
-  function drawStars(t) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    stars.forEach(s => {
-      s.twinkle += 0.008;
-      const op = s.opacity * (0.7 + 0.3 * Math.sin(s.twinkle));
-      ctx.beginPath();
-      ctx.arc(s.x * canvas.width, s.y * canvas.height, s.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(201,168,76,${op})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(drawStars);
-  }
-  requestAnimationFrame(drawStars);
+<footer>
+  <span class="foot-logo">Kindness Grace</span>
+  <div class="foot-links">
+    <a href="../">Finders Keepers Market</a>
+    <a href="../workshops/">Workshops</a>
+    <a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a>
+  </div>
+</footer>
 
-  // ── LOAD DATA ──
+<script>
+  const DATA = 'https://finderskeepers.market/art-data.json';
   let artworks = [];
-  async function loadData() {
+
+  async function loadAll() {
     try {
-      const r = await fetch('https://finderskeepers.market/art-data.json');
+      const r = await fetch(DATA);
       const data = await r.json();
       artworks = data.daughter || [];
+      renderWorkshops(data.workshops || []);
+      renderGallery('all');
     } catch(e) {
-      artworks = [];
+      document.getElementById('gallery-grid').innerHTML = '<div class="gallery-empty">Could not load collection.</div>';
     }
-    renderGallery('all');
+  }
+
+  function renderWorkshops(workshops) {
+    const cards = document.getElementById('ws-cards');
+    const upcoming = workshops.filter(w => w.available !== false).slice(0, 3);
+    if (!upcoming.length) {
+      cards.innerHTML = '<div class="ws-empty">No upcoming workshops right now &mdash; check back soon.</div>';
+      return;
+    }
+    cards.innerHTML = '';
+    upcoming.forEach(ws => {
+      const spotsLeft = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || 0);
+      const d = ws.date ? new Date(ws.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
+      const card = document.createElement('div');
+      card.className = 'ws-card';
+      card.innerHTML = `
+        <div class="ws-card-info">
+          <div class="ws-card-date">${d}${ws.time ? ' &middot; ' + ws.time : ''}</div>
+          <div class="ws-card-name">${ws.title}</div>
+          <div class="ws-card-spots">${spotsLeft === 0 ? 'Sold out' : spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' remaining'} &middot; ${ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults' : 'All ages'}</div>
+        </div>
+        ${spotsLeft === 0
+          ? '<div class="ws-card-sold">Sold out</div>'
+          : `<div class="ws-card-price">$${ws.price}</div>`}`;
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => window.location.href = '../workshops/');
+      cards.appendChild(card);
+    });
   }
 
   function renderGallery(filter) {
     const grid = document.getElementById('gallery-grid');
-    grid.innerHTML = '';
-    const filtered = filter === 'all'
-      ? artworks
-      : artworks.filter(a => a.tags && a.tags.includes(filter));
-
-    if (filtered.length === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:5rem;color:rgba(245,238,223,0.3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;">No pieces in this collection yet.</div>`;
+    const list = filter === 'all' ? artworks : artworks.filter(a => a.tags && a.tags.includes(filter));
+    if (!list.length) {
+      grid.innerHTML = '<div class="gallery-empty">No pieces in this category yet.</div>';
       return;
     }
-
-    filtered.forEach(art => {
+    grid.innerHTML = '';
+    list.forEach(art => {
       const card = document.createElement('div');
       card.className = 'art-card';
-      card.dataset.id = art.id;
-
-      const hasImg = art.image;
-      const imgEl = hasImg
-        ? `<img class="art-card-img" src="https://finderskeepers.market/${art.image}" alt="${art.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="art-card-placeholder" style="display:none;position:absolute;inset:0;">Image coming soon</div>`
-        : `<div class="art-card-placeholder">Image coming soon</div>`;
-
-      const priceEl = art.price
-        ? `<div class="art-card-price">$${art.price.toLocaleString()}</div>`
-        : `<div class="art-card-price inquire">Price on request</div>`;
-
+      const src = art.image ? `https://finderskeepers.market/${art.image}` : null;
+      const price = art.price ? `$${art.price.toLocaleString()}` : 'Price on request';
       card.innerHTML = `
-        ${imgEl}
-        ${!art.available ? '<div class="art-card-sold-badge">SOLD</div>' : ''}
-        <div class="art-card-corner"></div>
-        <div class="art-card-corner-bl"></div>
+        ${src ? `<img src="${src}" alt="${art.title}" loading="lazy" onerror="this.style.display='none'" />` : `<div class="gallery-placeholder">${art.title}</div>`}
+        ${!art.available ? '<div class="art-card-sold-badge">Sold</div>' : ''}
         <div class="art-card-overlay">
+          <div class="art-card-medium">${art.medium || ''}</div>
           <div class="art-card-title">${art.title}</div>
-          <div class="art-card-meta">${art.medium}</div>
-          ${priceEl}
-        </div>
-        <div class="art-card-view">VIEW PIECE</div>
-      `;
+          <div class="art-card-price${art.price ? '' : ' inquire'}">${price}</div>
+        </div>`;
       card.addEventListener('click', () => openModal(art));
       grid.appendChild(card);
     });
   }
 
-  // ── FILTER ──
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderGallery(btn.dataset.filter);
-    });
-  });
-
-  // ── MODAL ──
   function openModal(art) {
-    const overlay = document.getElementById('modal-overlay');
-    const imgWrap = document.getElementById('modal-img-wrap');
-    const title = document.getElementById('modal-title');
-    const price = document.getElementById('modal-price');
-    const sold = document.getElementById('modal-sold');
-    const desc = document.getElementById('modal-desc');
-    const details = document.getElementById('modal-details');
-    const cta = document.getElementById('modal-cta');
-
-    imgWrap.innerHTML = art.image
-      ? `<img src="https://finderskeepers.market/${art.image}" alt="${art.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--panel);font-family:Cormorant Garamond,serif;font-style:italic;color:var(--ivory-ghost)\'>Image coming soon</div>'" />`
-      : `<div style="width:100%;height:100%;min-height:480px;display:flex;align-items:center;justify-content:center;background:var(--panel);font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ivory-ghost)">Image coming soon</div>`;
-
-    title.textContent = art.title;
-    price.textContent = art.price ? `$${art.price.toLocaleString()}` : 'Price on request';
-    price.className = 'modal-price' + (art.price ? '' : ' inquire');
-    sold.textContent = !art.available ? 'SOLD' : '';
-
-    desc.textContent = art.description;
-
-    details.innerHTML = [
-      art.medium ? `<div class="modal-detail-row"><span class="modal-detail-label">MEDIUM</span><span class="modal-detail-val">${art.medium}</span></div>` : '',
-      art.dimensions ? `<div class="modal-detail-row"><span class="modal-detail-label">DIMENSIONS</span><span class="modal-detail-val">${art.dimensions}</span></div>` : '',
-      art.shipping ? `<div class="modal-detail-row"><span class="modal-detail-label">SHIPPING</span><span class="modal-detail-val">${art.shipping}</span></div>` : '',
+    const src = art.image ? `https://finderskeepers.market/${art.image}` : null;
+    document.getElementById('modal-img').innerHTML = src
+      ? `<img src="${src}" alt="${art.title}" />`
+      : `<div class="modal-img-placeholder">${art.title}</div>`;
+    document.getElementById('modal-title').textContent = art.title;
+    const p = document.getElementById('modal-price');
+    p.textContent = art.price ? `$${art.price.toLocaleString()}` : 'Price on request';
+    p.className = 'modal-price' + (art.price ? '' : ' inquire');
+    document.getElementById('modal-desc').textContent = art.description || '';
+    document.getElementById('modal-details').innerHTML = [
+      art.medium ? `<div class="modal-detail-row"><span class="modal-detail-label">Medium</span><span class="modal-detail-val">${art.medium}</span></div>` : '',
+      art.dimensions ? `<div class="modal-detail-row"><span class="modal-detail-label">Dimensions</span><span class="modal-detail-val">${art.dimensions}</span></div>` : '',
+      art.shipping ? `<div class="modal-detail-row"><span class="modal-detail-label">Shipping</span><span class="modal-detail-val">${art.shipping}</span></div>` : '',
     ].join('');
-
-    const subject = encodeURIComponent(`Inquiry: ${art.title}`);
-    const body = encodeURIComponent(`Hello,\n\nI'm interested in "${art.title}" (${art.price ? '$' + art.price : 'price on request'}).\n\nPlease let me know if it's available.\n\nThank you!`);
-
-    cta.innerHTML = art.available
-      ? `<a href="mailto:hello@finderskeepers.market?subject=${subject}&body=${body}" class="btn-inquire">INQUIRE ABOUT THIS PIECE</a>
-         <a href="https://www.instagram.com/artbykindnessgrace/" target="_blank" class="btn-inquire ghost">VIEW ON INSTAGRAM</a>`
-      : `<div style="font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.2em;color:var(--ivory-muted);text-align:center;padding:1rem;border:1px solid var(--border)">THIS PIECE HAS FOUND ITS HOME</div>
-         <a href="mailto:hello@finderskeepers.market" class="btn-inquire ghost">REQUEST A SIMILAR PIECE</a>`;
-
-    overlay.classList.add('open');
+    const sub = encodeURIComponent(`Inquiry: ${art.title}`);
+    const bod = encodeURIComponent(`Hello,\n\nI'm interested in "${art.title}" by Kindness Grace.\n\nIs it still available?\n\nThank you!`);
+    document.getElementById('modal-cta').innerHTML = art.available
+      ? `<a href="mailto:hello@finderskeepers.market?subject=${sub}&body=${bod}" class="btn-primary">Inquire about this piece</a>`
+      : `<div class="btn-sold">This piece has found its home</div>`;
+    document.getElementById('modal-overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
@@ -727,12 +400,18 @@
   }
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
-  document.getElementById('modal-overlay').addEventListener('click', e => {
-    if (e.target === document.getElementById('modal-overlay')) closeModal();
-  });
+  document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === document.getElementById('modal-overlay')) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  loadData();
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderGallery(btn.dataset.filter);
+    });
+  });
+
+  loadAll();
 </script>
 </body>
 </html>
