@@ -4,269 +4,312 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Workshops — Art by Kindness Grace</title>
-  <meta name="description" content="Join a paper mache sculpting workshop with Kindness Grace. Bay Area, CA. Book your spot online." />
+  <meta name="description" content="Join a workshop with Kindness Grace. Sculpture, painting, mixed media and more. Bay Area, CA. Small groups, all materials included." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../fk-styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Serif:ital,wght@0,400;1,400&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    nav { position: sticky; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ocean: #097a85;
+      --teal: #1c8698;
+      --sand: #d8a680;
+      --sand-pale: #faf6f0;
+      --border: #e8e0d6;
+      --ink: #0a1a1c;
+      --white: #ffffff;
+      --muted: #6a5e54;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--white); color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-weight: 300; overflow-x: hidden; }
 
-    /* Workshop cards */
-    .workshops-grid { padding: 2.5rem 3rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-    .workshop-card { background: var(--linen); border: 1px solid var(--border); border-top: 4px solid var(--sage-light); display: flex; flex-direction: column; cursor: pointer; transition: box-shadow 0.2s, transform 0.2s; }
-    .workshop-card:hover { box-shadow: 0 8px 24px rgba(80,100,85,0.1); transform: translateY(-2px); }
-    .workshop-card.full { border-top-color: var(--muted); opacity: 0.7; cursor: default; }
-    .workshop-card.full:hover { transform: none; box-shadow: none; }
-    .workshop-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; gap: 0.6rem; }
-    .workshop-tag { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); }
-    .workshop-tag.kids { color: var(--clay); }
-    .workshop-tag.adults { color: var(--sage-mid); }
-    .workshop-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; line-height: 1.2; }
-    .workshop-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.7; }
-    .workshop-meta { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.82rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: auto; }
-    .workshop-meta span { display: flex; align-items: flex-start; gap: 0.5rem; }
-    .workshop-footer { padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); background: var(--cream); }
-    .workshop-price { font-family: 'Playfair Display', serif; font-size: 1.3rem; }
-    .workshop-spots { font-size: 0.72rem; color: var(--muted); }
-    .workshop-spots.low { color: var(--clay); }
-    .btn-book { background: var(--sage-light); color: #fff; border: none; padding: 0.6rem 1.25rem; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
-    .btn-book:hover { background: var(--sage); }
-    .btn-sold-out { background: var(--border); color: var(--muted); border: none; padding: 0.6rem 1.25rem; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: default; }
+    /* ── NAV ── */
+    nav { position: sticky; top: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: var(--white); border-bottom: 1.5px solid var(--ink); }
+    .nav-logo { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-back { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; }
+    .nav-back::before { content: '←'; }
+    .nav-back:hover { color: var(--ink); }
+    .nav-cta { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; background: var(--teal); color: var(--white); padding: 0.45rem 1.1rem; text-decoration: none; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--ocean); }
 
-    /* Modal overlay — faux viewport so position:fixed isn't needed */
-    .modal-faux-viewport { display: none; position: fixed; inset: 0; background: rgba(30,26,22,0.55); z-index: 500; overflow-y: auto; padding: 2rem 1rem; }
-    .modal-faux-viewport.open { display: flex; align-items: flex-start; justify-content: center; }
-    .modal-sheet { background: var(--linen); max-width: 600px; width: 100%; border: 1px solid var(--border-sage); position: relative; }
+    /* ── HERO ── */
+    .hero { background: var(--white); padding: 3.5rem 2.5rem 0; border-bottom: 1.5px solid var(--border); }
+    .hero-inner { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; align-items: end; }
+    .hero-overline { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.6rem; }
+    .hero-overline::before { content: ''; width: 20px; height: 1px; background: var(--teal); }
+    .hero-h1 { font-family: 'Syne', sans-serif; font-size: 72px; font-weight: 800; line-height: 0.88; letter-spacing: -0.05em; text-transform: uppercase; color: var(--ink); }
+    .hero-h1 em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; font-size: 80px; line-height: 0.84; letter-spacing: -0.03em; color: var(--teal); display: block; margin-top: 0.08em; }
+    .hero-right { padding-bottom: 1.5rem; display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+    .hero-sub { font-size: 12px; line-height: 1.85; color: var(--muted); text-align: right; }
+    .hero-sub strong { color: var(--ink); font-weight: 500; }
+    .hero-note { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 11px; color: #bbb0a6; }
+
+    /* ── WAVE ── */
+    .wave-bar { height: 4px; background: repeating-linear-gradient(90deg, var(--teal) 0, var(--teal) 40px, var(--ocean) 40px, var(--ocean) 80px, #0a6e78 80px, #0a6e78 120px); opacity: 0.5; }
+
+    /* ── WORKSHOPS GRID ── */
+    .workshops-wrap { padding: 2.5rem; }
+    .workshops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5px; }
+    .ws-card { background: var(--white); border: 1px solid var(--border); border-top: 3px solid var(--teal); display: flex; flex-direction: column; cursor: pointer; transition: box-shadow 0.2s, transform 0.2s; }
+    .ws-card:hover { box-shadow: 0 8px 32px rgba(10,26,28,0.08); transform: translateY(-2px); }
+    .ws-card.sold-out { border-top-color: var(--border); opacity: 0.7; cursor: default; }
+    .ws-card.sold-out:hover { transform: none; box-shadow: none; }
+    .ws-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; gap: 0.6rem; }
+    .ws-age-tag { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); }
+    .ws-age-tag.kids { color: var(--sand); }
+    .ws-multiday-tag { display: inline-block; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; border: 1px solid var(--teal); color: var(--teal); padding: 0.15rem 0.45rem; margin-left: 0.5rem; }
+    .ws-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.25rem; line-height: 1.2; color: var(--ink); }
+    .ws-mod-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .ws-mod-tag { font-size: 10px; letter-spacing: 0.06em; background: var(--sand-pale); color: var(--muted); padding: 0.2rem 0.55rem; border: 1px solid var(--border); }
+    .ws-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.75; }
+    .ws-schedule { display: flex; flex-direction: column; gap: 0.25rem; border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: auto; }
+    .ws-schedule-row { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.82rem; color: var(--muted); }
+    .ws-schedule-icon { flex-shrink: 0; }
+    .ws-schedule-days { display: flex; flex-direction: column; gap: 0.15rem; line-height: 1.5; }
+    .ws-schedule-day { font-size: 0.82rem; color: var(--muted); }
+    .ws-card-footer { padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); background: var(--sand-pale); }
+    .ws-price { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--ocean); letter-spacing: -0.03em; }
+    .ws-spots { font-size: 0.72rem; letter-spacing: 0.06em; color: var(--muted); }
+    .ws-spots.low { color: var(--sand); }
+    .btn-book { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; background: var(--ink); color: var(--white); border: none; padding: 0.6rem 1.25rem; cursor: pointer; transition: background 0.2s; }
+    .btn-book:hover { background: var(--ocean); }
+    .btn-sold { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; background: var(--border); color: var(--muted); border: none; padding: 0.6rem 1.25rem; cursor: default; }
+    .loading-msg, .empty-msg { text-align: center; padding: 5rem 2rem; font-family: 'Instrument Serif', serif; font-style: italic; color: var(--muted); font-size: 1.1rem; }
+
+    /* ── MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,26,28,0.6); z-index: 500; overflow-y: auto; padding: 2rem 1rem; }
+    .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+    .modal-sheet { background: var(--white); max-width: 620px; width: 100%; position: relative; border-top: 3px solid var(--teal); }
     .modal-close-btn { position: absolute; top: 1rem; right: 1.25rem; background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--muted); z-index: 10; }
+    .modal-close-btn:hover { color: var(--ink); }
+
+    /* Modal header */
+    .modal-header { padding: 2rem 2rem 1.5rem; border-bottom: 1px solid var(--border); }
+    .modal-tag { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.4rem; }
+    .modal-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--ink); }
+    .modal-schedule { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .modal-schedule-day { display: block; }
 
     /* Stepper */
-    .stepper { display: flex; align-items: flex-start; gap: 0; margin-bottom: 2rem; }
+    .stepper { display: flex; align-items: flex-start; gap: 0; margin-top: 1.5rem; }
     .step-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .step-dot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 500; color: var(--muted); flex-shrink: 0; transition: all 0.2s; }
-    .step-dot.done { background: var(--sage-light); color: #fff; border-color: var(--sage-light); }
-    .step-dot.current { background: var(--sage-light); color: #fff; border-color: var(--sage); }
-    .step-label { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: center; }
-    .step-line { flex: 1; height: 1px; background: var(--border); margin-top: 15px; }
+    .step-dot { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 500; color: var(--muted); transition: all 0.2s; }
+    .step-dot.done { background: var(--teal); color: var(--white); border-color: var(--teal); }
+    .step-dot.current { background: var(--ink); color: var(--white); border-color: var(--ink); }
+    .step-label { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; }
+    .step-line { flex: 1; height: 1px; background: var(--border); margin-top: 14px; }
 
     /* Form steps */
     .form-step { display: none; }
     .form-step.active { display: block; }
-    .form-section { margin-bottom: 1.5rem; }
-    .form-section-title { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    .form-body { padding: 1.75rem 2rem 0; }
+    .form-section-title { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.85rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
     .form-group { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.85rem; }
-    .form-group label { font-size: 0.78rem; color: var(--ink); font-weight: 400; }
+    .form-group label { font-size: 0.78rem; color: var(--ink); }
     .form-group label .opt { font-size: 0.72rem; color: var(--muted); font-weight: 300; }
-    .form-group input, .form-group textarea, .form-group select { padding: 0.65rem 0.85rem; border: 1px solid var(--border-sage); background: #fff; font-family: 'Jost', sans-serif; font-size: 0.9rem; width: 100%; outline: none; transition: border-color 0.15s; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--sage-mid); }
+    .form-group input, .form-group textarea, .form-group select { padding: 0.65rem 0.85rem; border: 1px solid var(--border); background: var(--white); font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; width: 100%; outline: none; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--teal); }
     .form-group textarea { resize: vertical; min-height: 70px; }
     .check-group { display: flex; align-items: flex-start; gap: 0.65rem; margin-bottom: 0.75rem; }
-    .check-group input[type=checkbox] { margin-top: 3px; flex-shrink: 0; accent-color: var(--sage); width: 16px; height: 16px; }
+    .check-group input[type=checkbox] { margin-top: 3px; flex-shrink: 0; accent-color: var(--teal); width: 16px; height: 16px; }
     .check-group label { font-size: 0.84rem; color: var(--ink); line-height: 1.6; }
-    .minor-alert { display: none; background: var(--warm); border: 1px solid var(--border); border-left: 3px solid var(--clay); padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--clay); margin: 0.5rem 0 0.85rem; line-height: 1.6; }
-    .consent-text { background: var(--cream); border: 1px solid var(--border); padding: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+    .minor-alert { display: none; background: var(--sand-pale); border-left: 3px solid var(--sand); padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--muted); margin: 0.5rem 0 0.85rem; line-height: 1.6; }
+    .consent-text { background: var(--sand-pale); border: 1px solid var(--border); padding: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
 
-    /* Payment options */
+    /* Payment */
     .pay-option { border: 1px solid var(--border); padding: 1rem 1.25rem; cursor: pointer; margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.85rem; transition: border-color 0.15s; }
-    .pay-option:hover { border-color: var(--sage-light); }
-    .pay-option.selected { border: 2px solid var(--sage-mid); background: rgba(168,196,180,0.08); }
-    .pay-option input[type=radio] { margin-top: 3px; flex-shrink: 0; accent-color: var(--sage); }
+    .pay-option:hover { border-color: var(--teal); }
+    .pay-option.selected { border: 2px solid var(--teal); background: var(--sand-pale); }
+    .pay-option input[type=radio] { margin-top: 3px; flex-shrink: 0; accent-color: var(--teal); }
     .pay-option-title { font-size: 0.9rem; font-weight: 500; color: var(--ink); }
     .pay-option-desc { font-size: 0.8rem; color: var(--muted); margin-top: 3px; line-height: 1.6; }
-    .venmo-instructions { display: none; background: var(--sage-pale); border: 1px solid var(--border-sage); padding: 1rem 1.25rem; margin-top: 0.5rem; }
-    .venmo-instructions.visible { display: block; }
-    .venmo-handle { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--sage); margin: 0.25rem 0; }
+    .venmo-box { display: none; background: var(--sand-pale); border: 1px solid var(--border); padding: 1rem 1.25rem; margin-top: 0.5rem; }
+    .venmo-box.visible { display: block; }
+    .venmo-handle { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 1.4rem; color: var(--ocean); margin: 0.25rem 0; }
     .venmo-note { font-size: 0.8rem; color: var(--muted); }
 
     /* Summary */
-    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+    .summary-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
     .summary-row:last-child { border-bottom: none; font-weight: 500; font-size: 1rem; padding-top: 0.85rem; }
-    .summary-label { color: var(--muted); }
+    .summary-label { color: var(--muted); flex-shrink: 0; }
+    .summary-val { text-align: right; line-height: 1.5; }
 
     /* Step nav */
-    .step-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 2rem; border-top: 1px solid var(--border); background: var(--cream); }
-    .btn-back { background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.65rem 1.25rem; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
-    .btn-next { background: var(--sage-light); color: #fff; border: none; padding: 0.65rem 1.5rem; font-family: 'Jost', sans-serif; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
-    .btn-next:hover { background: var(--sage); }
+    .step-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 2rem; border-top: 1px solid var(--border); background: var(--sand-pale); }
+    .btn-back { background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.65rem 1.25rem; font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .btn-back:hover { border-color: var(--ink); color: var(--ink); }
+    .btn-next { background: var(--ink); color: var(--white); border: none; padding: 0.65rem 1.5rem; font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .btn-next:hover { background: var(--ocean); }
     .btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-confirm { background: var(--sage); color: #fff; border: none; padding: 0.65rem 1.75rem; font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+    .btn-confirm { background: var(--teal); color: var(--white); border: none; padding: 0.65rem 1.75rem; font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .btn-confirm:hover { background: var(--ocean); }
 
     /* Success */
     .success-screen { text-align: center; padding: 3rem 2rem; }
-    .success-icon { width: 60px; height: 60px; border-radius: 50%; background: rgba(168,196,180,0.2); border: 2px solid var(--sage-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.5rem; }
-    .success-title { font-family: 'Playfair Display', serif; font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .success-icon { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--teal); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.3rem; }
+    .success-title { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 2rem; color: var(--ink); margin-bottom: 0.5rem; }
     .success-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.8; margin-bottom: 2rem; }
-    .success-summary { background: var(--cream); border: 1px solid var(--border); padding: 1.25rem 1.5rem; text-align: left; max-width: 360px; margin: 0 auto; }
+    .success-summary { background: var(--sand-pale); border: 1px solid var(--border); padding: 1.25rem 1.5rem; text-align: left; max-width: 360px; margin: 0 auto 1.5rem; }
 
-    /* Loading + empty */
-    .loading-msg, .empty-msg { text-align: center; padding: 4rem 2rem; font-family: 'Playfair Display', serif; font-style: italic; color: var(--muted); }
+    /* About strip */
+    .about-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1.5px solid var(--border); }
+    .about-block { padding: 2.5rem 2.5rem; }
+    .about-block:first-child { border-right: 1px solid var(--border); }
+    .about-label { font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.75rem; }
+    .about-pull { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 20px; line-height: 1.25; color: var(--ink); margin-bottom: 0.75rem; }
+    .about-body { font-size: 12px; line-height: 1.9; color: var(--muted); }
 
+    /* Footer */
+    footer { background: var(--white); padding: 1.1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1.5px solid var(--ink); }
+    .foot-logo { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
+    .foot-links { display: flex; gap: 1.5rem; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+    footer a { color: #bbb0a6; text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--teal); }
+
+    /* Responsive */
     @media (max-width: 768px) {
-      .workshops-grid { padding: 1.5rem; grid-template-columns: 1fr; }
+      nav { padding: 0.85rem 1.5rem; }
+      .hero { padding: 2.5rem 1.5rem 0; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-h1 { font-size: 52px; }
+      .hero-h1 em { font-size: 60px; }
+      .hero-right { align-items: flex-start; }
+      .hero-sub { text-align: left; }
+      .workshops-wrap { padding: 1.5rem; }
+      .workshops-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
       .step-nav { padding: 1rem 1.25rem; }
-      .modal-sheet { margin: 0; }
+      .about-strip { grid-template-columns: 1fr; }
+      .about-block:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+    @media (max-width: 540px) {
+      .hero-h1 { font-size: 40px; }
+      .hero-h1 em { font-size: 46px; }
+      .nav-links { display: none; }
     }
   </style>
 </head>
 <body>
 
 <nav>
-  <a href="../kindnessgrace/" class="nav-back">Art by Kindness Grace</a>
-  <span class="nav-title">Workshops</span>
+  <a href="../kindnessgrace/" class="nav-back">Kindness Grace</a>
   <div class="nav-links">
-    <a href="../original-art/">Gallery</a>
+    <a href="../kindnessgrace/">Gallery</a>
     <a href="../keepers-closet/">Keepers Closet</a>
-    <a href="mailto:hello@finderskeepers.market" class="nav-cta">Contact</a>
   </div>
+  <a href="mailto:hello@finderskeepers.market" class="nav-cta">Inquire</a>
 </nav>
 
-<div class="page-header">
-  <p class="page-eyebrow">Hands on · Bay Area, CA</p>
-  <h1 class="page-title">Workshops with <em>Kindness Grace</em></h1>
-  <p class="page-sub">Learn paper mache sculpting directly from Kindness Grace. Small groups, all materials included, and you take your creation home on the day.</p>
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-overline">Bay Area, CA &mdash; Small groups</div>
+      <h1 class="hero-h1">Learn from<em>the maker.</em></h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-sub">Sculpture, painting, mixed media and more. <strong>Each workshop is different.</strong> All materials provided. You take your creation home on the day.</p>
+      <span class="hero-note">No experience needed &mdash; just curiosity</span>
+    </div>
+  </div>
 </div>
 
-<div class="workshops-grid" id="workshops-grid">
-  <div class="loading-msg">Loading upcoming workshops…</div>
+<div class="wave-bar"></div>
+
+<div class="workshops-wrap">
+  <div class="workshops-grid" id="workshops-grid">
+    <div class="loading-msg">Loading upcoming workshops&hellip;</div>
+  </div>
+</div>
+
+<div class="about-strip">
+  <div class="about-block">
+    <div class="about-label">About the workshops</div>
+    <div class="about-pull">&ldquo;Every workshop is a little different. That&rsquo;s the point.&rdquo;</div>
+    <p class="about-body">Kindness Grace runs small, hands-on sessions from her Bay Area studio. Whether it&rsquo;s paper mache creatures, wire armatures, acrylic painting, or something else entirely &mdash; each workshop is shaped around what she&rsquo;s making right now. The full address is sent after booking.</p>
+  </div>
+  <div class="about-block">
+    <div class="about-label">What to expect</div>
+    <div class="about-pull">&ldquo;All materials. All mess. All yours to take home.&rdquo;</div>
+    <p class="about-body">Everything you need is provided. Wear clothes you don&rsquo;t mind getting paint on. Spots are limited to keep things personal &mdash; if something sells out, reach out to hello@finderskeepers.market to register interest in the next one.</p>
+  </div>
 </div>
 
 <!-- MODAL -->
-<div class="modal-faux-viewport" id="modal-overlay">
-  <div class="modal-sheet" id="modal-sheet">
-    <button class="modal-close-btn" onclick="closeModal()" aria-label="Close">✕</button>
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-sheet">
+    <button class="modal-close-btn" onclick="closeModal()">&#10005;</button>
 
-    <!-- Modal header -->
-    <div style="padding: 2rem 2rem 1.5rem; border-bottom: 1px solid var(--border);">
-      <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--sage);margin-bottom:0.4rem;" id="modal-tag"></p>
-      <h2 style="font-family:'Playfair Display',serif;font-size:1.35rem;margin-bottom:0.25rem;" id="modal-title"></h2>
-      <p style="font-size:0.82rem;color:var(--muted);" id="modal-date-loc"></p>
-
-      <!-- Stepper -->
-      <div class="stepper" style="margin-top:1.5rem;">
-        <div class="step-item">
-          <div class="step-dot current" id="sdot1">1</div>
-          <div class="step-label">Details</div>
-        </div>
+    <div class="modal-header">
+      <p class="modal-tag" id="modal-tag"></p>
+      <h2 class="modal-title" id="modal-title"></h2>
+      <div class="modal-schedule" id="modal-schedule"></div>
+      <div class="stepper">
+        <div class="step-item"><div class="step-dot current" id="sdot1">1</div><div class="step-label">Details</div></div>
         <div class="step-line"></div>
-        <div class="step-item">
-          <div class="step-dot" id="sdot2">2</div>
-          <div class="step-label">Consent</div>
-        </div>
+        <div class="step-item"><div class="step-dot" id="sdot2">2</div><div class="step-label">Consent</div></div>
         <div class="step-line"></div>
-        <div class="step-item">
-          <div class="step-dot" id="sdot3">3</div>
-          <div class="step-label">Payment</div>
-        </div>
+        <div class="step-item"><div class="step-dot" id="sdot3">3</div><div class="step-label">Payment</div></div>
       </div>
     </div>
 
-    <!-- STEP 1: Attendee details -->
-    <div class="form-step active" id="fstep1" style="padding: 1.75rem 2rem 0;">
-      <div class="form-section">
-        <div class="form-section-title">Your contact details</div>
+    <!-- STEP 1 -->
+    <div class="form-step active" id="fstep1">
+      <div class="form-body">
+        <div class="form-section-title" style="margin-bottom:1rem;">Your contact details</div>
         <div class="form-row">
-          <div class="form-group">
-            <label for="f-first">First name</label>
-            <input type="text" id="f-first" placeholder="Ange" autocomplete="given-name" />
-          </div>
-          <div class="form-group">
-            <label for="f-last">Last name</label>
-            <input type="text" id="f-last" placeholder="Haythorpe" autocomplete="family-name" />
-          </div>
+          <div class="form-group"><label for="f-first">First name</label><input type="text" id="f-first" placeholder="Ange" autocomplete="given-name" /></div>
+          <div class="form-group"><label for="f-last">Last name</label><input type="text" id="f-last" placeholder="Haythorpe" autocomplete="family-name" /></div>
         </div>
-        <div class="form-group">
-          <label for="f-email">Email <span class="opt">(confirmation sent here)</span></label>
-          <input type="email" id="f-email" placeholder="hello@example.com" autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label for="f-phone">Phone <span class="opt">(optional)</span></label>
-          <input type="tel" id="f-phone" placeholder="415 555 0100" autocomplete="tel" />
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">Attendee</div>
+        <div class="form-group"><label for="f-email">Email <span class="opt">(confirmation sent here)</span></label><input type="email" id="f-email" placeholder="hello@example.com" autocomplete="email" /></div>
+        <div class="form-group"><label for="f-phone">Phone <span class="opt">(optional)</span></label><input type="tel" id="f-phone" placeholder="415 555 0100" autocomplete="tel" /></div>
+        <div class="form-section-title" style="margin:1rem 0 0.85rem;">Attendee</div>
         <div class="form-row">
-          <div class="form-group">
-            <label for="f-attendee">Attendee name <span class="opt">(if different)</span></label>
-            <input type="text" id="f-attendee" placeholder="Same as above, or child's name" />
-          </div>
-          <div class="form-group">
-            <label for="f-age">Age</label>
-            <input type="number" id="f-age" placeholder="Age" min="1" max="99" oninput="handleAgeInput()" />
-          </div>
+          <div class="form-group"><label for="f-attendee">Attendee name <span class="opt">(if different)</span></label><input type="text" id="f-attendee" placeholder="Child's name if different" /></div>
+          <div class="form-group"><label for="f-age">Age</label><input type="number" id="f-age" placeholder="Age" min="1" max="99" oninput="handleAge()" /></div>
         </div>
-        <div class="minor-alert" id="minor-alert">
-          Under 18 — a parent or guardian must attend the full workshop and will need to sign the consent form on the next step.
-        </div>
-        <div class="form-group">
-          <label for="f-notes">Anything Kindness should know? <span class="opt">(optional)</span></label>
-          <textarea id="f-notes" placeholder="Allergies, mobility needs, questions…"></textarea>
-        </div>
+        <div class="minor-alert" id="minor-alert">Under 18 — a parent or guardian must attend the full workshop and sign the consent form on the next step.</div>
+        <div class="form-group"><label for="f-notes">Anything Kindness should know? <span class="opt">(optional)</span></label><textarea id="f-notes" placeholder="Allergies, mobility needs, questions&hellip;"></textarea></div>
       </div>
     </div>
 
-    <!-- STEP 2: Consent -->
-    <div class="form-step" id="fstep2" style="padding: 1.75rem 2rem 0;">
-      <div class="form-section">
-        <div class="form-section-title">Workshop waiver</div>
-        <div class="consent-text">
-          Workshops involve paper mache, paints, wire armatures, and hand tools appropriate for the age group. Kindness Grace takes all reasonable safety precautions. All materials are non-toxic and craft-grade. Participants work with wet paper mache which may get messy — wear clothes you don't mind getting paint on.
-        </div>
-        <div class="check-group">
-          <input type="checkbox" id="c-risk" />
-          <label for="c-risk">I understand the workshop involves arts and craft materials and accept any minor associated risks.</label>
-        </div>
-        <div class="check-group">
-          <input type="checkbox" id="c-auth" />
-          <label for="c-auth">I confirm the attendee details are correct and I am authorised to register them for this workshop.</label>
-        </div>
-        <div class="check-group" id="c-minor-wrap" style="display:none;">
-          <input type="checkbox" id="c-minor" />
-          <label for="c-minor">The attendee is under 18. I am their parent or legal guardian and consent to their participation. I will be present for the full duration of the workshop.</label>
-        </div>
-        <div class="check-group">
-          <input type="checkbox" id="c-refund" />
-          <label for="c-refund">I understand that spots are non-refundable but transferable with at least 48 hours notice. Please email hello@finderskeepers.market to arrange a transfer.</label>
-        </div>
-        <div class="check-group">
-          <input type="checkbox" id="c-photo" checked />
-          <label for="c-photo">Kindness Grace may photograph the session for social media. I consent to photos that may include the attendee. <span style="color:var(--muted);">(Uncheck to opt out.)</span></label>
-        </div>
+    <!-- STEP 2 -->
+    <div class="form-step" id="fstep2">
+      <div class="form-body">
+        <div class="form-section-title" style="margin-bottom:0.85rem;">Workshop waiver</div>
+        <div class="consent-text">Workshops involve paper mache, paints, wire, and craft tools appropriate for the age group. All materials are non-toxic and craft-grade. Wear clothes you don&rsquo;t mind getting paint on. Kindness Grace takes all reasonable safety precautions.</div>
+        <div class="check-group"><input type="checkbox" id="c-risk" /><label for="c-risk">I understand the workshop involves arts and craft materials and accept any minor associated risks.</label></div>
+        <div class="check-group"><input type="checkbox" id="c-auth" /><label for="c-auth">I confirm the attendee details are correct and I am authorised to register them.</label></div>
+        <div class="check-group" id="c-minor-wrap" style="display:none;"><input type="checkbox" id="c-minor" /><label for="c-minor">The attendee is under 18. I am their parent or legal guardian and I will be present for the full duration of the workshop.</label></div>
+        <div class="check-group"><input type="checkbox" id="c-refund" /><label for="c-refund">I understand spots are non-refundable but transferable with at least 48 hours notice. Email hello@finderskeepers.market to arrange.</label></div>
+        <div class="check-group"><input type="checkbox" id="c-photo" checked /><label for="c-photo">Kindness Grace may photograph the session for social media. I consent to photos that may include the attendee. <span style="color:var(--muted);">(Uncheck to opt out.)</span></label></div>
       </div>
     </div>
 
-    <!-- STEP 3: Payment -->
-    <div class="form-step" id="fstep3" style="padding: 1.75rem 2rem 0;">
-      <div class="form-section">
-        <div class="form-section-title">Booking summary</div>
-        <div id="summary-block">
-          <div class="summary-row"><span class="summary-label">Workshop</span><span id="sum-title"></span></div>
-          <div class="summary-row"><span class="summary-label">Date</span><span id="sum-date"></span></div>
-          <div class="summary-row"><span class="summary-label">Attendee</span><span id="sum-attendee"></span></div>
-          <div class="summary-row"><span class="summary-label">Total due</span><span id="sum-price" style="font-family:'Playfair Display',serif;font-size:1.1rem;"></span></div>
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">How would you like to pay?</div>
+    <!-- STEP 3 -->
+    <div class="form-step" id="fstep3">
+      <div class="form-body">
+        <div class="form-section-title" style="margin-bottom:0.85rem;">Booking summary</div>
+        <div class="summary-row"><span class="summary-label">Workshop</span><span class="summary-val" id="sum-title"></span></div>
+        <div class="summary-row"><span class="summary-label">Date</span><span class="summary-val" id="sum-date"></span></div>
+        <div class="summary-row"><span class="summary-label">Attendee</span><span class="summary-val" id="sum-attendee"></span></div>
+        <div class="summary-row"><span class="summary-label">Total due</span><span class="summary-val" id="sum-price" style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--ocean);"></span></div>
+        <div class="form-section-title" style="margin:1.25rem 0 0.85rem;">How would you like to pay?</div>
         <div class="pay-option selected" id="pay-venmo" onclick="selectPay('venmo')">
           <input type="radio" name="pay" checked />
-          <div>
-            <div class="pay-option-title">Venmo</div>
-            <div class="pay-option-desc">Send payment before the workshop — your spot is confirmed once received. Include your name and workshop name in the note.</div>
-          </div>
+          <div><div class="pay-option-title">Venmo</div><div class="pay-option-desc">Send payment before the workshop — your spot is confirmed once received. Include your name and workshop in the note.</div></div>
         </div>
-        <div class="venmo-instructions visible" id="venmo-box">
+        <div class="venmo-box visible" id="venmo-box">
           <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.25rem;">Send <strong id="venmo-amount"></strong> to:</div>
           <div class="venmo-handle">@kindnessgrace</div>
-          <div class="venmo-note">Note: your name + workshop name</div>
+          <div class="venmo-note">Include in your note: your name + workshop name</div>
         </div>
         <div class="pay-option" id="pay-cash" onclick="selectPay('cash')">
           <input type="radio" name="pay" />
-          <div>
-            <div class="pay-option-title">Cash on arrival</div>
-            <div class="pay-option-desc">Bring exact cash on the day. Your spot is provisionally held — if payment isn't received by start time your place may be released to the waitlist.</div>
-          </div>
+          <div><div class="pay-option-title">Cash on arrival</div><div class="pay-option-desc">Bring exact cash on the day. Your spot is provisionally held — if payment isn&rsquo;t received by start time your place may be released.</div></div>
         </div>
       </div>
     </div>
@@ -275,30 +318,32 @@
     <div class="form-step" id="fstep4">
       <div class="success-screen">
         <div class="success-icon">✦</div>
-        <h2 class="success-title">You're in!</h2>
-        <p class="success-sub">A confirmation is on its way to <strong id="conf-email"></strong>.<br>Kindness will send the full address and any prep notes a few days before the workshop.</p>
+        <h2 class="success-title">You&rsquo;re in!</h2>
+        <p class="success-sub">A confirmation is on its way to <strong id="conf-email"></strong>.<br>Kindness will send the full address and any prep notes a few days before.</p>
         <div class="success-summary">
-          <div class="summary-row"><span class="summary-label">Workshop</span><span id="conf-title"></span></div>
-          <div class="summary-row"><span class="summary-label">Date</span><span id="conf-date"></span></div>
-          <div class="summary-row"><span class="summary-label">Payment</span><span id="conf-payment"></span></div>
-          <div class="summary-row"><span class="summary-label">Total</span><span id="conf-price" style="font-family:'Playfair Display',serif;"></span></div>
+          <div class="summary-row"><span class="summary-label">Workshop</span><span class="summary-val" id="conf-title"></span></div>
+          <div class="summary-row"><span class="summary-label">Date(s)</span><span class="summary-val" id="conf-date"></span></div>
+          <div class="summary-row"><span class="summary-label">Payment</span><span class="summary-val" id="conf-payment"></span></div>
+          <div class="summary-row"><span class="summary-label">Total</span><span class="summary-val" id="conf-price" style="font-family:'Syne',sans-serif;font-weight:800;color:var(--ocean);"></span></div>
         </div>
-        <button class="btn-next" style="margin-top:1.75rem;" onclick="closeModal()">Back to workshops</button>
+        <button class="btn-next" onclick="closeModal()">Back to workshops</button>
       </div>
     </div>
 
-    <!-- Step nav (hidden on success) -->
     <div class="step-nav" id="step-nav">
-      <button class="btn-back" id="btn-back" onclick="prevStep()" style="visibility:hidden;">← Back</button>
-      <button class="btn-next" id="btn-next" onclick="nextStep()">Next →</button>
+      <button class="btn-back" id="btn-back" onclick="prevStep()" style="visibility:hidden;">&#8592; Back</button>
+      <button class="btn-next" id="btn-next" onclick="nextStep()">Next &#8594;</button>
     </div>
   </div>
 </div>
 
 <footer>
-  <span>© Finders Keepers Market</span>
-  <a href="../">Back to Home</a>
-  <a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a>
+  <span class="foot-logo">Kindness Grace</span>
+  <div class="foot-links">
+    <a href="../">Finders Keepers Market</a>
+    <a href="../kindnessgrace/">Gallery</a>
+    <a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a>
+  </div>
 </footer>
 
 <script>
@@ -309,7 +354,39 @@
   let payMethod = 'venmo';
   let formspreeUrl = '';
 
-  // ── LOAD WORKSHOPS ──
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function formatDateShort(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  // Returns array of {date, time} lines for schedule display
+  function getScheduleLines(ws) {
+    if (ws.scheduleType === 'multiday-range') {
+      const label = `${formatDate(ws.date)} – ${formatDate(ws.dateEnd)}`;
+      return [{ date: label, time: ws.time ? ws.time + ' each day' : '' }];
+    } else if (ws.scheduleType === 'multiday-custom' && ws.days && ws.days.length) {
+      return ws.days.map(d => ({ date: formatDate(d.date), time: d.time || '' }));
+    }
+    return [{ date: formatDate(ws.date), time: ws.time || '' }];
+  }
+
+  // Short version for card snapshot
+  function getScheduleShort(ws) {
+    if (ws.scheduleType === 'multiday-range') {
+      return `${formatDateShort(ws.date)} – ${formatDateShort(ws.dateEnd)}${ws.time ? ' · ' + ws.time + ' each day' : ''}`;
+    } else if (ws.scheduleType === 'multiday-custom' && ws.days && ws.days.length) {
+      return ws.days.map(d => `${formatDateShort(d.date)}${d.time ? ' · ' + d.time : ''}`);
+    }
+    return [`${formatDate(ws.date)}${ws.time ? ' · ' + ws.time : ''}`];
+  }
+
   async function loadWorkshops() {
     const grid = document.getElementById('workshops-grid');
     try {
@@ -317,74 +394,57 @@
       const data = await r.json();
       workshops = (data.workshops || []).filter(w => w.available !== false);
       if (!workshops.length) {
-        grid.innerHTML = '<div class="empty-msg">No upcoming workshops right now — check back soon or email hello@finderskeepers.market to register interest.</div>';
+        grid.innerHTML = '<div class="empty-msg">No upcoming workshops right now &mdash; check back soon or email hello@finderskeepers.market to register interest.</div>';
         return;
       }
-      renderWorkshops(workshops);
+      renderWorkshops();
     } catch(e) {
-      grid.innerHTML = '<div class="empty-msg">Could not load workshops. Please try refreshing.</div>';
+      grid.innerHTML = '<div class="empty-msg">Could not load workshops &mdash; please try refreshing.</div>';
     }
   }
 
-  function wsScheduleDisplay(ws) {
-    if (ws.scheduleType === 'multiday-range') {
-      const start = formatDate(ws.date);
-      const end = formatDate(ws.dateEnd);
-      return `${start} – ${end}${ws.time ? ' · ' + ws.time + ' each day' : ''}`;
-    } else if (ws.scheduleType === 'multiday-custom' && ws.days && ws.days.length) {
-      return ws.days.map(d => `${formatDate(d.date)}${d.time ? ' · ' + d.time : ''}`).join('<br>');
-    }
-    return `${formatDate(ws.date)}${ws.time ? ' · ' + ws.time : ''}`;
-  }
-
-  function renderWorkshops(list) {
+  function renderWorkshops() {
     const grid = document.getElementById('workshops-grid');
     grid.innerHTML = '';
-    list.forEach(ws => {
+    workshops.forEach(ws => {
       const spotsLeft = ws.spotsRemaining !== undefined ? ws.spotsRemaining : (ws.spots || 0);
       const full = spotsLeft <= 0;
       const ageLabel = ws.ageGroup === 'kids' ? 'Kids' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages';
-      const ageClass = ws.ageGroup === 'kids' ? 'kids' : ws.ageGroup === 'adults' ? 'adults' : '';
-      const modTags = (ws.modalities || []).map(m =>
-        `<span style="font-size:0.65rem;letter-spacing:0.06em;background:var(--sage-faint);color:var(--sage);padding:0.2rem 0.55rem;border:1px solid var(--border-sage);">${m}</span>`
-      ).join('');
+      const ageClass = ws.ageGroup === 'kids' ? 'kids' : '';
       const isMultiDay = ws.scheduleType === 'multiday-range' || ws.scheduleType === 'multiday-custom';
+      const modTags = (ws.modalities || []).map(m => `<span class="ws-mod-tag">${m}</span>`).join('');
+      const scheduleLines = getScheduleShort(ws);
+      const scheduleHTML = Array.isArray(scheduleLines)
+        ? scheduleLines.map(l => `<div class="ws-schedule-day">&#128197; ${l}</div>`).join('')
+        : `<div class="ws-schedule-day">&#128197; ${scheduleLines}</div>`;
+
       const card = document.createElement('div');
-      card.className = 'workshop-card' + (full ? ' full' : '');
+      card.className = 'ws-card' + (full ? ' sold-out' : '');
       card.innerHTML = `
-        <div class="workshop-card-body">
-          <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
-            <div class="workshop-tag ${ageClass}">${ageLabel}</div>
-            ${isMultiDay ? '<div style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--blush);background:var(--blush-faint);padding:0.15rem 0.5rem;">Multi-day</div>' : ''}
+        <div class="ws-card-body">
+          <div style="display:flex;align-items:center;flex-wrap:wrap;">
+            <span class="ws-age-tag ${ageClass}">${ageLabel}</span>
+            ${isMultiDay ? '<span class="ws-multiday-tag">Multi-day</span>' : ''}
           </div>
-          <div class="workshop-title">${ws.title}</div>
-          ${modTags ? `<div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:-0.1rem;">${modTags}</div>` : ''}
-          <div class="workshop-desc">${ws.description}</div>
-          <div class="workshop-meta">
-            <span>📅 <span style="line-height:1.6;">${wsScheduleDisplay(ws)}</span></span>
-            <span>📍 ${ws.location}</span>
+          <div class="ws-title">${ws.title}</div>
+          ${modTags ? `<div class="ws-mod-tags">${modTags}</div>` : ''}
+          <div class="ws-desc">${ws.description}</div>
+          <div class="ws-schedule">
+            ${scheduleHTML}
+            <div class="ws-schedule-row"><span class="ws-schedule-icon">&#128205;</span><span>${ws.location}</span></div>
           </div>
         </div>
-        <div class="workshop-footer">
+        <div class="ws-card-footer">
           <div>
-            <div class="workshop-price">$${ws.price}</div>
-            <div class="workshop-spots ${spotsLeft <= 3 && !full ? 'low' : ''}">${full ? 'Sold out' : spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' remaining'}</div>
+            <div class="ws-price">$${ws.price}</div>
+            <div class="ws-spots ${spotsLeft <= 3 && !full ? 'low' : ''}">${full ? 'Sold out' : spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' remaining'}</div>
           </div>
-          ${full
-            ? '<button class="btn-sold-out" disabled>Sold out</button>'
-            : `<button class="btn-book" onclick="openModal('${ws.id}')">Book my spot →</button>`}
+          ${full ? '<button class="btn-sold" disabled>Sold out</button>' : `<button class="btn-book" onclick="openModal('${ws.id}')">Book my spot</button>`}
         </div>`;
       grid.appendChild(card);
     });
   }
 
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const d = new Date(dateStr + 'T12:00:00');
-    return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
-  }
-
-  // ── MODAL ──
   function openModal(wsId) {
     activeWorkshop = workshops.find(w => w.id === wsId);
     if (!activeWorkshop) return;
@@ -392,9 +452,14 @@
     currentStep = 1;
     payMethod = 'venmo';
     resetForm();
-    document.getElementById('modal-tag').textContent = activeWorkshop.ageGroup === 'kids' ? 'Kids workshop' : activeWorkshop.ageGroup === 'adults' ? 'Adults & teens' : 'All ages welcome';
-    document.getElementById('modal-title').textContent = activeWorkshop.title;
-    document.getElementById('modal-date-loc').textContent = formatDate(activeWorkshop.date) + ' · ' + activeWorkshop.time + ' · ' + activeWorkshop.location;
+    const ws = activeWorkshop;
+    const ageLabel = ws.ageGroup === 'kids' ? 'Kids workshop' : ws.ageGroup === 'adults' ? 'Adults & teens' : 'All ages welcome';
+    document.getElementById('modal-tag').textContent = ageLabel;
+    document.getElementById('modal-title').textContent = ws.title;
+    // Show full schedule in modal header
+    const lines = getScheduleLines(ws);
+    const schedEl = document.getElementById('modal-schedule');
+    schedEl.innerHTML = lines.map(l => `<span class="modal-schedule-day">${l.date}${l.time ? ' · ' + l.time : ''}</span>`).join('') + `<span class="modal-schedule-day" style="margin-top:2px;">&#128205; ${ws.location}</span>`;
     updateStepView();
     document.getElementById('modal-overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -405,18 +470,14 @@
     document.body.style.overflow = '';
   }
 
-  document.getElementById('modal-overlay').addEventListener('click', e => {
-    if (e.target === document.getElementById('modal-overlay')) closeModal();
-  });
+  document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === document.getElementById('modal-overlay')) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // ── STEPS ──
   function updateStepView() {
     for (let i = 1; i <= 4; i++) {
       const fs = document.getElementById('fstep' + i);
       if (fs) fs.classList.toggle('active', i === currentStep);
     }
-    // dots 1-3
     for (let i = 1; i <= 3; i++) {
       const dot = document.getElementById('sdot' + i);
       if (!dot) continue;
@@ -443,26 +504,20 @@
     updateStepView();
   }
 
-  function prevStep() {
-    if (currentStep > 1) { currentStep--; updateStepView(); }
-  }
+  function prevStep() { if (currentStep > 1) { currentStep--; updateStepView(); } }
 
-  function handleAgeInput() {
+  function handleAge() {
     const age = parseInt(document.getElementById('f-age').value) || 0;
-    const alert = document.getElementById('minor-alert');
-    const minorConsent = document.getElementById('c-minor-wrap');
     const isMinor = age > 0 && age < 18;
-    alert.style.display = isMinor ? 'block' : 'none';
-    minorConsent.style.display = isMinor ? 'flex' : 'none';
+    document.getElementById('minor-alert').style.display = isMinor ? 'block' : 'none';
+    document.getElementById('c-minor-wrap').style.display = isMinor ? 'flex' : 'none';
   }
 
   function validateStep1() {
-    const first = document.getElementById('f-first').value.trim();
+    if (!document.getElementById('f-first').value.trim()) { alert('Please enter your first name.'); return false; }
     const email = document.getElementById('f-email').value.trim();
-    const age = document.getElementById('f-age').value.trim();
-    if (!first) { alert('Please enter your first name.'); return false; }
     if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return false; }
-    if (!age) { alert('Please enter the attendee\'s age.'); return false; }
+    if (!document.getElementById('f-age').value.trim()) { alert('Please enter the attendee\'s age.'); return false; }
     return true;
   }
 
@@ -471,9 +526,7 @@
     if (!document.getElementById('c-auth').checked) { alert('Please confirm you are authorised to register this attendee.'); return false; }
     if (!document.getElementById('c-refund').checked) { alert('Please accept the refund policy to continue.'); return false; }
     const age = parseInt(document.getElementById('f-age').value) || 0;
-    if (age > 0 && age < 18 && !document.getElementById('c-minor').checked) {
-      alert('Please confirm parental/guardian consent for the under-18 attendee.'); return false;
-    }
+    if (age > 0 && age < 18 && !document.getElementById('c-minor').checked) { alert('Please confirm parental/guardian consent for the under-18 attendee.'); return false; }
     return true;
   }
 
@@ -484,7 +537,9 @@
     const att = document.getElementById('f-attendee').value.trim() || (first + ' ' + last).trim();
     const age = document.getElementById('f-age').value;
     document.getElementById('sum-title').textContent = ws.title;
-    document.getElementById('sum-date').innerHTML = wsScheduleDisplay(ws);
+    // Show full schedule in summary
+    const lines = getScheduleLines(ws);
+    document.getElementById('sum-date').innerHTML = lines.map(l => `${l.date}${l.time ? ' · ' + l.time : ''}`).join('<br>');
     document.getElementById('sum-attendee').textContent = att + (age ? ', age ' + age : '');
     document.getElementById('sum-price').textContent = '$' + ws.price;
     document.getElementById('venmo-amount').textContent = '$' + ws.price;
@@ -510,37 +565,25 @@
     const age = document.getElementById('f-age').value;
     const notes = document.getElementById('f-notes').value.trim();
     const photo = document.getElementById('c-photo').checked;
-
+    const lines = getScheduleLines(ws);
+    const dateStr = lines.map(l => l.date + (l.time ? ' · ' + l.time : '')).join(', ');
     const payload = {
       workshop: ws.title,
-      date: ws.scheduleType === 'multiday-custom' && ws.days
-        ? ws.days.map(d => formatDate(d.date) + (d.time ? ' · ' + d.time : '')).join(', ')
-        : (ws.scheduleType === 'multiday-range' ? formatDate(ws.date) + ' – ' + formatDate(ws.dateEnd) + (ws.time ? ' · ' + ws.time + ' each day' : '') : formatDate(ws.date) + ' · ' + ws.time),
+      date: dateStr,
       contactName: first + ' ' + last,
-      email,
-      phone: phone || 'Not provided',
+      email, phone: phone || 'Not provided',
       attendee: att + (age ? ', age ' + age : ''),
       payment: payMethod === 'venmo' ? 'Venmo (@kindnessgrace)' : 'Cash on arrival',
       amount: '$' + ws.price,
       photoConsent: photo ? 'Yes' : 'No',
       notes: notes || 'None'
     };
-
-    // Submit to Formspree if URL is set
     if (formspreeUrl) {
-      try {
-        await fetch(formspreeUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } catch(e) { console.log('Formspree error:', e); }
+      try { await fetch(formspreeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) }); } catch(e) {}
     }
-
-    // Show confirmation
     document.getElementById('conf-email').textContent = email;
     document.getElementById('conf-title').textContent = ws.title;
-    document.getElementById('conf-date').innerHTML = wsScheduleDisplay(ws);
+    document.getElementById('conf-date').innerHTML = lines.map(l => l.date + (l.time ? ' · ' + l.time : '')).join('<br>');
     document.getElementById('conf-payment').textContent = payMethod === 'venmo' ? 'Venmo @kindnessgrace' : 'Cash on arrival';
     document.getElementById('conf-price').textContent = '$' + ws.price;
     currentStep = 4;
@@ -548,14 +591,8 @@
   }
 
   function resetForm() {
-    ['f-first','f-last','f-email','f-phone','f-attendee','f-age','f-notes'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-    ['c-risk','c-auth','c-minor','c-refund'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.checked = false;
-    });
+    ['f-first','f-last','f-email','f-phone','f-attendee','f-age','f-notes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    ['c-risk','c-auth','c-minor','c-refund'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
     document.getElementById('c-photo').checked = true;
     document.getElementById('minor-alert').style.display = 'none';
     document.getElementById('c-minor-wrap').style.display = 'none';
