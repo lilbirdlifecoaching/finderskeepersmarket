@@ -64,7 +64,7 @@
     </div>
   </div>
 </div>
-<footer><span>© Finders Keepers Market</span><a href="../">Back to Home</a><a href="mailto:hello@finderskeepers.market">hello@finderskeepers.market</a></footer>
+<footer><span>© Finders Keepers Market</span><a href="../">Back to Home</a><a href="mailto:angelahaythorpe@gmail.com">angelahaythorpe@gmail.com</a></footer>
 <script>
 let allFurniture=[];let currentFilter="all";
 async function load(){try{const data=await(await fetch("https://finderskeepers.market/art-data.json")).json();allFurniture=data.furniture||[];renderGallery();renderBanner();}catch(e){}}
@@ -91,7 +91,7 @@ function openModal(art){
   document.getElementById("modal-desc").textContent=art.description||"";
   document.getElementById("modal-details").innerHTML=[art.medium?`<div class="modal-detail-row"><span class="modal-detail-label">Medium</span><span class="modal-detail-val">${art.medium}</span></div>`:"",art.dimensions?`<div class="modal-detail-row"><span class="modal-detail-label">Dimensions</span><span class="modal-detail-val">${art.dimensions}</span></div>`:"",art.shipping?`<div class="modal-detail-row"><span class="modal-detail-label">Shipping</span><span class="modal-detail-val">${art.shipping}</span></div>`:""].join("");
   const s=encodeURIComponent(`Inquiry: ${art.title}`);const b=encodeURIComponent(`Hello,\n\nI'm interested in "${art.title}".\n\nIs it available?\n\nThank you!`);
-  document.getElementById("modal-cta").innerHTML=art.available?`<a href="mailto:hello@finderskeepers.market?subject=${s}&body=${b}" class="btn-primary">Inquire About This Piece</a>`:"<div style='text-align:center;padding:1rem;border:1px solid var(--border);color:var(--muted);font-style:italic;font-size:0.9rem'>This piece has found its home.</div>";
+  document.getElementById("modal-cta").innerHTML=art.available?`<a href="mailto:angelahaythorpe@gmail.com?subject=${s}&body=${b}" class="btn-primary">Inquire About This Piece</a>`:"<div style='text-align:center;padding:1rem;border:1px solid var(--border);color:var(--muted);font-style:italic;font-size:0.9rem'>This piece has found its home.</div>";
   document.getElementById("modal-overlay").classList.add("open");document.body.style.overflow="hidden";
 }
 function closeModal(){document.getElementById("modal-overlay").classList.remove("open");document.body.style.overflow="";}
