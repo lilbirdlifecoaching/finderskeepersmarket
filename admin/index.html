@@ -174,6 +174,20 @@
       if (sessionStorage.getItem('fk_unlocked') !== 'yes') pw.focus();
     }
   });
+
+  // clearToken defined here so it's available before main script loads
+  function clearToken() {
+    try { localStorage.removeItem('fk_gh_token'); } catch(e) {}
+    if (typeof GITHUB_TOKEN !== 'undefined') GITHUB_TOKEN = '';
+    var ts = document.getElementById('token-setup');
+    var ti = document.getElementById('token-input');
+    var te = document.getElementById('token-error');
+    var grid = document.getElementById('listings-grid');
+    if (ts) ts.style.display = 'block';
+    if (ti) { ti.value = ''; setTimeout(function(){ ti.focus(); }, 100); }
+    if (te) te.style.display = 'none';
+    if (grid) grid.innerHTML = '<div style="text-align:center;padding:2rem;font-style:italic;color:#7A6E64;">Enter a GitHub token above to reload.</div>';
+  }
 </script>
 </head>
 <body>
@@ -708,7 +722,7 @@ function positionTooltip(tooltip, hs, container) {
       document.getElementById('lock-screen').style.display = 'none';
     }
   }
-  checkUnlocked();
+  try { checkUnlocked(); } catch(e) { console.log("checkUnlocked error:", e); }
 
   // Enter key + auto-focus handled via DOMContentLoaded in head script
 
