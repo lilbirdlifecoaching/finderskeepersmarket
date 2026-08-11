@@ -268,25 +268,19 @@
   "workshops": [
     {
       "id": "ws001",
-      "title": "Paper mache creatures — intro",
-      "description": "Learn the basics of paper mache sculpting. Build and paint your own creature from scratch. All materials provided. Suitable for all skill levels.",
+      "title": "Halloween Mask Creating",
+      "description": "Learn the basics of paper mache. Build your unique Halloween mask from scratch. All materials provided. Suitable for all skill levels.",
       "date": "2025-08-09",
       "time": "10:00am – 1:00pm",
-      "location": "Bay Area, CA (full address sent on booking)",
-      "price": 45,
+      "location": "Visual Philosophy Studio, 1065 The Alameda, San Jose CA 95126",
+      "price": 99,
       "spots": 8,
       "spotsRemaining": 4,
-      "ageGroup": "all",
-      "ageMin": 0,
-      "ageMax": 0,
+      "ageGroup": "kids",
+      "ageMin": 4,
+      "ageMax": 8,
       "available": true,
-      "formspreeUrl": "https://formspree.io/f/xeajgqzv",
-      "modalities": [
-        "Paper Mache",
-        "Acrylic Painting"
-      ],
-      "scheduleType": "single",
-      "days": []
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
     },
     {
       "id": "ws002",
