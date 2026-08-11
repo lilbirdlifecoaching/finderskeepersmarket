@@ -1833,8 +1833,8 @@ function positionTooltip(tooltip, hs, container) {
     row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr auto;gap:0.5rem;align-items:center;';
     row.id = 'ws-day-row-' + idx;
     row.innerHTML = `
-      <input type="date" id="ws-day-date-${idx}" value="${date}" onchange="wsCustomDays[${idx}].date=this.value" style="padding:0.6rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.85rem;width:100%;outline:none;" />
-      <input type="text" id="ws-day-time-${idx}" value="${time}" placeholder="10:00am – 1:00pm" onchange="wsCustomDays[${idx}].time=this.value" style="padding:0.6rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.85rem;width:100%;outline:none;" />
+      <input type="date" id="ws-day-date-${idx}" value="${date}" style="padding:0.6rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.85rem;width:100%;outline:none;" />
+      <input type="text" id="ws-day-time-${idx}" value="${time}" placeholder="10:00am – 1:00pm" style="padding:0.6rem 0.75rem;border:1px solid rgba(100,80,60,0.2);background:#FAF7F2;font-family:Jost,sans-serif;font-size:0.85rem;width:100%;outline:none;" />
       <button type="button" onclick="wsRemoveCustomDay(${idx})" style="background:none;border:1px solid rgba(100,80,60,0.2);color:#c0392b;padding:0.5rem 0.65rem;cursor:pointer;font-size:0.85rem;">✕</button>`;
     list.appendChild(row);
   }
@@ -1910,12 +1910,14 @@ function positionTooltip(tooltip, hs, container) {
   }
 
   function wsScheduleSummary(ws) {
-    if (ws.scheduleType === 'multiday-range') {
-      return `${ws.date || '?'} – ${ws.dateEnd || '?'}, ${ws.time || ''}`;
-    } else if (ws.scheduleType === 'multiday-custom' && ws.days && ws.days.length) {
-      return `${ws.days.length} day${ws.days.length > 1 ? 's' : ''} (${ws.days[0].date} – ${ws.days[ws.days.length-1].date})`;
+    const type = ws.scheduleType || (ws.days && ws.days.length ? 'multiday-custom' : 'single');
+    if (type === 'multiday-range') {
+      return `${ws.date || '?'} – ${ws.dateEnd || '?'}${ws.time ? ', ' + ws.time + ' each day' : ''}`;
+    } else if (type === 'multiday-custom' && ws.days && ws.days.length) {
+      const first = ws.days[0].date, last = ws.days[ws.days.length-1].date;
+      return `${ws.days.length} day${ws.days.length > 1 ? 's' : ''} · ${first}${last !== first ? ' – ' + last : ''}`;
     }
-    return `${ws.date || 'No date'} ${ws.time ? '· ' + ws.time : ''}`;
+    return `${ws.date || 'No date'}${ws.time ? ' · ' + ws.time : ''}`;
   }
 
   function wsResetForm() {
@@ -1977,7 +1979,7 @@ function positionTooltip(tooltip, hs, container) {
     document.getElementById('ws-formspree').value = ws.formspreeUrl || '';
     document.getElementById('ws-available').checked = ws.available !== false;
     wsSetModalities(ws.modalities || []);
-    const schedType = ws.scheduleType || 'single';
+    const schedType = ws.scheduleType || (ws.days && ws.days.length ? 'multiday-custom' : 'single');
     wsSetScheduleType(schedType);
     if (schedType === 'single') {
       document.getElementById('ws-date').value = ws.date || '';
@@ -2026,11 +2028,17 @@ function positionTooltip(tooltip, hs, container) {
         schedFields.time = document.getElementById('ws-range-time').value.trim();
         schedFields.days = [];
       } else {
-        // Sync any unsaved input values before saving
-        wsCustomDays = wsCustomDays.map((d, i) => ({
-          date: document.getElementById('ws-day-date-' + i)?.value || d.date,
-          time: document.getElementById('ws-day-time-' + i)?.value || d.time
-        }));
+        // Always read directly from DOM inputs — never rely on cached wsCustomDays values
+        const dayCount = wsCustomDays.length;
+        wsCustomDays = [];
+        for (let i = 0; i < dayCount; i++) {
+          const dateEl = document.getElementById('ws-day-date-' + i);
+          const timeEl = document.getElementById('ws-day-time-' + i);
+          if (dateEl) wsCustomDays.push({
+            date: dateEl.value || '',
+            time: timeEl ? timeEl.value.trim() : ''
+          });
+        }
         schedFields.date = wsCustomDays[0]?.date || '';
         schedFields.dateEnd = wsCustomDays[wsCustomDays.length - 1]?.date || '';
         schedFields.time = '';
