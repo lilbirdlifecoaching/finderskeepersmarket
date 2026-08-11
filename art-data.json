@@ -277,7 +277,13 @@
       "ageMin": 0,
       "ageMax": 0,
       "available": true,
-      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv",
+      "modalities": [
+        "Paper Mache",
+        "Acrylic Painting"
+      ],
+      "scheduleType": "single",
+      "days": []
     },
     {
       "id": "ws002",
@@ -293,7 +299,14 @@
       "ageMin": 15,
       "ageMax": 0,
       "available": true,
-      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv",
+      "modalities": [
+        "Paper Mache",
+        "Sculpture (general)",
+        "Acrylic Painting"
+      ],
+      "scheduleType": "single",
+      "days": []
     },
     {
       "id": "ws003",
@@ -309,7 +322,13 @@
       "ageMin": 5,
       "ageMax": 13,
       "available": true,
-      "formspreeUrl": "https://formspree.io/f/xeajgqzv"
+      "formspreeUrl": "https://formspree.io/f/xeajgqzv",
+      "modalities": [
+        "Paper Mache",
+        "Acrylic Painting"
+      ],
+      "scheduleType": "single",
+      "days": []
     }
   ]
 }
