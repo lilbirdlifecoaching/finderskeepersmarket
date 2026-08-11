@@ -2028,21 +2028,31 @@ function positionTooltip(tooltip, hs, container) {
         schedFields.time = document.getElementById('ws-range-time').value.trim();
         schedFields.days = [];
       } else {
-        // Always read directly from DOM inputs — never rely on cached wsCustomDays values
-        const dayCount = wsCustomDays.length;
-        wsCustomDays = [];
-        for (let i = 0; i < dayCount; i++) {
+        // Read ALL day inputs from DOM directly - scan for any ws-day-date-N elements
+        const collectedDays = [];
+        let i = 0;
+        while (true) {
           const dateEl = document.getElementById('ws-day-date-' + i);
+          if (!dateEl) break; // no more day rows
           const timeEl = document.getElementById('ws-day-time-' + i);
-          if (dateEl) wsCustomDays.push({
+          collectedDays.push({
             date: dateEl.value || '',
             time: timeEl ? timeEl.value.trim() : ''
           });
+          i++;
         }
+        wsCustomDays = collectedDays;
         schedFields.date = wsCustomDays[0]?.date || '';
         schedFields.dateEnd = wsCustomDays[wsCustomDays.length - 1]?.date || '';
         schedFields.time = '';
         schedFields.days = [...wsCustomDays];
+        if (!wsCustomDays.length) {
+          document.getElementById('ws-error-box').style.display = 'block';
+          document.getElementById('ws-error-msg').textContent = 'Please add at least one day using the "+ Add a day" button.';
+          document.getElementById('ws-save-btn').disabled = false;
+          document.getElementById('ws-save-btn').textContent = 'Save Workshop ✦';
+          return;
+        }
       }
 
       const wsData = {
