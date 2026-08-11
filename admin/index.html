@@ -729,10 +729,19 @@ function positionTooltip(tooltip, hs, container) {
   let GITHUB_TOKEN = localStorage.getItem('fk_gh_token') || '';
 
   function checkToken() {
+    const grid = document.getElementById('listings-grid');
     if (!GITHUB_TOKEN) {
       document.getElementById('token-setup').style.display = 'block';
+      // Never leave the grid stuck on its "Loading…" placeholder
+      if (grid) grid.innerHTML = '<div class="empty-state" style="padding:2rem;text-align:center;">'
+        + '<p style="font-family:\'Playfair Display\',serif;font-style:italic;color:#7A6E64;margin-bottom:0.5rem;">Not connected to GitHub yet.</p>'
+        + '<p style="font-size:0.85rem;color:#9a9288;">Enter your access token in the box above to load your listings.</p>'
+        + '</div>';
     } else {
       document.getElementById('token-setup').style.display = 'none';
+      if (grid && grid.textContent.indexOf('Not connected') !== -1) {
+        grid.innerHTML = '<div class="loading-state">Loading your artwork…</div>';
+      }
     }
   }
 
