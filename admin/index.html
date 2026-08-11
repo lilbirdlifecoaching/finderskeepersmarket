@@ -747,12 +747,14 @@ function positionTooltip(tooltip, hs, container) {
   function clearToken() {
     localStorage.removeItem('fk_gh_token');
     GITHUB_TOKEN = '';
-    document.getElementById('token-setup').style.display = 'block';
-    document.getElementById('token-input').value = '';
-    document.getElementById('token-error').style.display = 'none';
-    // Clear listings so stale data doesn't show
-    const grid = document.getElementById('listings-grid');
-    if (grid) grid.innerHTML = '<div class="loading-state">Enter a token above to load your artwork.</div>';
+    var ts = document.getElementById('token-setup');
+    var ti = document.getElementById('token-input');
+    var te = document.getElementById('token-error');
+    var grid = document.getElementById('listings-grid');
+    if (ts) ts.style.display = 'block';
+    if (ti) { ti.value = ''; setTimeout(function(){ ti.focus(); }, 100); }
+    if (te) te.style.display = 'none';
+    if (grid) grid.innerHTML = '<div class="loading-state">Enter a GitHub token above to load your artwork.</div>';
   }
 
   const REPO_OWNER = 'lilbirdlifecoaching';
