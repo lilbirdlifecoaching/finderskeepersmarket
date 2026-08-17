@@ -532,14 +532,7 @@
           <button type="button" class="freq-btn is-active" data-freq="Monthly">Monthly gift</button>
           <button type="button" class="freq-btn" data-freq="One-time">One-time gift</button>
         </div>
-        <div class="pledge-amounts" id="pledge-amounts">
-          <button type="button" class="amt-btn" data-amt="50">$50</button>
-          <button type="button" class="amt-btn" data-amt="100">$100</button>
-          <button type="button" class="amt-btn" data-amt="200">$200</button>
-          <button type="button" class="amt-btn" data-amt="500">$500</button>
-          <button type="button" class="amt-btn" data-amt="1000">$1,000</button>
-          <button type="button" class="amt-btn" data-amt="other">Other</button>
-        </div>
+        <div class="pledge-amounts" id="pledge-amounts"></div>
         <input type="number" min="1" step="1" id="pledge-custom" class="pledge-input" placeholder="Enter amount ($)" hidden>
         <input type="text" id="pledge-name" class="pledge-input" placeholder="Your name">
         <input type="email" id="pledge-email" class="pledge-input" placeholder="Your email">
@@ -693,14 +686,55 @@ loadTracker();
   const toggle = document.getElementById('pledge-toggle');
   const form = document.getElementById('pledge-form');
   const freqBtns = document.querySelectorAll('.freq-btn');
-  const amtBtns = document.querySelectorAll('.amt-btn');
+  const amountsWrap = document.getElementById('pledge-amounts');
   const customInput = document.getElementById('pledge-custom');
   const nameInput = document.getElementById('pledge-name');
   const emailInput = document.getElementById('pledge-email');
   const submitBtn = document.getElementById('pledge-submit');
 
+  const PRESETS = {
+    'Monthly': [50, 100, 200, 500, 1000],
+    'One-time': [200, 500, 1000, 5000, 10000]
+  };
+
   let frequency = 'Monthly';
   let amount = null;
+
+  function renderAmounts(){
+    amountsWrap.innerHTML = '';
+    amount = null;
+    customInput.hidden = true;
+    customInput.value = '';
+    PRESETS[frequency].forEach(val => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'amt-btn';
+      btn.dataset.amt = val;
+      btn.textContent = `$${val.toLocaleString()}`;
+      amountsWrap.appendChild(btn);
+    });
+    const otherBtn = document.createElement('button');
+    otherBtn.type = 'button';
+    otherBtn.className = 'amt-btn';
+    otherBtn.dataset.amt = 'other';
+    otherBtn.textContent = 'Other';
+    amountsWrap.appendChild(otherBtn);
+
+    amountsWrap.querySelectorAll('.amt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        amountsWrap.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        if(btn.dataset.amt === 'other'){
+          customInput.hidden = false;
+          customInput.focus();
+          amount = null;
+        } else {
+          customInput.hidden = true;
+          amount = btn.dataset.amt;
+        }
+      });
+    });
+  }
 
   toggle.addEventListener('click', () => {
     form.hidden = !form.hidden;
@@ -712,21 +746,7 @@ loadTracker();
       freqBtns.forEach(b => b.classList.remove('is-active'));
       btn.classList.add('is-active');
       frequency = btn.dataset.freq;
-    });
-  });
-
-  amtBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      amtBtns.forEach(b => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      if(btn.dataset.amt === 'other'){
-        customInput.hidden = false;
-        customInput.focus();
-        amount = null;
-      } else {
-        customInput.hidden = true;
-        amount = btn.dataset.amt;
-      }
+      renderAmounts();
     });
   });
 
@@ -746,6 +766,8 @@ loadTracker();
     );
     window.location.href = `mailto:angelahaythorpe@gmail.com?subject=${subject}&body=${body}`;
   });
+
+  renderAmounts();
 })();
 
 /* ---------------------------------------------------------------
