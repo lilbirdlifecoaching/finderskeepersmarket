@@ -257,6 +257,104 @@
     color:var(--fog);
     max-width:34em;
   }
+  #pledge-toggle{cursor:pointer; font-family:'Work Sans', sans-serif;}
+
+  .pledge-form{
+    margin-top:24px;
+    max-width:420px;
+    background:rgba(247,242,231,0.05);
+    border:1px solid rgba(247,242,231,0.14);
+    border-radius:14px;
+    padding:22px;
+  }
+  .pledge-freq{display:flex; gap:8px; margin-bottom:16px;}
+  .freq-btn{
+    flex:1;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    padding:9px 6px;
+    border-radius:7px;
+    border:1px solid rgba(247,242,231,0.25);
+    background:transparent;
+    color:var(--fog);
+    cursor:pointer;
+  }
+  .freq-btn.is-active{background:var(--lamp); color:var(--night); border-color:var(--lamp); font-weight:600;}
+
+  .pledge-amounts{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .amt-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.85rem;
+    padding:11px 4px;
+    border-radius:7px;
+    border:1px solid rgba(247,242,231,0.25);
+    background:transparent;
+    color:var(--paper);
+    cursor:pointer;
+  }
+  .amt-btn.is-active{background:var(--lamp); color:var(--night); border-color:var(--lamp); font-weight:600;}
+
+  .pledge-input{
+    width:100%;
+    font-family:'Work Sans', sans-serif;
+    font-size:0.92rem;
+    padding:11px 12px;
+    border-radius:7px;
+    border:1px solid rgba(247,242,231,0.25);
+    background:rgba(247,242,231,0.06);
+    color:var(--paper);
+    margin-bottom:10px;
+  }
+  .pledge-input::placeholder{color:var(--fog);}
+
+  /* ---------- NEWSLETTER ---------- */
+  .news{background:var(--paper);}
+  .news-head{max-width:32em; margin-bottom:32px;}
+  .news-head h2{font-size:2rem;}
+  .news-head p{color:var(--ink-soft); margin-top:14px;}
+  .news-row{
+    display:flex; gap:34px; flex-wrap:wrap; align-items:flex-start;
+  }
+  .news-subscribe{
+    flex:0 0 260px;
+    background:var(--paper-2);
+    border:1px solid #E4DAC4;
+    border-radius:12px;
+    padding:22px;
+  }
+  .news-subscribe .eyebrow{display:block; margin-bottom:10px;}
+  .news-subscribe p{font-size:0.92rem; color:var(--ink-soft); margin-bottom:16px;}
+  .news-posts{flex:1 1 340px;}
+  .post-item{
+    padding:16px 0;
+    border-bottom:1px solid #E4DAC4;
+  }
+  .post-item:last-child{border-bottom:none;}
+  .post-item a{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:1.05rem;
+    color:var(--ink);
+    text-decoration:none;
+  }
+  .post-item a:hover{color:var(--brick);}
+  .post-item .date{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--brick);
+    margin-bottom:5px;
+  }
+  .post-empty{
+    font-size:0.92rem;
+    color:var(--ink-soft);
+    font-style:italic;
+  }
 
   /* ---------- CONTACT / FOOTER ---------- */
   .contact{text-align:left;}
@@ -425,9 +523,29 @@
       <p class="sub">Ange is raising support for this season of service in the Tenderloin. Every gift and pledge — like every lit window in the Ellis Room — adds up to a safer, warmer place for San Francisco's unhoused neighbors.</p>
       <div class="give-ctas">
         <a class="btn btn-primary" href="https://www.ywamsanfrancisco.org/give" target="_blank" rel="noopener">Give now</a>
-        <a class="btn btn-ghost" href="mailto:angelahaythorpe@gmail.com?subject=I'd%20like%20to%20pledge%20support%20for%20Ange">Make a pledge</a>
+        <button class="btn btn-ghost" id="pledge-toggle" type="button">Make a pledge</button>
       </div>
       <p class="give-note">Giving through YWAM San Francisco's official portal. Note "Ange Haythorpe's ministry" in the comment field so it's directed to this season of support.</p>
+
+      <div class="pledge-form" id="pledge-form" hidden>
+        <div class="pledge-freq" role="tablist">
+          <button type="button" class="freq-btn is-active" data-freq="Monthly">Monthly gift</button>
+          <button type="button" class="freq-btn" data-freq="One-time">One-time gift</button>
+        </div>
+        <div class="pledge-amounts" id="pledge-amounts">
+          <button type="button" class="amt-btn" data-amt="50">$50</button>
+          <button type="button" class="amt-btn" data-amt="100">$100</button>
+          <button type="button" class="amt-btn" data-amt="200">$200</button>
+          <button type="button" class="amt-btn" data-amt="500">$500</button>
+          <button type="button" class="amt-btn" data-amt="1000">$1,000</button>
+          <button type="button" class="amt-btn" data-amt="other">Other</button>
+        </div>
+        <input type="number" min="1" step="1" id="pledge-custom" class="pledge-input" placeholder="Enter amount ($)" hidden>
+        <input type="text" id="pledge-name" class="pledge-input" placeholder="Your name">
+        <input type="email" id="pledge-email" class="pledge-input" placeholder="Your email">
+        <button type="button" class="btn btn-primary" id="pledge-submit" style="width:100%; margin-top:6px;">Send pledge</button>
+        <p class="give-note" style="margin-top:12px;">This opens an email to Ange with your pledge details — she logs each one so the tracker above stays current.</p>
+      </div>
     </div>
 
     <div class="tracker">
@@ -449,6 +567,26 @@
           <span class="n" id="stat-remaining">$0</span>
           <span class="k">Remaining</span>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="news">
+  <div class="wrap">
+    <div class="news-head">
+      <span class="eyebrow">Along the way</span>
+      <h2>Updates from the Tenderloin</h2>
+      <p>Ange is sending regular notes from the field — what's happening at the Ellis Room, prayer needs, and stories from the block. Subscribe to get them as they're written.</p>
+    </div>
+    <div class="news-row">
+      <div class="news-subscribe">
+        <span class="eyebrow">Newsletter</span>
+        <p>Short, honest updates — no spam, unsubscribe anytime.</p>
+        <a class="btn btn-primary" href="https://angela-ywam-newsletters.beehiiv.com/subscribe" target="_blank" rel="noopener" style="width:100%; text-align:center;">Subscribe</a>
+      </div>
+      <div class="news-posts" id="post-list">
+        <p class="post-empty">Loading latest updates&hellip;</p>
       </div>
     </div>
   </div>
@@ -541,6 +679,110 @@ async function loadTracker(){
 }
 
 loadTracker();
+
+/* ---------------------------------------------------------------
+   PLEDGE FORM
+   ---------------------------------------------------------------
+   Zero-backend pledge form: collects frequency + amount + contact
+   info, then opens a pre-filled email to Ange. No card numbers or
+   payments are collected here — it's a pledge, not a transaction.
+   Ange logs each pledge into the "pledged" cell of the Google
+   Sheet, which the tracker above already reads automatically.
+------------------------------------------------------------------ */
+(function pledgeForm(){
+  const toggle = document.getElementById('pledge-toggle');
+  const form = document.getElementById('pledge-form');
+  const freqBtns = document.querySelectorAll('.freq-btn');
+  const amtBtns = document.querySelectorAll('.amt-btn');
+  const customInput = document.getElementById('pledge-custom');
+  const nameInput = document.getElementById('pledge-name');
+  const emailInput = document.getElementById('pledge-email');
+  const submitBtn = document.getElementById('pledge-submit');
+
+  let frequency = 'Monthly';
+  let amount = null;
+
+  toggle.addEventListener('click', () => {
+    form.hidden = !form.hidden;
+    toggle.textContent = form.hidden ? 'Make a pledge' : 'Hide pledge form';
+  });
+
+  freqBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      freqBtns.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      frequency = btn.dataset.freq;
+    });
+  });
+
+  amtBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      amtBtns.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      if(btn.dataset.amt === 'other'){
+        customInput.hidden = false;
+        customInput.focus();
+        amount = null;
+      } else {
+        customInput.hidden = true;
+        amount = btn.dataset.amt;
+      }
+    });
+  });
+
+  submitBtn.addEventListener('click', () => {
+    const finalAmount = amount || customInput.value;
+    if(!finalAmount || Number(finalAmount) <= 0){
+      alert('Please choose or enter a pledge amount.');
+      return;
+    }
+    if(!nameInput.value.trim()){
+      alert('Please enter your name.');
+      return;
+    }
+    const subject = encodeURIComponent(`Pledge: $${finalAmount} ${frequency}`);
+    const body = encodeURIComponent(
+      `Hi Ange,\n\nI'd like to pledge:\n\nAmount: $${finalAmount}\nFrequency: ${frequency}\nName: ${nameInput.value.trim()}\nEmail: ${emailInput.value.trim()}\n\nThanks!`
+    );
+    window.location.href = `mailto:angelahaythorpe@gmail.com?subject=${subject}&body=${body}`;
+  });
+})();
+
+/* ---------------------------------------------------------------
+   NEWSLETTER — LATEST POSTS
+   ---------------------------------------------------------------
+   Pulls the latest posts from Ange's beehiiv RSS feed. beehiiv
+   publications expose a feed at /feed. If the fetch fails (e.g. no
+   posts published yet, or the browser blocks the cross-origin
+   request), this falls back to a friendly empty state — it never
+   breaks the page.
+------------------------------------------------------------------ */
+const NEWSLETTER_FEED_URL = "https://angela-ywam-newsletters.beehiiv.com/feed";
+
+async function loadNewsletterPosts(){
+  const list = document.getElementById('post-list');
+  try{
+    const res = await fetch(NEWSLETTER_FEED_URL);
+    const xml = await res.text();
+    const doc = new DOMParser().parseFromString(xml, "text/xml");
+    const items = Array.from(doc.querySelectorAll('item')).slice(0, 4);
+    if(!items.length){ throw new Error('no items'); }
+    list.innerHTML = '';
+    items.forEach(item => {
+      const title = item.querySelector('title')?.textContent || 'Untitled update';
+      const link = item.querySelector('link')?.textContent || NEWSLETTER_FEED_URL.replace('/feed','');
+      const pubDate = item.querySelector('pubDate')?.textContent;
+      const dateStr = pubDate ? new Date(pubDate).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' }) : '';
+      const row = document.createElement('div');
+      row.className = 'post-item';
+      row.innerHTML = `${dateStr ? `<span class="date">${dateStr}</span>` : ''}<a href="${link}" target="_blank" rel="noopener">${title}</a>`;
+      list.appendChild(row);
+    });
+  }catch(e){
+    list.innerHTML = '<p class="post-empty">No updates posted yet — subscribe above to get the first one straight to your inbox.</p>';
+  }
+}
+loadNewsletterPosts();
 
 /* ---------------------------------------------------------------
    SKYLINE WINDOWS
