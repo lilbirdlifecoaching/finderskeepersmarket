@@ -107,11 +107,14 @@
     display:inline-block;
     border:1px solid transparent;
     cursor:pointer;
+    background:none;
+    appearance:none;
+    -webkit-appearance:none;
   }
   .btn-primary{background:var(--lamp); color:var(--night);}
   .btn-primary:hover{background:var(--lamp-soft);}
-  .btn-ghost{border-color:rgba(247,242,231,0.35); color:var(--paper);}
-  .btn-ghost:hover{border-color:var(--paper);}
+  .btn-ghost{background:transparent; border-color:rgba(247,242,231,0.35); color:var(--paper);}
+  .btn-ghost:hover{border-color:var(--paper); background:rgba(247,242,231,0.08);}
 
   /* skyline */
   .skyline{
@@ -445,6 +448,56 @@
   </div>
 </div>
 
+<section id="give" class="give">
+  <div class="wrap give-inner">
+    <div>
+      <span class="eyebrow" style="color:var(--lamp-soft);">Partner with Ange</span>
+      <h2>Help keep the lights on.</h2>
+      <p class="sub">Ange is raising support for this season of service in the Tenderloin. Every gift and pledge — like every lit window in the Ellis Room — adds up to a safer, warmer place for San Francisco's unhoused neighbors.</p>
+      <div class="give-ctas">
+        <a class="btn btn-primary" href="https://www.ywamsanfrancisco.org/give" target="_blank" rel="noopener">Give now</a>
+        <button class="btn btn-ghost" id="pledge-toggle" type="button">Make a pledge</button>
+      </div>
+      <p class="give-note">Giving through YWAM San Francisco's official portal. Note "Ange Haythorpe's ministry" in the comment field so it's directed to this season of support.</p>
+
+      <div class="pledge-form" id="pledge-form" hidden>
+        <div class="pledge-freq" role="tablist">
+          <button type="button" class="freq-btn is-active" data-freq="Monthly">Monthly gift</button>
+          <button type="button" class="freq-btn" data-freq="One-time">One-time gift</button>
+        </div>
+        <div class="pledge-amounts" id="pledge-amounts"></div>
+        <input type="number" min="1" step="1" id="pledge-custom" class="pledge-input" placeholder="Enter amount ($)" hidden>
+        <input type="text" id="pledge-name" class="pledge-input" placeholder="Your name">
+        <input type="email" id="pledge-email" class="pledge-input" placeholder="Your email">
+        <button type="button" class="btn btn-primary" id="pledge-submit" style="width:100%; margin-top:6px;">Send pledge</button>
+        <p class="give-note" style="margin-top:12px;">This opens an email to Ange with your pledge details — she logs each one so the tracker above stays current.</p>
+      </div>
+    </div>
+
+    <div class="tracker">
+      <div class="tracker-label">
+        <span id="tracker-goal-label">Goal: $10,000</span>
+        <span id="tracker-pct">0%</span>
+      </div>
+      <div class="lamp-row" id="lamp-row"></div>
+      <div class="tracker-numbers">
+        <div class="stat given-stat">
+          <span class="n" id="stat-given">$0</span>
+          <span class="k">Given</span>
+        </div>
+        <div class="stat pledged-stat">
+          <span class="n" id="stat-pledged">$0</span>
+          <span class="k">Pledged</span>
+        </div>
+        <div class="stat">
+          <span class="n" id="stat-remaining">$0</span>
+          <span class="k">Remaining</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="story" class="wrap">
   <div class="story">
     <div>
@@ -515,55 +568,6 @@
   </div>
 </section>
 
-<section id="give" class="give">
-  <div class="wrap give-inner">
-    <div>
-      <span class="eyebrow" style="color:var(--lamp-soft);">Partner with Ange</span>
-      <h2>Help keep the lights on.</h2>
-      <p class="sub">Ange is raising support for this season of service in the Tenderloin. Every gift and pledge — like every lit window in the Ellis Room — adds up to a safer, warmer place for San Francisco's unhoused neighbors.</p>
-      <div class="give-ctas">
-        <a class="btn btn-primary" href="https://www.ywamsanfrancisco.org/give" target="_blank" rel="noopener">Give now</a>
-        <button class="btn btn-ghost" id="pledge-toggle" type="button">Make a pledge</button>
-      </div>
-      <p class="give-note">Giving through YWAM San Francisco's official portal. Note "Ange Haythorpe's ministry" in the comment field so it's directed to this season of support.</p>
-
-      <div class="pledge-form" id="pledge-form" hidden>
-        <div class="pledge-freq" role="tablist">
-          <button type="button" class="freq-btn is-active" data-freq="Monthly">Monthly gift</button>
-          <button type="button" class="freq-btn" data-freq="One-time">One-time gift</button>
-        </div>
-        <div class="pledge-amounts" id="pledge-amounts"></div>
-        <input type="number" min="1" step="1" id="pledge-custom" class="pledge-input" placeholder="Enter amount ($)" hidden>
-        <input type="text" id="pledge-name" class="pledge-input" placeholder="Your name">
-        <input type="email" id="pledge-email" class="pledge-input" placeholder="Your email">
-        <button type="button" class="btn btn-primary" id="pledge-submit" style="width:100%; margin-top:6px;">Send pledge</button>
-        <p class="give-note" style="margin-top:12px;">This opens an email to Ange with your pledge details — she logs each one so the tracker above stays current.</p>
-      </div>
-    </div>
-
-    <div class="tracker">
-      <div class="tracker-label">
-        <span id="tracker-goal-label">Goal: $10,000</span>
-        <span id="tracker-pct">0%</span>
-      </div>
-      <div class="lamp-row" id="lamp-row"></div>
-      <div class="tracker-numbers">
-        <div class="stat given-stat">
-          <span class="n" id="stat-given">$0</span>
-          <span class="k">Given</span>
-        </div>
-        <div class="stat pledged-stat">
-          <span class="n" id="stat-pledged">$0</span>
-          <span class="k">Pledged</span>
-        </div>
-        <div class="stat">
-          <span class="n" id="stat-remaining">$0</span>
-          <span class="k">Remaining</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="news">
   <div class="wrap">
