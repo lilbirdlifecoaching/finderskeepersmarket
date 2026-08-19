@@ -838,12 +838,17 @@ loadTracker();
    NEWSLETTER — LATEST POSTS
    ---------------------------------------------------------------
    Pulls the latest posts from Ange's beehiiv RSS feed. beehiiv
-   publications expose a feed at /feed. If the fetch fails (e.g. no
-   posts published yet, or the browser blocks the cross-origin
-   request), this falls back to a friendly empty state — it never
-   breaks the page.
+   doesn't send CORS headers on its feed, so the browser can't fetch
+   it directly — this goes through a small Cloudflare Worker proxy
+   (see beehiiv-feed-proxy-worker.js) that re-serves the feed with
+   the right headers. If the fetch fails (e.g. no posts published
+   yet, or the proxy is down), this falls back to a friendly empty
+   state — it never breaks the page.
+
+   TODO: replace the URL below with your deployed Worker's URL,
+   e.g. https://ange-newsletter-proxy.YOUR-SUBDOMAIN.workers.dev
 ------------------------------------------------------------------ */
-const NEWSLETTER_FEED_URL = "https://angelas-newsletters.beehiiv.com/feed";
+const NEWSLETTER_FEED_URL = "https://ywam.cwwq46sn7m.workers.dev/";
 
 async function loadNewsletterPosts(){
   const list = document.getElementById('post-list');
