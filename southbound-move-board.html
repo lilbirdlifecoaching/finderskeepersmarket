@@ -1993,9 +1993,12 @@
     if(el) el.remove();
   }
 
+  let failedSaveRetryTimer = null;
+
   async function saveBoard(){
     if(isSaving){ pendingSave = true; return; }
     isSaving = true;
+    const payloadSize = JSON.stringify({ ideas, contributions }).length;
     let result = { ok: false, status: 0, text: '' };
     for(let attempt = 1; attempt <= 3 && !result.ok; attempt++){
       try{
@@ -2014,16 +2017,27 @@
       statusLine.style.color = '';
       statusLine.textContent = 'Shared board — everyone with this link sees the same data.';
       autoBackup();
+      if(failedSaveRetryTimer){
+        clearInterval(failedSaveRetryTimer);
+        failedSaveRetryTimer = null;
+      }
     } else {
       saveFailed = true;
       let diag = `Status: ${result.status || 'network error'}`;
-      if(result.status === 429) diag += ' — too many saves too quickly. It will retry automatically.';
+      if(result.status === 429) diag += ' — too many saves too quickly.';
       else if(result.status === 413 || result.status === 422) diag += ' — the board may have grown too large for this free storage tier.';
+      else if(result.status === 0) diag += ' — could not reach the storage server. Check your connection, or an ad-blocker/privacy extension may be blocking it.';
       if(result.text) diag += ` · ${result.text.slice(0, 200)}`;
-      diag += ` · Payload size: ${(result.sizeBytes || 0).toLocaleString()} bytes`;
+      diag += ` · Payload size: ${payloadSize.toLocaleString()} bytes`;
+      diag += ' · Retrying automatically every 20s while this stays open.';
       showSaveFailedBanner(diag);
       statusLine.textContent = '⚠ Could not save — see the notice above.';
       statusLine.style.color = 'var(--coral)';
+      if(!failedSaveRetryTimer){
+        failedSaveRetryTimer = setInterval(() => {
+          if(saveFailed && !isSaving) saveBoard();
+        }, 20000);
+      }
     }
     isSaving = false;
     if(pendingSave){
