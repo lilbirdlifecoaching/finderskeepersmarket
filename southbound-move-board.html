@@ -1726,7 +1726,10 @@
   }
 
   async function fetchRemoteBoard(id){
-    const res = await fetch(`${API_BASE}/${id}`, { headers: { 'Accept': 'application/json' } });
+    const res = await fetch(`${API_BASE}/${id}?_=${Date.now()}`, {
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store'
+    });
     if(!res.ok) throw new Error('not found');
     return await res.json();
   }
@@ -1735,7 +1738,8 @@
     const res = await fetch(`${API_BASE}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      cache: 'no-store'
     });
     return res.ok;
   }
