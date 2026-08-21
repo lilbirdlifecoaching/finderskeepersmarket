@@ -1713,6 +1713,14 @@
   let pendingSave = false;
   let saveFailed = false;
 
+  window.addEventListener('beforeunload', (e) => {
+    if(isSaving || pendingSave || saveFailed){
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    }
+  });
+
   async function createRemoteBoard(initialData){
     const res = await fetch(API_BASE, {
       method: 'POST',
