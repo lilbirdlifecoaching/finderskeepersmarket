@@ -1706,7 +1706,7 @@
     nameGate.style.display = 'none';
   });
 
-  const API_BASE = 'https://jsonblob.com/api/jsonBlob';
+  const FIREBASE_DB_URL = 'https://southbound-move-default-rtdb.firebaseio.com';
   let boardId = null;
   let pollTimer = null;
   let isSaving = false;
@@ -1722,37 +1722,43 @@
   });
 
   async function createRemoteBoard(initialData){
-    const res = await fetch(API_BASE, {
+    const res = await fetch(`${FIREBASE_DB_URL}/boards.json`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(initialData)
     });
-    if(!res.ok) throw new Error('create failed');
-    const loc = res.headers.get('Location');
-    if(!loc) throw new Error('no location header returned');
-    return loc.split('/').pop();
+    if(!res.ok) throw new Error('create failed: ' + res.status);
+    const result = await res.json();
+    if(!result || !result.name) throw new Error('no board id returned');
+    return result.name;
   }
 
   async function fetchRemoteBoard(id){
-    const res = await fetch(`${API_BASE}/${id}?_=${Date.now()}`, {
-      headers: { 'Accept': 'application/json' },
+    const res = await fetch(`${FIREBASE_DB_URL}/boards/${id}.json?_=${Date.now()}`, {
       cache: 'no-store'
     });
     if(!res.ok) throw new Error('not found');
-    return await res.json();
+    const data = await res.json();
+    if(data === null) throw new Error('board does not exist');
+    return data;
   }
 
   async function putRemoteBoard(id, data){
     const body = JSON.stringify(data);
-    const res = await fetch(`${API_BASE}/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body,
-      cache: 'no-store'
-    });
+    let res;
+    try{
+      res = await fetch(`${FIREBASE_DB_URL}/boards/${id}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        cache: 'no-store'
+      });
+    }catch(e){
+      return { ok: false, status: 0, text: (e && e.message) || 'network error', sizeBytes: body.length };
+    }
     let text = '';
     try{ text = await res.text(); }catch(e){ /* ignore */ }
-    return { ok: res.ok, status: res.status, text, sizeBytes: body.length };
+    return { ok: res.ok, status: res.status, text: res.ok ? '' : text, sizeBytes: body.length };
   }
 
   function showNewBoardBanner(url){
@@ -2024,8 +2030,8 @@
     } else {
       saveFailed = true;
       let diag = `Status: ${result.status || 'network error'}`;
-      if(result.status === 429) diag += ' — too many saves too quickly.';
-      else if(result.status === 413 || result.status === 422) diag += ' — the board may have grown too large for this free storage tier.';
+      if(result.status === 401 || result.status === 403) diag += ' — permission denied. The Firebase database security rules may need updating (see console).';
+      else if(result.status === 429) diag += ' — too many saves too quickly.';
       else if(result.status === 0) diag += ' — could not reach the storage server. Check your connection, or an ad-blocker/privacy extension may be blocking it.';
       if(result.text) diag += ` · ${result.text.slice(0, 200)}`;
       diag += ` · Payload size: ${payloadSize.toLocaleString()} bytes`;
