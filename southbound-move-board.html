@@ -1765,9 +1765,19 @@
     });
   }
 
-  function showFatalError(msg){
-    statusLine.textContent = msg;
-    statusLine.style.color = 'var(--coral)';
+  function showFatalError(msg, attemptedId){
+    statusLine.textContent = '';
+    if(document.getElementById('load-failed-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'load-failed-banner';
+    banner.style.cssText = 'background:#fbe7e2;border:2px solid var(--coral);border-radius:4px;padding:1rem 1.2rem;margin-bottom:1.6rem;';
+    banner.innerHTML = `
+      <div style="font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--coral);margin-bottom:0.4rem;">Board failed to load</div>
+      <div style="font-size:0.9rem;color:#7A2E1D;margin-bottom:0.5rem;">${escapeHTML(msg)}</div>
+      ${attemptedId ? `<div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#7A2E1D;">Board ID it tried to load: ${escapeHTML(attemptedId)}</div>` : ''}
+    `;
+    const header = document.querySelector('header');
+    header.insertAdjacentElement('afterend', banner);
   }
 
   async function initBoard(){
@@ -1932,7 +1942,7 @@
       autoBackup();
     }catch(e){
       if(!silent){
-        showFatalError('Could not load this board. Double-check you used the full shared link.');
+        showFatalError('Could not load this board. It may have been created a while ago and is no longer available, or the link is incomplete.', boardId);
       }
     }
   }
