@@ -1085,6 +1085,7 @@
   }
   .fund-progress-numbers strong{ color:var(--eucalyptus); }
   .fund-progress-bar{
+    position:relative;
     height:12px;
     background:var(--paper2);
     border-radius:6px;
@@ -1092,10 +1093,22 @@
     margin-bottom:0.5rem;
   }
   .fund-progress-fill{
+    position:absolute;
+    left:0; top:0;
     height:100%;
     background:var(--eucalyptus);
     border-radius:6px;
     transition:width .3s ease;
+    z-index:2;
+  }
+  .fund-progress-pledged-fill{
+    position:absolute;
+    left:0; top:0;
+    height:100%;
+    background:repeating-linear-gradient(45deg, #cfe0e8, #cfe0e8 4px, #bcd4e0 4px, #bcd4e0 8px);
+    border-radius:6px;
+    transition:width .3s ease;
+    z-index:1;
   }
   .fund-progress-pct{
     font-family:'Space Mono',monospace;
@@ -1136,6 +1149,35 @@
     border:none;
     cursor:pointer;
   }
+  .contribution-row.pledged{ opacity:0.9; }
+  .pledge-tag{
+    font-family:'Space Mono',monospace;
+    font-size:0.6rem;
+    text-transform:uppercase;
+    background:#e4edf1;
+    color:var(--ocean);
+    padding:0.08rem 0.4rem;
+    border-radius:3px;
+    margin-left:0.4rem;
+  }
+  .pledge-expected{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    color:rgba(30,42,36,0.45);
+  }
+  .contribution-actions{ display:flex; align-items:center; gap:0.5rem; flex-shrink:0; }
+  .mark-received-btn{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    text-transform:uppercase;
+    background:var(--eucalyptus);
+    color:var(--paper);
+    border:none;
+    border-radius:3px;
+    padding:0.3rem 0.5rem;
+    cursor:pointer;
+    white-space:nowrap;
+  }
   .contribution-add-toggle{
     font-family:'Space Mono',monospace;
     font-size:0.68rem;
@@ -1157,6 +1199,37 @@
   }
   @media (max-width:640px){
     .contribution-form{ grid-template-columns:1fr 1fr; }
+  }
+  .contrib-status-row{
+    grid-column:1 / -1;
+    display:flex;
+    gap:1rem;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    margin-top:0.3rem;
+  }
+  .contrib-status-picker{ display:flex; gap:0.4rem; }
+  .contrib-status-picker button{
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    text-transform:none;
+    background:var(--paper);
+    color:rgba(30,42,36,0.6);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:0.5rem 0.7rem;
+    cursor:pointer;
+  }
+  .contrib-status-picker button.active[data-contrib-status="received"]{ background:var(--eucalyptus); color:var(--paper); border-color:var(--eucalyptus); }
+  .contrib-status-picker button.active[data-contrib-status="pledged"]{ background:var(--ocean); color:var(--paper); border-color:var(--ocean); }
+  .contrib-expected-group label{
+    font-family:'Space Mono',monospace;
+    font-size:0.6rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:rgba(30,42,36,0.45);
+    display:block;
+    margin-bottom:0.3rem;
   }
   .contribution-form label{
     font-family:'Space Mono',monospace;
@@ -1423,14 +1496,17 @@
       <span class="fund-progress-title">Moving Fund Progress</span>
       <span class="fund-progress-numbers" id="fund-progress-numbers"><strong>$0</strong> raised of $0 needed</span>
     </div>
-    <div class="fund-progress-bar"><div class="fund-progress-fill" id="fund-progress-fill" style="width:0%;"></div></div>
+    <div class="fund-progress-bar">
+      <div class="fund-progress-fill" id="fund-progress-fill" style="width:0%;"></div>
+      <div class="fund-progress-pledged-fill" id="fund-progress-pledged-fill" style="width:0%;"></div>
+    </div>
     <div class="fund-progress-pct" id="fund-progress-pct">0% of the way there</div>
     <div class="contributions-list" id="contributions-list"></div>
-    <button type="button" class="contribution-add-toggle" id="contribution-add-toggle">+ Log a contribution</button>
+    <button type="button" class="contribution-add-toggle" id="contribution-add-toggle">+ Log a contribution or pledge</button>
     <div class="contribution-form" id="contribution-form" style="display:none;">
       <div>
         <label for="contrib-from">From</label>
-        <input type="text" id="contrib-from" placeholder="e.g. Mom, tax refund">
+        <input type="text" id="contrib-from" placeholder="e.g. Mom, Uncle Dave">
       </div>
       <div>
         <label for="contrib-amount">Amount ($)</label>
@@ -1439,6 +1515,19 @@
       <div>
         <label for="contrib-source">How it came in</label>
         <input type="text" id="contrib-source" placeholder="e.g. gift, savings, sold car">
+      </div>
+      <div class="contrib-status-row">
+        <div class="contrib-status-picker">
+          <button type="button" class="active" data-contrib-status="received">✓ Received now</button>
+          <button type="button" data-contrib-status="pledged">🤝 Pledged for later</button>
+        </div>
+        <div class="contrib-expected-group" id="contrib-expected-group" style="display:none;">
+          <label>Expected by</label>
+          <div class="cost-item-date-group">
+            <select id="contrib-expected-month"></select>
+            <select id="contrib-expected-year"></select>
+          </div>
+        </div>
       </div>
       <button type="button" id="contrib-save-btn">Add</button>
     </div>
@@ -1604,10 +1693,21 @@
     render();
   });
 
+  let contribStatus = 'received';
+
   document.getElementById('contribution-add-toggle').addEventListener('click', () => {
     const form = document.getElementById('contribution-form');
     form.style.display = form.style.display === 'none' ? 'grid' : 'none';
   });
+
+  document.querySelectorAll('[data-contrib-status]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      contribStatus = btn.dataset.contribStatus;
+      document.querySelectorAll('[data-contrib-status]').forEach(b => b.classList.toggle('active', b === btn));
+      document.getElementById('contrib-expected-group').style.display = contribStatus === 'pledged' ? 'block' : 'none';
+    });
+  });
+  fillMonthYearSelect('contrib-expected-month', 'contrib-expected-year', null);
 
   document.getElementById('contrib-save-btn').addEventListener('click', async () => {
     const from = document.getElementById('contrib-from').value.trim();
@@ -1618,9 +1718,14 @@
       alert('Add who it is from and an amount before saving.');
       return;
     }
+    const expM = document.getElementById('contrib-expected-month').value;
+    const expY = document.getElementById('contrib-expected-year').value;
+    const expectedMonth = (contribStatus === 'pledged' && expM && expY) ? `${expY}-${expM}` : null;
     contributions.push({
       id: 'contrib_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
       from, amount, source: source || null,
+      status: contribStatus,
+      expectedMonth,
       addedBy: userName || null,
       createdAt: Date.now()
     });
@@ -1628,6 +1733,10 @@
     document.getElementById('contrib-amount').value = '';
     document.getElementById('contrib-source').value = '';
     document.getElementById('contribution-form').style.display = 'none';
+    contribStatus = 'received';
+    document.querySelectorAll('[data-contrib-status]').forEach(b => b.classList.toggle('active', b.dataset.contribStatus === 'received'));
+    document.getElementById('contrib-expected-group').style.display = 'none';
+    fillMonthYearSelect('contrib-expected-month', 'contrib-expected-year', null);
     renderFundProgress();
     await saveBoard();
   });
@@ -2609,6 +2718,16 @@
         }
       });
     });
+    contributions.forEach(c => {
+      if(c.status === 'pledged' && c.expectedMonth){
+        items.push({
+          title: `💰 Follow up: ${c.from} pledged ${fmtMoney(c.amount)}`,
+          start: c.expectedMonth,
+          end: c.expectedMonth,
+          completed: false
+        });
+      }
+    });
     return items;
   }
 
@@ -2650,30 +2769,50 @@
   function renderFundProgress(){
     const flat = allCostItemsFlat();
     const needed = flat.reduce((s, ci) => s + ci.amount, 0);
-    const raised = contributions.reduce((s, c) => s + (c.amount || 0), 0);
-    const pct = needed > 0 ? Math.min(100, Math.round((raised / needed) * 100)) : 0;
+    const received = contributions.filter(c => (c.status || 'received') === 'received').reduce((s, c) => s + (c.amount || 0), 0);
+    const pledged = contributions.filter(c => c.status === 'pledged').reduce((s, c) => s + (c.amount || 0), 0);
+    const pct = needed > 0 ? Math.min(100, Math.round((received / needed) * 100)) : 0;
+    const pctWithPledged = needed > 0 ? Math.min(100, Math.round(((received + pledged) / needed) * 100)) : 0;
 
-    document.getElementById('fund-progress-numbers').innerHTML = `<strong>${fmtMoney(raised)}</strong> raised of ${fmtMoney(needed)} needed`;
+    document.getElementById('fund-progress-numbers').innerHTML = `<strong>${fmtMoney(received)}</strong> raised${pledged > 0 ? ` <span style="color:var(--ocean);">(+${fmtMoney(pledged)} pledged)</span>` : ''} of ${fmtMoney(needed)} needed`;
     document.getElementById('fund-progress-fill').style.width = pct + '%';
-    document.getElementById('fund-progress-pct').textContent = needed > 0 ? `${pct}% of the way there` : 'Add some costs to see progress toward them';
+    document.getElementById('fund-progress-pledged-fill').style.width = pctWithPledged + '%';
+    document.getElementById('fund-progress-pct').textContent = needed > 0 ? `${pct}% of the way there${pledged > 0 ? ` (${pctWithPledged}% counting pledges)` : ''}` : 'Add some costs to see progress toward them';
 
     const listEl = document.getElementById('contributions-list');
     listEl.innerHTML = contributions.length
-      ? contributions.slice().sort((a,b) => b.createdAt - a.createdAt).map(c => `
-          <div class="contribution-row" data-cid="${c.id}">
+      ? contributions.slice().sort((a,b) => b.createdAt - a.createdAt).map(c => {
+          const isPledged = c.status === 'pledged';
+          return `
+          <div class="contribution-row ${isPledged ? 'pledged' : ''}" data-cid="${c.id}">
             <div class="contribution-main">
-              <span class="contribution-from">${escapeHTML(c.from)}</span>
+              <span class="contribution-from">${escapeHTML(c.from)}</span>${isPledged ? '<span class="pledge-tag">Pledged</span>' : ''}
               ${c.source ? `<span class="contribution-source">${escapeHTML(c.source)}</span>` : ''}
+              ${isPledged && c.expectedMonth ? `<span class="pledge-expected">Expected ${monthLabel(c.expectedMonth)}</span>` : ''}
             </div>
-            <span class="contribution-amount">${fmtMoney(c.amount)}</span>
-            <button class="contribution-remove" data-contrib-remove="${c.id}">✕</button>
+            <div class="contribution-actions">
+              <span class="contribution-amount">${fmtMoney(c.amount)}</span>
+              ${isPledged ? `<button class="mark-received-btn" data-contrib-received="${c.id}">✓ Received</button>` : ''}
+              <button class="contribution-remove" data-contrib-remove="${c.id}">✕</button>
+            </div>
           </div>
-        `).join('')
-      : `<div class="no-comments-yet">No contributions logged yet</div>`;
+        `;
+        }).join('')
+      : `<div class="no-comments-yet">No contributions or pledges logged yet</div>`;
 
     listEl.querySelectorAll('[data-contrib-remove]').forEach(btn => {
       btn.addEventListener('click', async () => {
         contributions = contributions.filter(c => c.id !== btn.dataset.contribRemove);
+        renderFundProgress();
+        await saveBoard();
+      });
+    });
+    listEl.querySelectorAll('[data-contrib-received]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const c = contributions.find(x => x.id === btn.dataset.contribReceived);
+        if(!c) return;
+        c.status = 'received';
+        c.expectedMonth = null;
         renderFundProgress();
         await saveBoard();
       });
