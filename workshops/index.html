@@ -576,7 +576,11 @@
     const photo = document.getElementById('c-photo').checked;
     const lines = getScheduleLines(ws);
     const dateStr = lines.map(l => l.date + (l.time ? ' · ' + l.time : '')).join(', ');
+    // Subject line so bookings are scannable in the inbox without opening them
+    const payTag = payMethod === 'venmo' ? 'Venmo' : 'Cash';
+    const attendeeTag = att + (age ? ', age ' + age : '');
     const payload = {
+      _subject: 'Workshop booking: ' + ws.title + ' \u00b7 ' + attendeeTag + ' \u00b7 ' + payTag,
       workshop: ws.title,
       date: dateStr,
       contactName: first + ' ' + last,
