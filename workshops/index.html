@@ -202,6 +202,12 @@
       .mobile-strip a:last-child{padding-right:1.5rem}
       .mobile-strip a.here{color:var(--teal);border-bottom-color:var(--teal)}
     }
+  
+    .kd{display:block;pointer-events:none;user-select:none}
+    .about-art{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--border)}
+    .about-art .kd{width:100%;max-width:300px;height:auto;opacity:.85}
+    .about-art.tall .kd{max-width:none;height:74px;width:auto}
+    @media (max-width:768px){.about-art .kd{max-width:100%}}
   </style>
 </head>
 <body>
@@ -258,11 +264,13 @@
     <div class="about-label">About the workshops</div>
     <div class="about-pull">&ldquo;Every workshop is a little different. That&rsquo;s the point.&rdquo;</div>
     <p class="about-body">Kindness Grace runs small, hands-on sessions from her Bay Area studio. Whether it&rsquo;s paper mache creatures, wire armatures, acrylic painting, or something else entirely &mdash; each workshop is shaped around what she&rsquo;s making right now. The full address is sent after booking.</p>
+    <div class="about-art tall"><img class="kd" src="../art/kindi/brushes.svg" alt="Drawing of paintbrushes" /></div>
   </div>
   <div class="about-block">
     <div class="about-label">What to expect</div>
     <div class="about-pull">&ldquo;All materials. All mess. All yours to take home.&rdquo;</div>
     <p class="about-body">Everything you need is provided. Wear clothes you don&rsquo;t mind getting paint on. Spots are limited to keep things personal &mdash; if something sells out, reach out to kindnessgracee@gmail.com to register interest in the next one.</p>
+    <div class="about-art"><img class="kd" src="../art/kindi/tools.svg" alt="Drawing of an apron, paste pot, paper, hanger and brushes" /></div>
   </div>
 </div>
 
