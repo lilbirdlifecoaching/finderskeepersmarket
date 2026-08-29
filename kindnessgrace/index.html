@@ -28,7 +28,7 @@
 
     /* ── NAV ── */
     nav {
-      position: sticky; top: 0; z-index: 200;
+      
       display: flex; align-items: center; justify-content: space-between;
       padding: 1rem 2.5rem;
       background: var(--white);
@@ -196,19 +196,38 @@
       .hero-h1 em { font-size: 50px; }
       .nav-links { display: none; }
     }
+  
+    .site-head{position:sticky;top:0;z-index:200;background:var(--white)}
+    .mobile-strip{display:none}
+    @media (max-width:540px){
+      .mobile-strip{display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:#fff;border-bottom:1.5px solid var(--ink)}
+      .mobile-strip::-webkit-scrollbar{display:none}
+      .mobile-strip a{flex:0 0 auto;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:.75rem .9rem;border-bottom:2px solid transparent;white-space:nowrap}
+      .mobile-strip a:first-child{padding-left:1.5rem}
+      .mobile-strip a:last-child{padding-right:1.5rem}
+      .mobile-strip a.here{color:var(--teal);border-bottom-color:var(--teal)}
+    }
   </style>
 </head>
 <body>
 
+<div class="site-head">
 <nav>
   <a href="../" class="nav-back">Finders Keepers</a>
   <div class="nav-links">
     <a href="../workshops/">Workshops</a>
     <a href="../private-lessons/">Private lessons</a>
     <a href="../keepers-closet/">Keepers Closet</a>
-    <a href="mailto:kindnessgracee@gmail.com" class="nav-cta">Inquire</a>
   </div>
+  <a href="mailto:kindnessgracee@gmail.com" class="nav-cta">Inquire</a>
 </nav>
+<div class="mobile-strip">
+  <a href="../kindnessgrace/" class="here">Gallery</a>
+  <a href="../workshops/">Workshops</a>
+  <a href="../private-lessons/">Private lessons</a>
+  <a href="../keepers-closet/">Keepers Closet</a>
+</div>
+</div>
 
 <!-- ── HERO ── -->
 <div class="hero">

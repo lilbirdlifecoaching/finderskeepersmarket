@@ -23,7 +23,7 @@
     body { background: var(--white); color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-weight: 300; overflow-x: hidden; }
 
     /* ── NAV ── */
-    nav { position: sticky; top: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: var(--white); border-bottom: 1.5px solid var(--ink); }
+    nav {  display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: var(--white); border-bottom: 1.5px solid var(--ink); }
     .nav-logo { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); text-decoration: none; }
     .nav-links { display: flex; gap: 2rem; align-items: center; }
     .nav-links a { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
@@ -191,10 +191,22 @@
       .hero-h1 em { font-size: 46px; }
       .nav-links { display: none; }
     }
+  
+    .site-head{position:sticky;top:0;z-index:200;background:var(--white)}
+    .mobile-strip{display:none}
+    @media (max-width:540px){
+      .mobile-strip{display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:#fff;border-bottom:1.5px solid var(--ink)}
+      .mobile-strip::-webkit-scrollbar{display:none}
+      .mobile-strip a{flex:0 0 auto;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:.75rem .9rem;border-bottom:2px solid transparent;white-space:nowrap}
+      .mobile-strip a:first-child{padding-left:1.5rem}
+      .mobile-strip a:last-child{padding-right:1.5rem}
+      .mobile-strip a.here{color:var(--teal);border-bottom-color:var(--teal)}
+    }
   </style>
 </head>
 <body>
 
+<div class="site-head">
 <nav>
   <a href="../kindnessgrace/" class="nav-back">Kindness Grace</a>
   <div class="nav-links">
@@ -204,6 +216,13 @@
   </div>
   <a href="mailto:kindnessgracee@gmail.com" class="nav-cta">Inquire</a>
 </nav>
+<div class="mobile-strip">
+  <a href="../kindnessgrace/">Gallery</a>
+  <a href="../workshops/" class="here">Workshops</a>
+  <a href="../private-lessons/">Private lessons</a>
+  <a href="../keepers-closet/">Keepers Closet</a>
+</div>
+</div>
 
 <div class="hero">
   <div class="hero-inner">
